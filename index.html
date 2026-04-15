@@ -108,9 +108,19 @@
 <body>
 
 <div id="private-counter" style="display: none;">
-    <div id="sfc...etc"></div>
-    <script src="https://counter1.optistats.ovh/..."></script>
+    <div id="sfcj1hadcun8xqdfhbzttteef2bq7w1376p"></div>
+    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcu..."></script>
 </div>
+
+<script>
+// كود لإظهار العداد فقط عند الضغط على Ctrl + Shift + H
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key === 'H') {
+        var counter = document.getElementById('private-counter');
+        counter.style.display = (counter.style.display === 'none') ? 'block' : 'none';
+    }
+});
+</script>
     <audio id="hover-sound" preload="auto">
         <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
     </audio>
