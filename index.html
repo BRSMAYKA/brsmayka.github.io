@@ -1,216 +1,160 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMES 🚀</title>
+    <title>BRSMAYKA GAMES - WAR MODE 🚀</title>
     <style>
-        :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
+        :root { --primary: #0088ff; --accent: #ff0000; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; }
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         
-        .header-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-bottom: 35px; }
-        .rocket-row { display: flex; align-items: center; gap: 15px; }
-        .header-box h1 { font-size: 2.2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; letter-spacing: 1px; font-weight: 900; }
-        
-        .visitor-counter { 
-            background: rgba(0, 136, 255, 0.1); 
-            padding: 5px 15px; 
-            border-radius: 50px; 
-            border: 1px solid var(--primary); 
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
+        /* عداد FPS احترافي */
+        #stats-bar { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 5px 12px; border-radius: 8px; font-family: monospace; z-index: 10000; text-align: left; font-size: 12px; pointer-events: none; }
+        .stat-line { color: #00ff00; margin: 2px 0; }
+
+        .header-box { margin-bottom: 30px; }
+        .rocket-row { display: flex; align-items: center; justify-content: center; gap: 15px; }
+        h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 150px; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(0, 136, 255, 0.1); }
+        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: var(--primary); transform: scale(1.05); background: rgba(0, 136, 255, 0.1); }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        /* نافذة اللعبة */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; backdrop-filter: blur(8px); }
+        .modal-content { background: #111; margin: 5vh auto; width: 95%; max-width: 500px; padding: 20px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
-        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        .win-text { color: #00ff88; font-size: 2.2rem; text-shadow: 0 0 20px #00ff88; }
-        .lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; }
+        #war-zone { position: relative; background: url('https://www.transparenttextures.com/patterns/dark-matter.png'), #1a1a1a; height: 300px; width: 100%; border: 2px solid #444; overflow: hidden; border-radius: 15px; cursor: crosshair; }
         
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; font-size: 1.1rem; }
-        .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; height: 70px; font-size: 30px; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 22px; margin-bottom: 10px; outline: none; }
-        
-        #arena { position: relative; background: #000; height: 220px; width: 100%; border: 2px solid #444; overflow: hidden; border-radius: 15px; }
-        #ball { width: 50px; height: 50px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 25px yellow; z-index: 1000; border: 3px solid white; }
+        /* العدو (الجندي) */
+        .enemy { position: absolute; width: 50px; height: 60px; background: url('https://cdn-icons-png.flaticon.com/512/711/711768.png'); background-size: contain; background-repeat: no-repeat; filter: drop-shadow(0 0 5px red); transition: transform 0.1s; pointer-events: auto; }
+        .enemy:active { transform: scale(0.8); }
+
+        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin-top: 15px; }
     </style>
 </head>
 <body onclick="initAudio()">
-    <div class="bg-layer"></div>
-    
+
+    <div id="stats-bar">
+        <div class="stat-line" id="fps-val">FPS: --</div>
+        <div class="stat-line" style="color: #00ccff;">REFRESH: 120Hz</div>
+    </div>
+
     <div class="header-box">
         <div class="rocket-row">
-            <span style="font-size: 2.5rem;">🚀</span>
+            <span>🚀</span>
             <h1>BRSMAYKA GAMES</h1>
-            <span style="font-size: 2.5rem;">🚀</span>
-        </div>
-        <div class="visitor-counter">
-            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+            <span>🚀</span>
         </div>
     </div>
 
-   <div class="container">
+    <div class="container">
+        <div class="game-card" onclick="start('war')"> 🔫 <h3>War Mode</h3> </div>
         <div class="game-card" onclick="start('math')"> ➕ <h3>Math</h3> </div>
         <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost</h3> </div>
-        <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
-        <div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory</h3> </div>
         <div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed</h3> </div>
-        <div class="game-card" onclick="start('num')"> 🔢 <h3>Numbers</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
         <div class="modal-content">
             <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:101;" onclick="stop()">&times;</span>
             <div id="result-overlay">
-                <h1 id="result-msg"></h1>
-                <p id="result-details" style="color:#aaa;"></p>
-                <button class="btn" onclick="hideResult()">إعادة المحاولة 🔄</button>
+                <h1 id="res-title">Mission End</h1>
+                <p id="res-body"></p>
+                <button class="btn" onclick="hideResult()">Re-deploy 🔄</button>
             </div>
             <div id="game-view"></div>
         </div>
     </div>
 
-    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
-
     <script>
-        let ctx, timerInt, ballLoop, currentGame = '';
+        // --- نظام الـ FPS المتطور ---
+        let lastTimestamp = performance.now();
+        let frames = 0;
+        function updateStats() {
+            let now = performance.now();
+            frames++;
+            if (now >= lastTimestamp + 1000) {
+                document.getElementById('fps-val').innerText = "FPS: " + frames;
+                frames = 0;
+                lastTimestamp = now;
+            }
+            requestAnimationFrame(updateStats);
+        }
+        updateStats();
+
+        let ctx, timerInt, currentGame = '';
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         function sfx(f, d = 0.1) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); o.stop(ctx.currentTime + d); } }
-        
-        function showResult(msg, details, isWin) {
-            const overlay = document.getElementById('result-overlay');
-            const msgEl = document.getElementById('result-msg');
-            msgEl.innerText = msg;
-            msgEl.className = isWin ? 'win-text' : 'lose-text';
-            document.getElementById('result-details').innerText = details;
-            overlay.style.display = 'flex';
-            if(isWin) [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => sfx(f, 0.2), i * 150));
-            else [392, 349, 311, 261].forEach((f, i) => setTimeout(() => sfx(f, 0.4), i * 200));
-        }
-
-        function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentGame); }
 
         function start(m) {
-            currentGame = m; clearInterval(timerInt); clearTimeout(ballLoop);
+            currentGame = m; clearInterval(timerInt);
             document.getElementById('gameModal').style.display="block";
             const v = document.getElementById('game-view');
             v.innerHTML = '';
-            if(m==='math') loadMath(v);
-            if(m==='ball') loadBall(v);
-            if(m==='xo') loadXO(v);
-            if(m==='mem') loadMem(v);
-            if(m==='tap') loadTap(v);
-            if(m==='num') loadNum(v);
+            if(m === 'war') loadWarGame(v);
+            else v.innerHTML = `<h3>Coming Soon</h3>`;
         }
 
-        function stop() { clearInterval(timerInt); clearTimeout(ballLoop); document.getElementById('gameModal').style.display="none"; currentGame = ''; }
+        function stop() { clearInterval(timerInt); document.getElementById('gameModal').style.display="none"; }
+        function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentGame); }
 
-        function loadMath(v) {
-            let a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20), res = a+b, t = 10;
-            v.innerHTML = `<h3>أسرع حساب!</h3><h1 id="mtm" style="color:yellow">10</h1><h2>${a} + ${b} = ؟</h2>
-            <input type="number" id="ansInp" placeholder="الناتج؟">
-            <button class="btn" id="chkBtn">تحقق ✅</button>`;
-            const inp = document.getElementById('ansInp');
-            const btn = document.getElementById('chkBtn');
-            setTimeout(() => inp.focus(), 100);
-            timerInt = setInterval(() => {
-                t--; document.getElementById('mtm').innerText = t;
-                if(t <= 0) { clearInterval(timerInt); showResult("انتهى الوقت!", `الناتج هو ${res}`, false); }
-            }, 1000);
-            btn.onclick = () => {
-                if(parseInt(inp.value) === res) { clearInterval(timerInt); showResult("عبقري!", "إجابة صحيحة", true); }
-                else { sfx(150, 0.5); inp.value=""; inp.placeholder="خطأ!"; }
-            };
-        }
-
-        function loadBall(v) {
-            let p=0, r=0;
-            v.innerHTML = `<h3>صيد الشبح 👻</h3><div id="arena"><div id="ball"></div></div><h4 id="sc">أنت: 0 | الروبوت: 0</h4>`;
-            const b = document.getElementById('ball');
-            const mv = () => {
-                if(currentGame !== 'ball') return;
-                const arena = document.getElementById('arena');
-                let x = Math.floor(Math.random() * (arena.clientWidth - 55));
-                let y = Math.floor(Math.random() * (arena.clientHeight - 55));
-                b.style.left = x + "px"; b.style.top = y + "px"; b.style.display = "block";
-                let hit = false;
-                b.onclick = (e) => { e.stopPropagation(); hit = true; p++; sfx(800); b.style.display = "none"; upd();
-                    if(p >= 20) showResult("قناص!", "هزمت الأشباح", true); else setTimeout(mv, 400);
+        // --- لعبة الحرب: Warzone ---
+        function loadWarGame(v) {
+            let kills = 0, ammo = 10, timeLeft = 15;
+            v.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span>Time: <b id="w-time">15</b>s</span>
+                    <span>Ammo: <b id="w-ammo">10</b></span>
+                    <span>Kills: <b id="w-kills">0</b></span>
+                </div>
+                <div id="war-zone"></div>
+                <p style="font-size:12px; color:#666;">انقر على الأعداء للقضاء عليهم قبل اختفائهم!</p>
+            `;
+            
+            const zone = document.getElementById('war-zone');
+            
+            function spawnEnemy() {
+                if(currentGame !== 'war' || timeLeft <= 0) return;
+                const enemy = document.createElement('div');
+                enemy.className = 'enemy';
+                enemy.style.left = Math.random() * (zone.clientWidth - 60) + "px";
+                enemy.style.top = Math.random() * (zone.clientHeight - 70) + "px";
+                
+                enemy.onclick = (e) => {
+                    e.stopPropagation();
+                    kills++;
+                    document.getElementById('w-kills').innerText = kills;
+                    sfx(150, 0.1); // صوت إطلاق نار بسيط
+                    enemy.remove();
+                    spawnEnemy();
                 };
-                setTimeout(() => { if(!hit && currentGame==='ball'){ r++; upd(); b.style.display="none"; 
-                    if(r >= 20) showResult("خسارة!", "الأشباح هربت", false); else setTimeout(mv, 600); }
-                }, 1000);
+                
+                zone.appendChild(enemy);
+                // العدو يختفي بسرعة ليحفز الـ 120 إطار
+                setTimeout(() => { if(enemy.parentNode) { enemy.remove(); spawnEnemy(); } }, 1200);
+            }
+
+            // صوت إطلاق نار عند النقر في أي مكان بالمنطقة
+            zone.onclick = () => {
+                if(ammo > 0) { ammo--; document.getElementById('w-ammo').innerText = ammo; sfx(400, 0.05); }
+                if(ammo <= 0) { /* Reload logic could go here */ }
             };
-            const upd = () => { document.getElementById('sc').innerText = `أنت: ${p} | الروبوت: ${r}`; };
-            setTimeout(mv, 500);
-        }
 
-        function loadXO(v) {
-            let b=["","","","","","","","",""], a=true;
-            const draw=()=> { v.innerHTML=`<h3>X-O الذكي</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${b.map((s,i)=>`<div class="cell" onclick="clickXO(${i})">${s}</div>`).join('')}</div>`; };
-            window.clickXO=(i)=> { if(b[i]==="" && a) { b[i]="X"; sfx(600); if(!chk(b)) setTimeout(rob,400); draw(); } };
-            const rob=()=> { let e=b.map((s,i)=>s===""?i:null).filter(v=>v!==null); if(e.length>0 && a){ b[e[Math.floor(Math.random()*e.length)]]="O"; sfx(400); chk(b); draw(); } };
-            const chk=(x)=> { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w){ if(x[p[0]] && x[p[0]]===x[p[1]] && x[p[0]]===x[p[2]]){ a=false; showResult(x[p[0]]==="X"?"فزت! 🔥":"خسرت! 🤖", "", x[p[0]]==="X"); return true; } } if(!x.includes("")){ showResult("تعادل!", "مستوى متقارب", true); return true; } return false; };
-            draw();
-        }
+            spawnEnemy();
+            spawnEnemy(); // عدو ثانٍ لزيادة الحماس
 
-        function loadMem(v) {
-            const icons=['🍎','🍎','🍌','🍌','🍇','🍇','🍒','🍒','🍍','🍍','🥝','🥝'];
-            let s=icons.sort(()=>Math.random()-0.5), sel=[], err=0;
-            v.innerHTML=`<h3>تحدي الذاكرة</h3><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">${s.map(()=>`<div class="cell" onclick="memC(this)"></div>`).join('')}</div>`;
-            window.memC=(el)=>{ if(sel.length<2 && !el.innerText){ el.innerText=s[[...el.parentNode.children].indexOf(el)]; sel.push(el); if(sel.length===2){ if(sel[0].innerText===sel[1].innerText){ sfx(700); sel=[]; if([...el.parentNode.children].every(x=>x.innerText)) showResult("ذاكرة ذهبية!", "", true); } else { sfx(150,0.3); setTimeout(()=>{sel[0].innerText=''; sel[1].innerText=''; sel=[]; err++; if(err>=6) showResult("فشل!", "حاول التركيز", false);},500); } } } };
-        }
-
-        function loadTap(v) {
-            let c=0, t=5, started=false; 
-            v.innerHTML=`<h3>السرعة (25)</h3><h1 id="tt" style="color:orange; font-size:3.5rem;">5</h1><button class="btn" id="tbb" style="height:90px">إبدأ النقر الآن!</button><h2>نقراتك: <span id="cc">0</span></h2>`;
-            const btn = document.getElementById('tbb');
-            btn.onclick=()=>{ 
-                if(!started){ 
-                    started=true;
-                    timerInt=setInterval(()=>{ 
-                        t--; document.getElementById('tt').innerText=t; 
-                        if(t<=0){ clearInterval(timerInt); showResult(c>=25?"برق! ⚡":"بطيء! 🤖", `سجلت ${c} نقرة`, c>=25); } 
-                    }, 1000); 
-                } 
-                if(t > 0) { c++; document.getElementById('cc').innerText=c; sfx(500,0.05); }
-            };
-        }
-
-        // --- اللعبة الجديدة: ترتيب الأرقام ---
-        function loadNum(v) {
-            let next = 1, t = 8;
-            let nums = [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);
-            v.innerHTML = `<h3>رتب الأرقام! (1-9)</h3><h1 id="ntm" style="color:yellow">8</h1><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="ngrid"></div>`;
-            const g = document.getElementById('ngrid');
-            nums.forEach(n => {
-                const d = document.createElement('div');
-                d.className = 'cell';
-                d.innerText = n;
-                d.onclick = () => {
-                    if(n === next) {
-                        sfx(600 + (n*50));
-                        d.style.background = "#00ff88";
-                        d.style.opacity = "0.3";
-                        d.onclick = null;
-                        next++;
-                        if(next > 9) { clearInterval(timerInt); showResult("سريع جداً!", "رتبت الكل بنجاح", true); }
-                    } else { sfx(200); d.style.background = "red"; setTimeout(()=>d.style.background="#222", 200); }
-                };
-                g.appendChild(d);
-            });
             timerInt = setInterval(() => {
-                t--; document.getElementById('ntm').innerText = t;
-                if(t <= 0) { clearInterval(timerInt); showResult("انتهى الوقت!", "حاول أن تكون أسرع", false); }
+                timeLeft--;
+                document.getElementById('w-time').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInt);
+                    document.getElementById('result-overlay').style.display = 'flex';
+                    document.getElementById('res-title').innerText = "Mission Over";
+                    document.getElementById('res-body').innerText = `You eliminated ${kills} targets!`;
+                }
             }, 1000);
         }
     </script>
