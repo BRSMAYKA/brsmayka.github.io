@@ -3,235 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA ULTIMATE - 13 GAMES 🚀</title>
+    <title>BRSMAYKA GAMES PRO 🚀</title>
     <style>
-        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; --locked: #222; }
+        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; text-align: center; }
         
-        /* Stats & Levels */
+        /* شريط المستوى الرئيسي */
         .level-header { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
-        #xp-bar-container { background: #111; height: 12px; border-radius: 6px; margin-top: 10px; border: 1px solid #444; overflow: hidden; }
+        #xp-bar-container { background: #111; height: 10px; border-radius: 5px; margin-top: 8px; overflow: hidden; }
         #xp-bar-fill { background: linear-gradient(90deg, #0088ff, #00ffcc); width: 0%; height: 100%; transition: 0.4s; }
 
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; max-width: 600px; margin: 0 auto; }
-        
-        .game-card { background: #111; border: 1px solid #333; border-radius: 18px; padding: 15px; cursor: pointer; transition: 0.2s; position: relative; }
-        .game-card.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
-        .game-card:not(.locked):hover { border-color: var(--primary); transform: scale(1.05); background: #161616; }
-        
-        .lvl-tag { position: absolute; top: 5px; right: 5px; background: var(--primary); font-size: 9px; padding: 2px 5px; border-radius: 8px; font-weight: bold; }
+        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; max-width: 600px; margin: 0 auto; }
+        .game-card { background: #111; border: 1px solid #333; border-radius: 15px; padding: 12px; cursor: pointer; transition: 0.2s; position: relative; }
+        .game-card.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+        .game-card:not(.locked):hover { border-color: var(--primary); transform: scale(1.05); }
 
-        /* Modal & UI */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 1000; backdrop-filter: blur(10px); }
-        .modal-content { background: #0c0c0c; margin: 10vh auto; width: 90%; max-width: 400px; padding: 20px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        /* نافذة اللعبة */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.97); z-index: 1000; backdrop-filter: blur(10px); }
+        .modal-content { background: #0c0c0c; margin: 5vh auto; width: 92%; max-width: 400px; padding: 20px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
-        #timer-box { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: var(--accent); transition: 0.1s linear; }
+        /* عداد الوقت والمستوى داخل اللعبة */
+        .game-stats-inner { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-family: monospace; }
+        #timer-box { flex-grow: 1; height: 6px; background: #222; border-radius: 3px; margin: 0 10px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: var(--accent); }
 
-        #game-canvas { width: 100%; height: 280px; background: #000; border-radius: 15px; border: 1px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #game-canvas { width: 100%; height: 300px; background: #000; border-radius: 15px; border: 1px solid #333; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        #result-screen { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        #result-screen { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
         
-        .dot { position: absolute; border-radius: 50%; cursor: pointer; }
+        @keyframes shake { 0%{transform:translate(2px,2px)} 25%{transform:translate(-2px,-2px)} 50%{transform:translate(2px,-2px)} 100%{transform:translate(0,0)} }
+        .shake-effect { animation: shake 0.2s; border-color: red !important; }
+        
+        /* عناصر الألعاب */
+        .target { position: absolute; border-radius: 50%; cursor: pointer; transition: 0.1s; }
+        .cell { background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border-radius: 8px; height: 60px; }
     </style>
 </head>
 <body onclick="initAudio()">
 
     <div class="level-header">
-        <div style="display: flex; justify-content: space-between; font-size: 14px;">
-            <span>Level: <b id="lvl-txt">1</b></span>
-            <span>XP: <b id="xp-txt">0</b>/100</span>
+        <div style="display: flex; justify-content: space-between;">
+            <span>المستوى العام: <b id="main-lvl">1</b></span>
+            <span>XP: <b id="main-xp">0</b>/100</span>
         </div>
         <div id="xp-bar-container"><div id="xp-bar-fill"></div></div>
     </div>
 
     <div class="container" id="menu">
-        <div class="game-card" onclick="entry('math', 1)"> <span class="lvl-tag">L1</span> ➕ <h3>Math</h3> </div>
-        <div class="game-card" onclick="entry('xo', 1)"> <span class="lvl-tag">L1</span> ❌ <h3>X-O</h3> </div>
-        <div class="game-card" onclick="entry('bird', 1)"> <span class="lvl-tag">L1</span> 🐦 <h3>Bird</h3> </div>
-        
-        <div class="game-card" onclick="entry('tap', 2)"> <span class="lvl-tag">L2</span> ⚡ <h3>Speed</h3> </div>
-        <div class="game-card" onclick="entry('color', 2)"> <span class="lvl-tag">L2</span> 🎨 <h3>Color</h3> </div>
-        <div class="game-card" onclick="entry('num', 2)"> <span class="lvl-tag">L2</span> 🔢 <h3>Nums</h3> </div>
-        
-        <div class="game-card" onclick="entry('ball', 3)"> <span class="lvl-tag">L3</span> 👻 <h3>Ghost</h3> </div>
-        <div class="game-card" onclick="entry('type', 3)"> <span class="lvl-tag">L3</span> ⌨️ <h3>Type</h3> </div>
-        <div class="game-card" onclick="entry('mem', 3)"> <span class="lvl-tag">L3</span> 🧠 <h3>Memo</h3> </div>
-        
-        <div class="game-card" onclick="entry('war', 4)"> <span class="lvl-tag">L4</span> 🔫 <h3>War</h3> </div>
-        <div class="game-card" onclick="entry('storm', 4)"> <span class="lvl-tag">L4</span> ⛈️ <h3>Storm</h3> </div>
-        
-        <div class="game-card" onclick="entry('3d', 5)"> <span class="lvl-tag">L5</span> 🌌 <h3>3D</h3> </div>
-        <div class="game-card" onclick="entry('slice', 5)"> <span class="lvl-tag">L5</span> ⚔️ <h3>Slice</h3> </div>
+        <div class="game-card" onclick="checkAndStart('math', 1)"> ➕ <h3>Math</h3> </div>
+        <div class="game-card" onclick="entry('xo', 1)"> ❌ <h3>X-O</h3> </div>
+        <div class="game-card" onclick="entry('bird', 1)"> 🐦 <h3>Bird</h3> </div>
+        <div class="game-card" onclick="entry('color', 2)"> 🎨 <h3>Color</h3> </div>
+        <div class="game-card" onclick="entry('tap', 2)"> ⚡ <h3>Speed</h3> </div>
+        <div class="game-card" onclick="entry('num', 2)"> 🔢 <h3>Nums</h3> </div>
+        <div class="game-card" onclick="entry('ball', 3)"> 👻 <h3>Ghost</h3> </div>
+        <div class="game-card" onclick="entry('type', 3)"> ⌨️ <h3>Type</h3> </div>
+        <div class="game-card" onclick="entry('mem', 3)"> 🧠 <h3>Memo</h3> </div>
+        <div class="game-card" onclick="entry('war', 4)"> 🔫 <h3>War</h3> </div>
+        <div class="game-card" onclick="entry('storm', 4)"> ⛈️ <h3>Storm</h3> </div>
+        <div class="game-card" onclick="entry('3d', 5)"> 🌌 <h3>3D</h3> </div>
+        <div class="game-card" onclick="entry('slice', 5)"> ⚔️ <h3>Slice</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content">
-            <span style="position:absolute; left:15px; top:5px; font-size:28px; cursor:pointer;" onclick="closeModal()">&times;</span>
-            <div id="timer-box"><div id="timer-bar"></div></div>
+        <div class="modal-content" id="modal-box">
+            <span style="position:absolute; left:15px; top:5px; font-size:28px; cursor:pointer;" onclick="closeGame()">&times;</span>
+            
+            <div class="game-stats-inner">
+                <span>LVL: <span id="inner-lvl-display">1</span></span>
+                <div id="timer-box"><div id="timer-bar"></div></div>
+                <span id="score-display">0</span>
+            </div>
             
             <div id="game-canvas">
                 <div id="result-screen">
-                    <h2 id="res-h"></h2>
-                    <p id="res-p"></p>
-                    <button class="btn" onclick="retry()">إعادة تحميل 🔄</button>
+                    <h2 id="res-title"></h2>
+                    <p id="res-desc"></p>
+                    <button class="btn" onclick="retryGame()">إعادة المحاولة 🔄</button>
                 </div>
-                <div id="play-area" style="width:100%; height:100%; position:relative;"></div>
+                <div id="play-zone" style="width:100%; height:100%; position:relative;"></div>
             </div>
         </div>
     </div>
 
     <script>
         let player = { lvl: 1, xp: 0 };
-        let gameActive = false, timer, timeLeft, currentMode;
+        let gameTimer, timeLeft, currentMode, isPlaying = false, score = 0;
+        let ctx;
 
-        function updateUI() {
-            document.getElementById('lvl-txt').innerText = player.lvl;
-            document.getElementById('xp-txt').innerText = player.xp;
+        function updateMainUI() {
+            document.getElementById('main-lvl').innerText = player.lvl;
+            document.getElementById('main-xp').innerText = player.xp;
             document.getElementById('xp-bar-fill').style.width = player.xp + "%";
-            document.querySelectorAll('.game-card').forEach((c, i) => {
-                const reqs = [1,1,1, 2,2,2, 3,3,3, 4,4, 5,5];
-                player.lvl < reqs[i] ? c.classList.add('locked') : c.classList.remove('locked');
+            
+            const reqs = [1,1,1, 2,2,2, 3,3,3, 4,4, 5,5];
+            document.querySelectorAll('.game-card').forEach((card, i) => {
+                if(player.lvl < reqs[i]) card.classList.add('locked');
+                else card.classList.remove('locked');
             });
         }
 
         function entry(m, req) {
-            if(player.lvl >= req) { currentMode = m; openGame(); }
-            else playSfx('fail');
+            if(player.lvl >= req) { currentMode = m; launch(); }
+            else { triggerErrorEffect(document.body); playSfx('fail'); }
         }
 
-        function openGame() {
-            gameActive = true;
+        function launch() {
+            isPlaying = true;
+            score = 0;
+            timeLeft = 15;
             document.getElementById('gameModal').style.display = "block";
             document.getElementById('result-screen').style.display = "none";
-            const area = document.getElementById('play-area');
-            area.innerHTML = "";
-            timeLeft = 15;
+            document.getElementById('inner-lvl-display').innerText = player.lvl;
+            document.getElementById('score-display').innerText = "0";
             
-            if(currentMode === 'math') loadMath(area);
-            else if(currentMode === 'bird') loadBird(area);
-            else if(currentMode === 'color') loadColor(area);
-            else if(currentMode === 'storm') loadStorm(area);
-            else if(currentMode === 'type') loadType(area);
-            else if(currentMode === 'war') loadWar(area);
-            else if(currentMode === '3d') load3D(area);
-            else area.innerHTML = "<h3>قيد التطوير</h3>";
+            const zone = document.getElementById('play-zone');
+            zone.innerHTML = "";
+            
+            // اختيار اللعبة وتشغيلها
+            if(currentMode === 'math') loadMath(zone);
+            else if(currentMode === 'war') loadWar(zone);
+            else if(currentMode === '3d') load3D(zone);
+            else if(currentMode === 'storm') loadStorm(zone);
+            else if(currentMode === 'color') loadColor(zone);
+            else if(currentMode === 'bird') loadBird(zone);
+            else if(currentMode === 'type') loadType(zone);
+            else if(currentMode === 'xo') loadXO(zone);
+            else if(currentMode === 'num') loadNum(zone);
+            else if(currentMode === 'tap') loadTap(zone);
+            else if(currentMode === 'mem') loadMem(zone);
+            else if(currentMode === 'ball') loadBall(zone);
+            else zone.innerHTML = "<h3>لعبة قيد التحديث</h3>";
 
-            startTimer();
+            runTimer();
         }
 
-        function startTimer() {
-            clearInterval(timer);
+        function runTimer() {
+            clearInterval(gameTimer);
             const bar = document.getElementById('timer-bar');
-            timer = setInterval(() => {
+            gameTimer = setInterval(() => {
                 timeLeft -= 0.1;
                 bar.style.width = (timeLeft / 15 * 100) + "%";
-                if(timeLeft <= 0) endGame(false, "انتهى الوقت!");
+                if(timeLeft <= 0) finish(false, "انتهى الوقت!");
             }, 100);
         }
 
-        function endGame(win, msg) {
-            gameActive = false;
-            clearInterval(timer);
+        function triggerErrorEffect(el) {
+            const target = el || document.getElementById('modal-box');
+            target.classList.add('shake-effect');
+            setTimeout(() => target.classList.remove('shake-effect'), 200);
+        }
+
+        function finish(win, msg) {
+            isPlaying = false;
+            clearInterval(gameTimer);
             document.getElementById('result-screen').style.display = "flex";
-            document.getElementById('res-h').innerText = win ? "أحسنت!" : "حاول مجدداً";
-            document.getElementById('res-p').innerText = msg;
+            document.getElementById('res-title').innerText = win ? "تم الإنجاز!" : "خسارة";
+            document.getElementById('res-desc').innerText = msg;
             if(win) { 
-                playSfx('win'); player.xp += 20; 
+                playSfx('win'); player.xp += 25; 
                 if(player.xp >= 100){ player.lvl++; player.xp=0; }
-                updateUI();
+                updateMainUI();
             } else playSfx('fail');
         }
 
-        function retry() { openGame(); }
-        function closeModal() { clearInterval(timer); document.getElementById('gameModal').style.display = "none"; }
+        function retryGame() { launch(); }
+        function closeGame() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = "none"; }
 
-        // --- ألعاب خفيفة جديدة ---
+        // --- محركات الألعاب ---
 
-        function loadMath(a) {
-            let n1 = Math.floor(Math.random()*10), n2 = Math.floor(Math.random()*10);
-            a.innerHTML = `<h1 style='margin-top:50px'>${n1} + ${n2} = ?</h1>
-            <input type='number' id='ans' autofocus style='padding:10px; border-radius:10px; border:none; width:60%; text-align:center;'>
-            <button class='btn' onclick="if(document.getElementById('ans').value == ${n1+n2}) endGame(true, '+20 XP')">تحقق</button>`;
+        function loadMath(z) {
+            let n1 = Math.floor(Math.random()*15), n2 = Math.floor(Math.random()*15);
+            z.innerHTML = `<h1 style='margin-top:60px'>${n1} + ${n2} = ?</h1>
+            <input type='number' id='ansInp' style='width:60%; font-size:24px; text-align:center; padding:10px; border-radius:10px;'>
+            <button class='btn' onclick="checkMath(${n1+n2})">تحقق ✅</button>`;
+        }
+        window.checkMath = (r) => {
+            if(parseInt(document.getElementById('ansInp').value) === r) finish(true, "إجابة صحيحة");
+            else { playSfx('fail'); triggerErrorEffect(); }
         }
 
-        function loadColor(a) {
-            const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
-            const target = colors[Math.floor(Math.random()*4)];
-            a.innerHTML = `<h3>اختر اللون المكتوب:</h3><h1 style="color:white">${target}</h1>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:80%;">
-                ${colors.map(c => `<div onclick="if('${c}'=='${target}') endGame(true, '+20 XP'); else endGame(false,'خطأ')" style="background:${c}; height:60px; border-radius:10px; cursor:pointer;"></div>`).join('')}
-            </div>`;
-        }
-
-        function loadStorm(a) {
-            let hits = 0;
-            function spawn() {
-                if(!gameActive) return;
-                const d = document.createElement('div');
-                d.className = "dot";
-                d.style.width = "40px"; d.style.height = "40px"; d.style.background = "cyan";
-                d.style.left = Math.random()*80+"%"; d.style.top = Math.random()*80+"%";
-                d.onclick = () => { hits++; d.remove(); playSfx('pop'); if(hits>=10) endGame(true, "سرعة خيالية!"); else spawn(); };
-                a.appendChild(d);
-                setTimeout(() => { if(d.parentNode) { d.remove(); spawn(); } }, 800);
-            }
-            spawn(); spawn();
-        }
-
-        function loadBird(a) {
-            a.innerHTML = `<div id='b' style='position:absolute; left:20%; top:50%; font-size:30px;'>🐦</div>`;
-            const b = a.querySelector('#b');
-            let pos = 50;
-            a.onclick = () => { pos -= 10; b.style.top = pos + "%"; playSfx('pop'); };
-            let loop = setInterval(() => {
-                pos += 1.5; b.style.top = pos + "%";
-                if(pos > 90 || pos < 0) { clearInterval(loop); endGame(false, "تحطمت!"); }
-                if(!gameActive) clearInterval(loop);
-            }, 50);
-            setTimeout(() => { if(gameActive){ clearInterval(loop); endGame(true, "طيران ممتاز!"); } }, 5000);
-        }
-
-        function loadType(a) {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            let target = chars[Math.floor(Math.random()*26)];
-            a.innerHTML = `<h3>اكتب الحرف:</h3><h1 style="font-size:80px">${target}</h1>
-            <input type='text' id='ti' maxlength='1' oninput="if(this.value.toUpperCase()=='${target}') endGame(true, 'كتابة سريعة')" style='opacity:0; position:absolute;' autofocus>`;
-            document.getElementById('ti').focus();
-        }
-
-        function loadWar(a) {
-            let k = 0;
+        function loadWar(z) {
             function sp() {
-                if(!gameActive) return;
+                if(!isPlaying) return;
                 const e = document.createElement('div');
-                e.style.cssText = `position:absolute; width:40px; height:40px; background:url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center/contain; left:${Math.random()*80}%; top:${Math.random()*80}%; cursor:crosshair;`;
-                e.onclick = () => { k++; playSfx('shoot'); e.remove(); if(k>=8) endGame(true, "جندي محترف"); else sp(); };
-                a.appendChild(e);
+                e.className = "target";
+                e.style.cssText = `width:45px; height:45px; background:url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center/contain; left:${Math.random()*85}%; top:${Math.random()*80}%;`;
+                e.onclick = () => { score++; document.getElementById('score-display').innerText = score; playSfx('shoot'); e.remove(); if(score >= 10) finish(true, "قناص محترف!"); else sp(); };
+                z.appendChild(e);
                 setTimeout(() => { if(e.parentNode) { e.remove(); sp(); } }, 1000);
-            }
-            sp();
-        }
-
-        function load3D(a) {
-            let s = 0;
-            function sp() {
-                if(!gameActive) return;
-                const st = document.createElement('div');
-                st.className = "star-3d";
-                st.style.left = Math.random()*80+10+"%"; st.style.top = Math.random()*80+10+"%";
-                a.appendChild(st);
-                let anim = st.animate([{transform:'scale(0) translateZ(-500px)',opacity:0},{transform:'scale(3) translateZ(200px)',opacity:1}], 2000);
-                st.onclick = () => { s++; playSfx('pop'); st.remove(); if(s>=10) endGame(true, "خبير أبعاد"); };
-                anim.onfinish = () => { if(st.parentNode){ st.remove(); sp(); } };
             }
             sp(); sp();
         }
 
-        // Audio System
-        let ctx;
+        function loadStorm(z) {
+            function sp() {
+                if(!isPlaying) return;
+                const d = document.createElement('div');
+                d.className = "target";
+                d.style.cssText = `width:40px; height:40px; background:cyan; left:${Math.random()*85}%; top:${Math.random()*80}%; box-shadow:0 0 15px cyan;`;
+                d.onclick = () => { score++; document.getElementById('score-display').innerText = score; playSfx('pop'); d.remove(); if(score >= 15) finish(true, "سرعة خيالية!"); else sp(); };
+                z.appendChild(d);
+                setTimeout(() => { if(d.parentNode) { d.remove(); sp(); } }, 700);
+            }
+            sp(); sp(); sp();
+        }
+
+        function loadBird(z) {
+            z.innerHTML = `<div id='birdObj' style='position:absolute; left:20%; top:50%; font-size:35px;'>🐦</div>`;
+            const b = z.querySelector('#birdObj'); let p = 50;
+            z.onclick = () => { p -= 12; b.style.top = p + "%"; playSfx('pop'); };
+            let loop = setInterval(() => {
+                p += 1.8; b.style.top = p + "%";
+                if(p > 90 || p < 0) { clearInterval(loop); finish(false, "اصطدمت!"); }
+                if(!isPlaying) clearInterval(loop);
+            }, 50);
+            setTimeout(() => { if(isPlaying){ clearInterval(loop); finish(true, "طيران ناجح"); } }, 6000);
+        }
+
+        function load3D(z) {
+            function sp() {
+                if(!isPlaying) return;
+                const s = document.createElement('div');
+                s.style.cssText = `position:absolute; width:30px; height:30px; background:#00ffcc; border-radius:50%; left:${Math.random()*80+10}%; top:${Math.random()*80+10}%; box-shadow:0 0 20px #0ff;`;
+                z.appendChild(s);
+                let anim = s.animate([{transform:'scale(0) translateZ(-500px)',opacity:0},{transform:'scale(4) translateZ(200px)',opacity:1}], 2000);
+                s.onclick = () => { score++; document.getElementById('score-display').innerText = score; playSfx('pop'); s.remove(); if(score>=10) finish(true, "بطل الأبعاد"); };
+                anim.onfinish = () => { if(s.parentNode){ s.remove(); sp(); } };
+            }
+            sp(); sp();
+        }
+
+        function loadColor(z) {
+            const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+            const target = colors[Math.floor(Math.random()*4)];
+            z.innerHTML = `<h3>اختر اللون المكتوب:</h3><h1 style="color:white">${target}</h1>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:80%;">
+                ${colors.map(c => `<div onclick="checkCol('${c}','${target}')" style="background:${c}; height:65px; border-radius:12px; cursor:pointer;"></div>`).join('')}
+            </div>`;
+        }
+        window.checkCol = (c, t) => { if(c === t) finish(true, "تركيز عالي"); else { playSfx('fail'); triggerErrorEffect(); } };
+
+        function loadXO(z) {
+            let b = ["","","","","","","","",""];
+            const d = () => { z.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:200px;">${b.map((s,i)=>`<div class="cell" onclick="xoMove(${i})">${s}</div>`).join('')}</div>`; };
+            window.xoMove = (i) => { if(b[i]==="") { b[i]="X"; playSfx('pop'); if(!chkXO()) { let e=b.map((s,x)=>s===""?x:null).filter(x=>x!==null); if(e.length>0) b[e[Math.floor(Math.random()*e.length)]]="O"; d(); chkXO(); } d(); } };
+            const chkXO = () => { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w) if(b[p[0]] && b[p[0]]===b[p[1]] && b[p[0]]===b[p[2]]) { finish(b[p[0]]==="X", b[p[0]]==="X"?"فوز":"خسارة"); return true; } return false; };
+            d();
+        }
+
+        // --- نظام الصوت ---
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         function playSfx(t) {
             if(!ctx) return; const o=ctx.createOscillator(), g=ctx.createGain(); o.connect(g); g.connect(ctx.destination);
@@ -241,7 +264,7 @@
             if(t==='win'){ o.frequency.value=800; g.gain.value=0.1; o.start(); o.stop(ctx.currentTime+0.5); }
         }
 
-        updateUI();
+        updateMainUI();
     </script>
 </body>
 </html>
