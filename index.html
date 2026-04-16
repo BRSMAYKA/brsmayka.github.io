@@ -3,43 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - تحدي الـ 20 نقطة</title>
+    <title>BRSMAYKA AI - مع صوت الخطأ</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; }
-        
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-        
         .header-box { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; }
         .header-box h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); }
-
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 160px; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #111; margin: 10vh auto; width: 85%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
-        
-        #result-overlay { 
-            display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); 
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; 
-        }
-        .win-text { color: #00ff88; font-size: 2.2rem; text-shadow: 0 0 20px #00ff88; margin-bottom: 10px; }
-        .lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; margin-bottom: 10px; }
-
+        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
+        .win-text { color: #00ff88; font-size: 2.2rem; text-shadow: 0 0 20px #00ff88; }
+        .lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; }
         .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; height: 70px; font-size: 30px; }
         .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin-top: 15px; }
-        
         #arena { height: 220px; background: #000; position: relative; border-radius: 15px; border: 1px solid #333; overflow: hidden; }
-        #ball { width: 45px; height: 45px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 20px yellow; z-index: 50; }
-        
-        .score-board { font-size: 1.2rem; margin-top: 10px; font-weight: bold; }
+        #ball { width: 45px; height: 45px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 20px yellow; }
     </style>
 </head>
 <body onclick="initAudio()">
     <div class="bg-layer"></div>
-    
     <div class="header-box">
         <h1>🎮 BRSMAYKA AI</h1>
         <div style="background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:50px; border:1px solid var(--primary);">
@@ -57,13 +43,11 @@
     <div id="gameModal" class="modal">
         <div class="modal-content">
             <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white;" onclick="stop()">&times;</span>
-            
             <div id="result-overlay">
                 <h1 id="result-msg"></h1>
                 <p id="result-details" style="color:#aaa;"></p>
                 <button class="btn" onclick="hideResult()">إعادة المحاولة 🔄</button>
             </div>
-
             <div id="game-view"></div>
         </div>
     </div>
@@ -72,13 +56,20 @@
     <script>
         let ctx;
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function sfx(f) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime+0.1); o.stop(ctx.currentTime+0.1); } }
+        // دالة الصوت: f للتردد، d للمدة
+        function sfx(f, d = 0.1) { 
+            if(ctx) { 
+                const o=ctx.createOscillator(), g=ctx.createGain(); 
+                o.frequency.value=f; o.connect(g); g.connect(ctx.destination); 
+                o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); 
+                o.stop(ctx.currentTime + d); 
+            } 
+        }
 
         function showResult(msg, details, isWin) {
             const overlay = document.getElementById('result-overlay');
-            const msgH1 = document.getElementById('result-msg');
-            msgH1.innerText = msg;
-            msgH1.className = isWin ? 'win-text' : 'lose-text';
+            document.getElementById('result-msg').innerText = msg;
+            document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
             overlay.style.display = 'flex';
         }
@@ -92,7 +83,6 @@
         function start(m) {
             currentGame = m;
             document.getElementById('gameModal').style.display="block";
-            document.getElementById('result-overlay').style.display='none';
             const v = document.getElementById('game-view');
             if(m==='xo') loadXO(v);
             if(m==='ball') loadBall(v);
@@ -100,7 +90,40 @@
             if(m==='tap') loadTap(v);
         }
 
-        // --- X-O Logic ---
+        // --- Memory Game Logic (With Wrong Answer Sound) ---
+        function loadMem(v) {
+            const icons=['🍎','🍎','🍌','🍌','🍇','🍇','🍒','🍒','🍍','🍍','🥝','🥝'];
+            let s=icons.sort(()=>Math.random()-0.5), sel=[], err=0;
+            v.innerHTML=`<h3>اختبار الذاكرة</h3><p id="errs">الأخطاء: 0 / 6</p><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div>`;
+            const g=v.querySelector('div:last-child');
+            s.forEach(icon=>{ 
+                let c=document.createElement('div'); 
+                c.className='cell'; c.style.fontSize='20px'; 
+                c.onclick=()=>{
+                    if(sel.length<2 && !c.innerText){ 
+                        c.innerText=icon; sel.push(c); 
+                        if(sel.length===2){ 
+                            if(sel[0].innerText===sel[1].innerText){ 
+                                sfx(700); // صوت النجاح (مرتفع)
+                                sel=[]; 
+                                if([...g.children].every(x=>x.innerText)) showResult("ذاكرة حديدية! 🧠", "أتممت المهمة بنجاح", true); 
+                            } else { 
+                                sfx(150, 0.3); // صوت الخطأ (منخفض ومزعج قليلاً)
+                                setTimeout(()=>{
+                                    sel[0].innerText=''; sel[1].innerText=''; sel=[]; 
+                                    err++; 
+                                    document.getElementById('errs').innerText=`الأخطاء: ${err} / 6`; 
+                                    if(err>=6) showResult("فشل! 🤖", "ذاكرة الروبوت أقوى منك", false); 
+                                }, 500); 
+                            } 
+                        } 
+                    } 
+                }; 
+                g.appendChild(c); 
+            });
+        }
+
+        // الألعاب الأخرى (XO, Ball, Tap) تبقى كما هي في الكود السابق...
         function loadXO(v) {
             let b=["","","","","","","","",""], a=true;
             const draw=()=> { v.innerHTML=`<h3>X-O الذكي</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${b.map((s,i)=>`<div class="cell ${s.toLowerCase()}" onclick="clickXO(${i})">${s}</div>`).join('')}</div>`; };
@@ -110,52 +133,25 @@
             draw();
         }
 
-        // --- Ball Challenge (Target 20) ---
         let ballLoop;
         function loadBall(v) {
-            let p=0, r=0; 
-            v.innerHTML=`<h3>تحدي الـ 20 نقطة</h3><p style="font-size:0.8rem; color:#888;">من يصل لـ 20 أولاً يفوز!</p><div id="arena"><div id="ball"></div></div><div class="score-board" id="scores">أنت: 0 | الروبوت: 0</div>`;
+            let p=0, r=0; v.innerHTML=`<h3>تحدي الـ 20 نقطة</h3><div id="arena"><div id="ball"></div></div><div id="scores" style="font-weight:bold; margin-top:10px;">أنت: 0 | الروبوت: 0</div>`;
             const b=document.getElementById('ball');
             const mv=()=> { 
-                clearTimeout(ballLoop);
-                b.style.display="block"; b.style.top=Math.random()*160+"px"; b.style.left=Math.random()*300+"px"; b.style.opacity="1";
+                clearTimeout(ballLoop); b.style.display="block"; b.style.top=Math.random()*160+"px"; b.style.left=Math.random()*300+"px"; b.style.opacity="1";
                 let hit=false;
-                b.onclick=(e)=>{ 
-                    e.stopPropagation();
-                    hit=true; p++; sfx(800); update(); 
-                    if(p>=20) showResult("بطل الأشباح! 🏆", "وصلت لـ 20 نقطة بنجاح", true); else mv(); 
-                };
-                setTimeout(()=>{ 
-                    if(!hit && currentGame === 'ball'){ 
-                        r++; sfx(200); update(); 
-                        if(r>=20) showResult("خسارة! 👻", "الروبوت وصل لـ 20 قبلك", false); 
-                    } 
-                    b.style.opacity="0";
-                }, 750);
+                b.onclick=(e)=>{ e.stopPropagation(); hit=true; p++; sfx(800); document.getElementById('scores').innerText=`أنت: ${p} | الروبوت: ${r}`; if(p>=20) showResult("بطل الأشباح! 🏆", "وصلت لـ 20 نقطة", true); else mv(); };
+                setTimeout(()=>{ if(!hit && currentGame==='ball'){ r++; sfx(200); document.getElementById('scores').innerText=`أنت: ${p} | الروبوت: ${r}`; if(r>=20) showResult("خسارة! 👻", "الروبوت سبقك لـ 20", false); } b.style.opacity="0"; }, 750);
                 ballLoop=setTimeout(mv, 1600);
-            };
-            const update=()=>{ document.getElementById('scores').innerText=`أنت: ${p} | الروبوت: ${r}`; };
-            mv();
+            }; mv();
         }
 
-        // --- Memory Logic ---
-        function loadMem(v) {
-            const icons=['🍎','🍎','🍌','🍌','🍇','🍇','🍒','🍒','🍍','🍍','🥝','🥝'];
-            let s=icons.sort(()=>Math.random()-0.5), sel=[], err=0;
-            v.innerHTML=`<h3>اختبار الذاكرة</h3><p id="errs">الأخطاء: 0 / 6</p><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div>`;
-            const g=v.querySelector('div:last-child');
-            s.forEach(icon=>{ let c=document.createElement('div'); c.className='cell'; c.style.fontSize='20px'; c.onclick=()=>{
-                if(sel.length<2 && !c.innerText){ c.innerText=icon; sel.push(c); if(sel.length===2){ if(sel[0].innerText===sel[1].innerText){ sfx(700); sel=[]; if([...g.children].every(x=>x.innerText)) showResult("ذاكرة حديدية! 🧠", "أتممت المهمة بنجاح", true); } else { setTimeout(()=>{sel[0].innerText=''; sel[1].innerText=''; sel=[]; err++; document.getElementById('errs').innerText=`الأخطاء: ${err} / 6`; if(err>=6) showResult("فشل! 🤖", "ذاكرة الروبوت أقوى منك", false); },400); } } }
-            }; g.appendChild(c); });
-        }
-
-        // --- Speed Logic ---
         function loadTap(v) {
             let c=0, target=35, t=5;
-            v.innerHTML=`<h3>تحدي السرعة</h3><p>الهدف: تجاوز 35 نقرة</p><h1 id="tm">5</h1><button class="btn" id="tp">إبدأ النقر!</button><h2>نقراتك: <span id="cc">0</span></h2>`;
+            v.innerHTML=`<h3>تحدي السرعة</h3><h1 id="tm">5</h1><button class="btn" id="tp">إبدأ النقر!</button><h2>نقراتك: <span id="cc">0</span></h2>`;
             const b=document.getElementById('tp');
             b.onclick=()=>{
-                if(t===5){ let i=setInterval(()=>{ t--; document.getElementById('tm').innerText=t; if(t<=0){ clearInterval(i); if(c > target) showResult("سرعة البرق! ⚡", `حققت ${c} نقرة بنجاح`, true); else showResult("بطيء جداً! 🤖", `نقراتك (${c}) لم تكفِ`, false); } },1000); }
+                if(t===5){ let i=setInterval(()=>{ t--; document.getElementById('tm').innerText=t; if(t<=0){ clearInterval(i); if(c > target) showResult("سرعة البرق! ⚡", `حققت ${c} نقرة`, true); else showResult("بطيء جداً! 🤖", `سجلت ${c} فقط`, false); } },1000); }
                 c++; document.getElementById('cc').innerText=c; sfx(500);
             };
         }
