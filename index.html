@@ -1,177 +1,218 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مكتبة ألعاب BRSMAYKA</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRSMAYKA Game Studio</title>
     <style>
         body {
-            background-color: #050505;
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
+            background-color: #0d0d0d;
             color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* عداد المتصلين */
-        #online-counter {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 212, 255, 0.15);
-            border: 1px solid #00d4ff;
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-size: 14px;
-            color: #00d4ff;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+            border-bottom: 3px solid #00ffcc;
+            border-radius: 20px;
+            margin-bottom: 40px;
         }
 
-        .container {
-            background: #111;
-            padding: 30px;
-            border-radius: 30px;
-            border: 2px solid #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
-            max-width: 1100px;
-            width: 95%;
-            margin: 20px auto;
+        .header h1 {
+            color: #00ffcc;
+            font-size: 3rem;
+            text-shadow: 0 0 15px #00ffcc;
+            margin: 0;
         }
 
-        h1 { color: #00d4ff; font-size: 50px; text-shadow: 0 0 15px #00d4ff; }
-        
-        #entry-btn {
-            background: linear-gradient(45deg, #00d4ff, #0055ff);
-            color: white;
-            border: none;
-            padding: 20px 60px;
-            border-radius: 50px;
-            font-size: 26px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 80px;
-            transition: 0.3s;
-        }
-        #entry-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #00d4ff; }
-
-        .game-grid {
-            display: none; 
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        .games-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
         }
 
         .game-card {
             background: #1a1a1a;
+            width: 300px;
             border-radius: 20px;
-            padding: 20px;
-            text-decoration: none;
-            color: white;
-            border: 1px solid #333;
+            overflow: hidden;
+            border: 2px solid #333;
             transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
-        .game-card:hover { 
-            border-color: #00d4ff; 
-            transform: scale(1.08); 
-            background: #222; 
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
         }
 
-        .emoji { font-size: 50px; margin-bottom: 10px; }
-        .game-name { font-weight: bold; font-size: 15px; }
-
-        .dot {
-            height: 10px;
-            width: 10px;
-            background-color: #2ecc71;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 5px;
-            animation: pulse 1.5s infinite;
+        .game-icon {
+            font-size: 80px;
+            padding: 40px;
+            background: #222;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+        .game-info {
+            padding: 20px;
+        }
+
+        .play-btn {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .play-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        /* تنسيق اللعبة المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            background-color: #222;
+            margin: 5% auto;
+            padding: 20px;
+            border: 2px solid #00ffcc;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .close {
+            color: white;
+            float: left;
+            font-size: 30px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div id="sfcq1the2caqb3c1jtglnejqu48rhb6jrhr"></div><script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=q1the2caqb3c1jtglnejqu48rhb6jrhr&down=async" async></script><noscript><a href="https://www.freecounterstat.com" title="web counter"><img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=q1the2caqb3c1jtglnejqu48rhb6jrhr" border="0" title="web counter" alt="web counter"></a></noscript><audio id="click-sound" preload="auto">
-        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
-    </audio>
 
-    <div class="container">
-        <div id="welcome-section">
-            <h1>BRSMAYKA 🎮</h1>
-            <p style="font-size: 20px; color: #888;">أهلاً بك في مكتبة الألعاب الـ 20</p>
-            <button id="entry-btn" onclick="openGames()">اضغط الآن للعب</button>
+    <div class="header">
+        <h1>ستوديو ألعاب BRSMAYKA</h1>
+        <p>مرحباً بك في عالم الألعاب الحصرية والفريدة</p>
+    </div>
+
+    <div class="games-grid">
+        <div class="game-card">
+            <div class="game-icon">⚡</div>
+            <div class="game-info">
+                <h3>تحدي النقر السريع</h3>
+                <p>أرنا سرعتك في 10 ثوانٍ!</p>
+                <button class="play-btn" onclick="openGame('clicker')">اضغط هنا للعب</button>
+            </div>
         </div>
 
-        <div id="game-grid" class="game-grid">
-            <h2 style="grid-column: 1/-1; color: #00d4ff; margin-bottom: 20px;">اختر لعبتك 🎧</h2>
-            
-            <a href="https://poki.com/en/g/subway-surfers" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🏃‍♂️</div><div class="game-name">Subway Surfers</div></a>
-            <a href="https://poki.com/en/g/drive-mad" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🏎️</div><div class="game-name">Drive Mad</div></a>
-            <a href="https://poki.com/en/g/moto-x3m" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🏍️</div><div class="game-name">Moto X3M</div></a>
-            <a href="https://poki.com/en/g/minecraft-classic" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">⛏️</div><div class="game-name">Minecraft</div></a>
-            <a href="https://poki.com/en/g/temple-run-2" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">👺</div><div class="game-name">Temple Run 2</div></a>
-            <a href="https://poki.com/en/g/monkey-mart" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🐒</div><div class="game-name">Monkey Mart</div></a>
-            <a href="https://poki.com/en/g/stickman-hook" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🪝</div><div class="game-name">Stickman Hook</div></a>
-            <a href="https://poki.com/en/g/jetpack-joyride" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🚀</div><div class="game-name">Jetpack Joyride</div></a>
-            <a href="https://poki.com/en/g/2048" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🔢</div><div class="game-name">2048</div></a>
-            <a href="https://poki.com/en/g/bubble-shooter" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🔵</div><div class="game-name">Bubble Shooter</div></a>
-            <a href="https://poki.com/en/g/fruit-ninja" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🍉</div><div class="game-name">Fruit Ninja</div></a>
-            <a href="https://poki.com/en/g/retro-bowl" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🏈</div><div class="game-name">Retro Bowl</div></a>
-            <a href="https://poki.com/en/g/cut-the-rope" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🍬</div><div class="game-name">Cut the Rope</div></a>
-            <a href="https://poki.com/en/g/crossy-road" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🐔</div><div class="game-name">Crossy Road</div></a>
-            <a href="https://poki.com/en/g/brain-test-tricky-puzzles" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🧠</div><div class="game-name">Brain Test</div></a>
-            <a href="https://poki.com/en/g/vectaria-io" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🧱</div><div class="game-name">Vectaria</div></a>
-            <a href="https://poki.com/en/g/who-is" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🕵️‍♂️</div><div class="game-name">Who Is?</div></a>
-            <a href="https://poki.com/en/g/combat-online" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🔫</div><div class="game-name">Combat Online</div></a>
-            <a href="https://poki.com/en/g/narrow-one" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🏹</div><div class="game-name">Narrow One</div></a>
-            <a href="https://poki.com/en/g/google-feud" target="_blank" class="game-card" onmouseover="playHover()"><div class="emoji">🔍</div><div class="game-name">Google Feud</div></a>
+        <div class="game-card">
+            <div class="game-icon">⚽</div>
+            <div class="game-info">
+                <h3>ضربات الجزاء السوبر</h3>
+                <p>سدد بدقة واهزم الحارس!</p>
+                <button class="play-btn" onclick="openGame('penalty')">اضغط هنا للعب</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGame()">&times;</span>
+            <div id="gameArea"></div>
         </div>
     </div>
 
     <script>
-        // عداد عشوائي
-        function updateCounter() {
-            let base = 1500;
-            let rand = Math.floor(Math.random() * 60);
-            document.getElementById('user-count').innerText = (base + rand).toLocaleString();
-        }
-        setInterval(updateCounter, 3000);
+        function openGame(type) {
+            const modal = document.getElementById('gameModal');
+            const area = document.getElementById('gameArea');
+            modal.style.display = "block";
 
-        // تشغيل الصوت عند التمرير
-        function playHover() {
-            var snd = document.getElementById("hover-sound");
-            snd.currentTime = 0;
-            snd.play().catch(e => {});
+            if(type === 'clicker') {
+                area.innerHTML = `
+                    <div style="text-align:center">
+                        <h2>تحدي النقر</h2>
+                        <h1 id="s_score">0</h1>
+                        <h3 id="s_timer">الوقت: 10</h3>
+                        <button onclick="addPoint()" id="btn_p" style="padding:20px; font-size:20px; width:100%; background:#ff0055; color:white; border:none; border-radius:10px;">اضغط هنا!</button>
+                        <button onclick="startClickGame()" style="margin-top:10px">ابدأ</button>
+                    </div>`;
+            } else {
+                area.innerHTML = `
+                    <div style="text-align:center">
+                        <h2>ضربات جزاء</h2>
+                        <div style="height:100px; border:2px solid white; position:relative; margin-bottom:10px">
+                            <div id="kpr" style="position:absolute; bottom:0; left:45%; font-size:30px">🧤</div>
+                        </div>
+                        <div id="p_res">سدد!</div>
+                        <button onclick="kick('left')">يسار</button>
+                        <button onclick="kick('center')">وسط</button>
+                        <button onclick="kick('right')">يمين</button>
+                    </div>`;
+            }
         }
 
-        // تشغيل الصوت عند الضغط
-        function playClick() {
-            var snd = document.getElementById("click-sound");
-            snd.currentTime = 0;
-            snd.play();
+        function closeGame() {
+            document.getElementById('gameModal').style.display = "none";
         }
 
-        function openGames() {
-            playClick();
-            document.getElementById('welcome-section').style.display = 'none';
-            document.getElementById('game-grid').style.display = 'grid';
+        // منطق لعبة النقر
+        let p_score = 0; let p_time = 10; let p_active = false;
+        function startClickGame() {
+            p_score = 0; p_time = 10; p_active = true;
+            document.getElementById('s_score').innerText = p_score;
+            let inter = setInterval(() => {
+                p_time--;
+                document.getElementById('s_timer').innerText = "الوقت: " + p_time;
+                if(p_time <= 0) { clearInterval(inter); p_active = false; alert("انتهى! نقاطك: " + p_score); }
+            }, 1000);
+        }
+        function addPoint() { if(p_active) { p_score++; document.getElementById('s_score').innerText = p_score; } }
+
+        // منطق لعبة الكرة
+        function kick(dir) {
+            const dirs = ['left', 'center', 'right'];
+            const kDir = dirs[Math.floor(Math.random()*3)];
+            const kpr = document.getElementById('kpr');
+            if(kDir === 'left') kpr.style.left = '10%';
+            else if(kDir === 'center') kpr.style.left = '45%';
+            else kpr.style.left = '80%';
+            
+            if(dir === kDir) document.getElementById('p_res').innerText = "صدها! ❌";
+            else document.getElementById('p_res').innerText = "هدف! ⚽";
         }
     </script>
-
+    <div style="text-align: center; margin-top: 50px; padding: 20px; border-top: 1px solid #333;">
+    <p style="color: #00ffcc; font-size: 14px; margin-bottom: 10px;">إجمالي زوار الاستوديو:</p>
+    
+    <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
+    
+    <p style="color: #555; font-size: 12px; margin-top: 10px;">نحن نكبر بفضلكم! 🚀</p>
+</div>
 </body>
 </html>
