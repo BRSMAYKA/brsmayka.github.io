@@ -3,55 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMES - LVL UP 🚀</title>
+    <title>BRSMAYKA GAMES - PRO EDITION 🚀</title>
     <style>
-        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; --locked: #444; }
+        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; --locked: #333; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         
-        /* شريط المستوى العلوي */
-        .level-header { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #333; }
+        /* شريط المستوى والخبرة */
+        .level-header { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #444; }
         #xp-bar-container { background: #222; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
         #xp-bar-fill { background: linear-gradient(90deg, var(--primary), #00ffcc); width: 0%; height: 100%; transition: 0.5s; }
 
-        #stats-bar { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 5px 12px; border-radius: 8px; font-family: monospace; z-index: 10000; font-size: 11px; pointer-events: none; text-align: left; }
+        /* عداد الوقت داخل اللعبة */
+        #game-timer-container { width: 100%; background: #222; height: 6px; border-radius: 3px; margin-bottom: 15px; display: none; overflow: hidden; }
+        #game-timer-fill { background: var(--accent); width: 100%; height: 100%; transition: 1s linear; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        
-        /* تصميم بطاقة اللعبة مع نظام القفل */
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-        .game-card.locked { filter: grayscale(1); opacity: 0.6; cursor: not-allowed; border-color: var(--locked); }
+        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; position: relative; }
+        .game-card.locked { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
         .game-card:not(.locked):hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(0, 136, 255, 0.1); }
         
-        .lvl-badge { position: absolute; top: 5px; right: 5px; background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
-        .lock-icon { font-size: 20px; display: block; margin-top: 5px; }
+        .lvl-badge { position: absolute; top: 5px; right: 5px; background: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 10px; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; min-height: 350px; }
+        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
         #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
         .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
         
         #arena, #tunnel-container { position: relative; background: #000; height: 250px; width: 100%; border: 2px solid #333; overflow: hidden; border-radius: 15px; }
-        .enemy { position: absolute; width: 50px; height: 50px; background: url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center/contain; filter: drop-shadow(0 0 5px red); }
-        .star-3d { position: absolute; width: 35px; height: 35px; background: #00ffcc; border-radius: 50%; box-shadow: 0 0 25px #00ffcc; cursor: pointer; }
+        .enemy { position: absolute; width: 50px; height: 50px; background: url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center/contain; }
+        .star-3d { position: absolute; width: 35px; height: 35px; background: #00ffcc; border-radius: 50%; box-shadow: 0 0 20px #00ffcc; cursor: pointer; }
         .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; height: 60px; font-size: 25px; }
-        
-        @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(5px)} 50%{transform:translateX(-5px)} 100%{transform:translateX(0)} }
-        .shake { animation: shake 0.2s; }
     </style>
 </head>
 <body onclick="initAudio()">
 
-    <div id="stats-bar">
-        <div id="fps-val" style="color: #00ff00;">FPS: --</div>
-        <div style="color: #00ccff;">120Hz MODE</div>
-    </div>
-
     <div class="level-header">
-        <div style="display: flex; justify-content: space-between; font-weight: bold;">
-            <span>المستوى: <span id="current-lvl">1</span></span>
-            <span>XP: <span id="current-xp">0</span>/100</span>
+        <div style="display: flex; justify-content: space-between;">
+            <span>المستوى: <b id="current-lvl">1</b></span>
+            <span>الخبرة: <b id="current-xp">0</b>/100</span>
         </div>
         <div id="xp-bar-container"><div id="xp-bar-fill"></div></div>
     </div>
@@ -68,160 +59,126 @@
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content" id="mContent">
-            <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:101;" onclick="stop()">&times;</span>
+        <div class="modal-content">
+            <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
+            <div id="game-timer-container"><div id="game-timer-fill"></div></div>
+            
             <div id="result-overlay">
                 <h1 id="res-msg"></h1>
-                <p id="res-details" style="color:#aaa;"></p>
-                <button class="btn" onclick="hideResult()">العودة 🔄</button>
+                <p id="res-details"></p>
+                <button class="btn" onclick="hideResult()">إعادة تحميل اللعبة 🔄</button>
             </div>
             <div id="game-view"></div>
         </div>
     </div>
 
     <script>
-        // --- نظام المستويات ---
         let player = { lvl: 1, xp: 0, next: 100 };
-        
+        let timerInt, currentGame = '', gameTime = 0, initialTime = 0;
+
         function updateUI() {
             document.getElementById('current-lvl').innerText = player.lvl;
             document.getElementById('current-xp').innerText = player.xp;
             document.getElementById('xp-bar-fill').style.width = (player.xp / player.next * 100) + "%";
-            
-            // تحديث حالة القفل في القائمة
-            const cards = document.querySelectorAll('.game-card');
             const requirements = [1, 1, 2, 2, 3, 3, 4, 5];
-            cards.forEach((card, i) => {
-                if(player.lvl < requirements[i]) {
-                    card.classList.add('locked');
-                    if(!card.querySelector('.lock-icon')) {
-                        const icon = document.createElement('span');
-                        icon.className = 'lock-icon'; icon.innerText = '🔒';
-                        card.appendChild(icon);
-                    }
-                } else {
-                    card.classList.remove('locked');
-                    const icon = card.querySelector('.lock-icon');
-                    if(icon) icon.remove();
-                }
+            document.querySelectorAll('.game-card').forEach((card, i) => {
+                player.lvl < requirements[i] ? card.classList.add('locked') : card.classList.remove('locked');
             });
-        }
-
-        function addXP(amount) {
-            player.xp += amount;
-            if(player.xp >= player.next) {
-                player.lvl++;
-                player.xp = 0;
-                playSfx('win');
-                alert("تهانينا! ارتفع مستواك إلى " + player.lvl);
-            }
-            updateUI();
         }
 
         function checkLvl(game, req) {
             if(player.lvl >= req) start(game);
-            else {
-                playSfx('fail');
-                const content = document.getElementById('menu');
-                content.classList.add('shake');
-                setTimeout(()=>content.classList.remove('shake'), 200);
-            }
+            else { playSfx('fail'); alert("تحتاج للوصول لمستوى " + req); }
         }
 
-        // --- FPS Engine ---
-        let lastTime = performance.now(), frames = 0;
-        function updateFPS() {
-            let now = performance.now(); frames++;
-            if (now >= lastTime + 1000) {
-                document.getElementById('fps-val').innerText = "FPS: " + frames;
-                frames = 0; lastTime = now;
-            }
-            requestAnimationFrame(updateFPS);
+        function start(m) {
+            currentGame = m; clearInterval(timerInt);
+            document.getElementById('gameModal').style.display="block";
+            const v = document.getElementById('game-view'); v.innerHTML = '';
+            
+            // ضبط الوقت لكل لعبة
+            if(m==='math') { initialTime = 10; loadMath(v); }
+            else if(m==='war') { initialTime = 15; loadWar(v); }
+            else if(m==='3d') { initialTime = 20; load3D(v); }
+            else if(m==='ball') { initialTime = 15; loadBall(v); }
+            else { initialTime = 15; v.innerHTML = `<h3>لعبة ${m}</h3><button class="btn" onclick="showResult('فوز','+35 XP',true)">فوز سريع</button>`; }
+            
+            startTimer();
         }
-        updateFPS();
+
+        function startTimer() {
+            gameTime = initialTime;
+            const bar = document.getElementById('game-timer-fill');
+            const container = document.getElementById('game-timer-container');
+            container.style.display = "block";
+            bar.style.width = "100%";
+            
+            timerInt = setInterval(() => {
+                gameTime--;
+                bar.style.width = (gameTime / initialTime * 100) + "%";
+                if(gameTime <= 0) {
+                    clearInterval(timerInt);
+                    showResult("انتهى الوقت", "حاول أن تكون أسرع!", false);
+                }
+            }, 1000);
+        }
+
+        function showResult(m, d, w) {
+            clearInterval(timerInt);
+            const o = document.getElementById('result-overlay');
+            document.getElementById('res-msg').innerText = m;
+            document.getElementById('res-details').innerText = d;
+            o.style.display = 'flex';
+            if(w) { playSfx('win'); player.xp += 35; if(player.xp>=100){player.lvl++; player.xp=0;} updateUI(); } 
+            else playSfx('fail');
+        }
+
+        function hideResult() {
+            document.getElementById('result-overlay').style.display = 'none';
+            start(currentGame); // إعادة تحميل اللعبة الحالية تلقائياً
+        }
+
+        function stop() { clearInterval(timerInt); document.getElementById('gameModal').style.display="none"; }
+
+        // --- محركات الألعاب ---
+        function loadMath(v) {
+            let a=Math.floor(Math.random()*20), b=Math.floor(Math.random()*20), r=a+b;
+            v.innerHTML=`<h2>${a} + ${b} = ؟</h2><input type="number" id="ans" style="width:80%; padding:10px; font-size:20px; border-radius:10px;"><button class="btn" onclick="checkMath(${r})">تحقق</button>`;
+        }
+        window.checkMath = (r) => { if(parseInt(document.getElementById('ans').value)===r) showResult('صح!','+35 XP',true); else playSfx('fail'); };
+
+        function loadWar(v) {
+            let k=0; v.innerHTML=`<div id="arena"></div><p>القتلى: <span id="wk">0</span></p>`;
+            const a=v.querySelector('#arena');
+            function sp(){ if(currentGame!=='war'||gameTime<=0) return; const e=document.createElement('div'); e.className='enemy';
+            e.style.left=Math.random()*80+"%"; e.style.top=Math.random()*70+"%"; a.appendChild(e);
+            e.onclick=(ev)=>{ev.stopPropagation(); k++; playSfx('shoot'); document.getElementById('wk').innerText=k; e.remove(); if(k>=10) showResult('بطل!','تمت المهمة',true); else sp();};
+            setTimeout(()=>{if(e.parentNode){e.remove(); sp();}}, 1000); }
+            sp(); sp();
+        }
+
+        function load3D(v) {
+            let s=0; v.innerHTML=`<div id="tunnel-container"></div><p>النقاط: <span id="s3">0</span></p>`;
+            function sp(){ if(currentGame!=='3d'||gameTime<=0) return; const st=document.createElement('div'); st.className='star-3d'; 
+            st.style.left=Math.random()*80+10+"%"; st.style.top=Math.random()*80+10+"%"; v.querySelector('#tunnel-container').appendChild(st);
+            let a=st.animate([{transform:'scale(0) translateZ(-500px)',opacity:0},{transform:'scale(3) translateZ(200px)',opacity:1}],2000);
+            st.onclick=()=>{s++; playSfx('pop'); document.getElementById('s3').innerText=s; st.remove(); if(s>=15) showResult('فوز!','خبير أبعاد',true); }; 
+            a.onfinish=()=>{if(st.parentNode){st.remove(); sp();}}; }
+            sp(); sp();
+        }
 
         // --- نظام الصوت ---
         let ctx;
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function playSfx(type) {
-            if(!ctx) return;
-            const osc = ctx.createOscillator(); const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            let now = ctx.currentTime;
-            if(type==='pop'){ osc.frequency.setValueAtTime(600,now); gain.gain.setValueAtTime(0.2,now); osc.start(); osc.stop(now+0.1); }
-            else if(type==='shoot'){ osc.type='square'; osc.frequency.value=150; gain.gain.value=0.2; osc.start(); osc.stop(now+0.1); }
-            else if(type==='fail'){ osc.type='sawtooth'; osc.frequency.value=100; gain.gain.value=0.2; osc.start(); osc.stop(now+0.3); }
-            else if(type==='win'){ [523, 659, 783].forEach((f,i)=>{ const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=f; g.gain.value=0.1; o.start(now+i*0.1); o.stop(now+i*0.1+0.2); }); }
+        function playSfx(t) {
+            if(!ctx) return; const o=ctx.createOscillator(), g=ctx.createGain(); o.connect(g); g.connect(ctx.destination);
+            if(t==='shoot'){ o.type='square'; o.frequency.value=150; g.gain.value=0.1; o.start(); o.stop(ctx.currentTime+0.1); }
+            if(t==='pop'){ o.frequency.value=600; g.gain.value=0.1; o.start(); o.stop(ctx.currentTime+0.1); }
+            if(t==='fail'){ o.type='sawtooth'; o.frequency.value=100; g.gain.value=0.1; o.start(); o.stop(ctx.currentTime+0.3); }
+            if(t==='win'){ o.frequency.value=800; g.gain.value=0.1; o.start(); o.stop(ctx.currentTime+0.5); }
         }
 
-        let timerInt, currentGame = '';
-
-        function start(m) {
-            initAudio(); currentGame = m; clearInterval(timerInt);
-            document.getElementById('gameModal').style.display="block";
-            const v = document.getElementById('game-view'); v.innerHTML = '';
-            if(m==='3d') load3D(v);
-            else if(m==='war') loadWar(v);
-            else if(m==='math') loadMath(v);
-            else if(m==='ball') loadBall(v);
-            else if(m==='xo') loadXO(v);
-            else if(m==='mem') loadMem(v);
-            else if(m==='tap') loadTap(v);
-            else if(m==='num') loadNum(v);
-        }
-
-        function stop() { clearInterval(timerInt); document.getElementById('gameModal').style.display="none"; }
-        function hideResult() { document.getElementById('result-overlay').style.display = 'none'; stop(); }
-        
-        function showResult(m, d, w) {
-            const o = document.getElementById('result-overlay');
-            document.getElementById('res-msg').innerText = m;
-            document.getElementById('res-msg').style.color = w ? '#00ff88' : '#ff3333';
-            document.getElementById('res-details').innerText = d;
-            o.style.display = 'flex';
-            if(w) { playSfx('win'); addXP(35); } else { playSfx('fail'); }
-        }
-
-        // --- الألعاب (نسخة مختصرة للأداء) ---
-        function load3D(v) {
-            let s=0, t=15; v.innerHTML=`<h3>نفق LVL 5 🌌</h3><div id="tunnel-container"></div>`;
-            function sp(){ if(currentGame!=='3d'||t<=0) return; const st=document.createElement('div'); st.className='star-3d'; 
-            st.style.left=Math.random()*80+10+"%"; st.style.top=Math.random()*80+10+"%"; v.querySelector('#tunnel-container').appendChild(st);
-            let a=st.animate([{transform:'scale(0) translateZ(-500px)',opacity:0},{transform:'scale(3) translateZ(200px)',opacity:1}],2000);
-            st.onclick=()=>{s++; playSfx('pop'); st.remove();}; a.onfinish=()=>{st.remove(); sp();}; }
-            sp(); sp(); timerInt=setInterval(()=>{t--; if(t<=0) showResult("انتهى", `جمعت ${s}`, true);},1000);
-        }
-
-        function loadWar(v) {
-            let k=0, t=15; v.innerHTML=`<h3>War LVL 4 🔫</h3><div id="arena"></div>`;
-            const a=v.querySelector('#arena');
-            function sp(){ if(currentGame!=='war'||t<=0) return; const e=document.createElement('div'); e.className='enemy';
-            e.style.left=Math.random()*80+"%"; e.style.top=Math.random()*70+"%"; a.appendChild(e);
-            e.onclick=(ev)=>{ev.stopPropagation(); k++; playSfx('shoot'); e.remove(); sp();};
-            setTimeout(()=>{if(e.parentNode){e.remove(); sp();}}, 1000); }
-            a.onclick=()=>playSfx('shoot'); sp(); sp();
-            timerInt=setInterval(()=>{t--; if(t<=0) showResult("انتهت المهمة", `القتلى: ${k}`, true);},1000);
-        }
-
-        function loadMath(v) {
-            let a=Math.floor(Math.random()*15), b=Math.floor(Math.random()*15), r=a+b;
-            v.innerHTML=`<h3>Math LVL 1</h3><h2>${a} + ${b} = ؟</h2><input type="number" id="ans"><button class="btn" onclick="if(parseInt(document.getElementById('ans').value)===${r}) showResult('صح','+35 XP',true); else playSfx('fail')">تحقق</button>`;
-        }
-
-        function loadXO(v) {
-            let b=["","","","","","","","",""], active=true;
-            const d=()=>{ v.innerHTML=`<h3>X-O LVL 1</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;">${b.map((s,i)=>`<div class="cell" onclick="go(${i})">${s}</div>`).join('')}</div>`; };
-            window.go=(i)=>{ if(b[i]==="" && active){ b[i]="X"; playSfx('pop'); if(active) setTimeout(()=>{let e=b.map((s,x)=>s===""?x:null).filter(x=>x!==null); if(e.length>0) b[e[Math.floor(Math.random()*e.length)]]="O"; d();},200); d(); } };
-            d();
-        }
-        
-        // الألعاب الأخرى تتبع نفس النمط...
-        function loadTap(v){ v.innerHTML=`<h3>Speed LVL 2</h3><button class="btn" style="height:100px" onclick="showResult('سريع','+35 XP',true)">اضغط للفوز السريع</button>`; }
-        function loadNum(v){ v.innerHTML=`<h3>Numbers LVL 2</h3><p>رتب الأرقام للفوز</p><button class="btn" onclick="showResult('رائع','+35 XP',true)">بدء</button>`; }
-        function loadBall(v){ v.innerHTML=`<h3>Ghost LVL 3</h3><p>اصطد الشبح</p><button class="btn" onclick="showResult('تم الصيد','+35 XP',true)">بدء</button>`; }
-        function loadMem(v){ v.innerHTML=`<h3>Memory LVL 3</h3><p>اختبر ذاكرتك</p><button class="btn" onclick="showResult('ذاكرة حديدية','+35 XP',true)">بدء</button>`; }
-
-        updateUI(); // تشغيل النظام عند التحميل
+        updateUI();
     </script>
 </body>
 </html>
