@@ -178,7 +178,35 @@
         clearTimeout(ballTimer);
         document.getElementById('gameModal').style.display = "none";
     }
-</script>
+</script>// نظام الصوت المطور لـ BRSMAYKA
+let audioCtx;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playSound(freq, duration) {
+    initAudio(); // تفعيل نظام الصوت عند أول ضغطة
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine'; 
+    osc.frequency.value = freq;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+// دالة الطقطقة عند الماوس
+function playTick() { playSound(600, 0.1); }
+// دالة الطقطقة عند الضغط
+function playClick() { playSound(400, 0.2); }
 
 <div style="margin-top:50px; border-top:1px solid #333; padding:20px;">
     <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
