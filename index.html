@@ -10,7 +10,6 @@
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
         
-        /* عداد الأداء */
         #stats-bar { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 5px 12px; border-radius: 8px; font-family: monospace; z-index: 10000; font-size: 12px; pointer-events: none; text-align: left; }
 
         .header-box { margin-bottom: 35px; }
@@ -21,7 +20,6 @@
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(0, 136, 255, 0.1); }
 
-        /* نافذة اللعبة */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; min-height: 350px; }
         
@@ -29,22 +27,24 @@
         .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; font-size: 1.1rem; }
         .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; height: 60px; font-size: 25px; }
         
-        /* منطقة اللعب */
         #arena { position: relative; background: #000; height: 250px; width: 100%; border: 2px solid #333; overflow: hidden; border-radius: 15px; }
-        .enemy { position: absolute; width: 50px; height: 50px; background: url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center; background-size: contain; filter: drop-shadow(0 0 5px red); }
-        #ball { width: 40px; height: 40px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 20px yellow; }
+        .enemy { position: absolute; width: 50px; height: 50px; background: url('https://cdn-icons-png.flaticon.com/512/711/711768.png') no-repeat center; background-size: contain; filter: drop-shadow(0 0 5px red); cursor: crosshair; }
+        #ball { width: 45px; height: 45px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 20px yellow; border: 3px solid white; }
 
-        /* تصميم 3D */
         #tunnel-container { perspective: 800px; width: 100%; height: 250px; background: #000; overflow: hidden; border-radius: 15px; position: relative; }
-        .star-3d { position: absolute; width: 30px; height: 30px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 20px var(--primary); transform-style: preserve-3d; cursor: pointer; }
+        .star-3d { position: absolute; width: 35px; height: 35px; background: #00ffcc; border-radius: 50%; box-shadow: 0 0 25px #00ffcc; transform-style: preserve-3d; cursor: pointer; }
         input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 20px; }
+
+        /* انيميشن الاهتزاز */
+        @keyframes shake { 0% {transform:translate(1px, 1px)} 20% {transform:translate(-2px, 0)} 40% {transform:translate(2px, 1px)} 100% {transform:translate(0, 0)} }
+        .shake { animation: shake 0.2s; }
     </style>
 </head>
 <body onclick="initAudio()">
 
     <div id="stats-bar">
         <div id="fps-val" style="color: #00ff00;">FPS: --</div>
-        <div style="color: #00ccff;">REFRESH: 120Hz</div>
+        <div style="color: #00ccff;">ULTRA 120Hz</div>
     </div>
 
     <div class="header-box">
@@ -65,7 +65,7 @@
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" id="mContent">
             <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:101;" onclick="stop()">&times;</span>
             <div id="result-overlay">
                 <h1 id="res-msg"></h1>
@@ -89,9 +89,54 @@
         }
         updateFPS();
 
-        let ctx, timerInt, currentGame = '';
+        // --- نظام الصوت المتطور ---
+        let ctx;
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function sfx(f, d = 0.1) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); o.stop(ctx.currentTime + d); } }
+        
+        function playSfx(type) {
+            if(!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            let now = ctx.currentTime;
+
+            if(type === 'shoot') { // صوت طلقة
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                osc.start(); osc.stop(now + 0.1);
+            } 
+            else if(type === 'pop') { // صوت صيد (نجاح)
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                osc.start(); osc.stop(now + 0.1);
+            }
+            else if(type === 'fail') { // صوت خطأ
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, now);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(); osc.stop(now + 0.3);
+                document.getElementById('mContent').classList.add('shake');
+                setTimeout(()=>document.getElementById('mContent').classList.remove('shake'), 200);
+            }
+            else if(type === 'win') { // نغمة الفوز
+                [523, 659, 783].forEach((f, i) => {
+                    const o = ctx.createOscillator(); const g = ctx.createGain();
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = f; g.gain.value = 0.1;
+                    o.start(now + i*0.1); o.stop(now + i*0.1 + 0.2);
+                });
+            }
+        }
+
+        let timerInt, currentGame = '';
 
         function start(m) {
             currentGame = m; clearInterval(timerInt);
@@ -116,6 +161,7 @@
             document.getElementById('res-msg').style.color = w ? '#00ff88' : '#ff3333';
             document.getElementById('res-details').innerText = d;
             o.style.display = 'flex';
+            w ? playSfx('win') : playSfx('fail');
         }
 
         // --- 1. 3D Tunnel ---
@@ -128,8 +174,8 @@
                 const s = document.createElement('div'); s.className = 'star-3d';
                 s.style.left = Math.random()*80+10+"%"; s.style.top = Math.random()*80+10+"%";
                 container.appendChild(s);
-                let anim = s.animate([{transform:'translateZ(-1000px) scale(0)', opacity:0},{transform:'translateZ(500px) scale(4)', opacity:1}], {duration:2000});
-                s.onclick = () => { score++; document.getElementById('s3d').innerText=score; sfx(1000); s.remove(); };
+                let anim = s.animate([{transform:'translateZ(-1000px) scale(0)', opacity:0},{transform:'translateZ(500px) scale(4)', opacity:1}], {duration:1800});
+                s.onclick = () => { score++; document.getElementById('s3d').innerText=score; playSfx('pop'); s.remove(); };
                 anim.onfinish = () => { if(s.parentNode) s.remove(); spawn(); };
             }
             for(let i=0; i<4; i++) spawn();
@@ -145,10 +191,11 @@
                 if(currentGame !== 'war' || t <= 0) return;
                 const e = document.createElement('div'); e.className = 'enemy';
                 e.style.left = Math.random()*80+"%"; e.style.top = Math.random()*70+"%";
-                e.onclick = () => { k++; document.getElementById('wk').innerText=k; sfx(150); e.remove(); spawn(); };
+                e.onclick = (ev) => { ev.stopPropagation(); k++; document.getElementById('wk').innerText=k; playSfx('shoot'); e.remove(); spawn(); };
                 a.appendChild(e);
-                setTimeout(() => { if(e.parentNode){ e.remove(); spawn(); } }, 1000);
+                setTimeout(() => { if(e.parentNode){ e.remove(); spawn(); } }, 900);
             }
+            a.onclick = () => playSfx('shoot');
             spawn(); spawn();
             timerInt = setInterval(() => { t--; document.getElementById('wt').innerText=t; if(t<=0) showResult("Mission Over", `النتيجة: ${k} قتيل`, true); }, 1000);
         }
@@ -159,7 +206,10 @@
             v.innerHTML = `<h3>أسرع حساب!</h3><h1 id="mt">10</h1><h2>${a} + ${b} = ؟</h2><input type="number" id="mi"><button class="btn" id="mc">تحقق</button>`;
             document.getElementById('mi').focus();
             timerInt = setInterval(() => { t--; document.getElementById('mt').innerText=t; if(t<=0) showResult("وقت مستقطع", `الجواب هو ${r}`, false); }, 1000);
-            document.getElementById('mc').onclick = () => { if(parseInt(document.getElementById('mi').value)===r) showResult("عبقري!", "صح", true); else sfx(100); };
+            document.getElementById('mc').onclick = () => { 
+                if(parseInt(document.getElementById('mi').value)===r) { playSfx('pop'); showResult("عبقري!", "صح", true); } 
+                else { playSfx('fail'); } 
+            };
         }
 
         // --- 4. Ghost ---
@@ -169,19 +219,19 @@
             function move() {
                 if(currentGame !== 'ball') return;
                 b.style.left=Math.random()*80+"%"; b.style.top=Math.random()*80+"%"; b.style.display="block";
-                let hit=false; b.onclick=()=>{ hit=true; p++; sfx(800); b.style.display="none"; document.getElementById('bs').innerText=`أنت: ${p} | آلي: ${r}`; if(p>=15) showResult("هزمته!", "رائع", true); else setTimeout(move, 400); };
-                setTimeout(()=>{ if(!hit && currentGame==='ball'){ r++; document.getElementById('bs').innerText=`أنت: ${p} | آلي: ${r}`; b.style.display="none"; if(r>=15) showResult("هرب الشبح", "", false); else setTimeout(move, 600); } }, 800);
+                let hit=false; b.onclick=()=>{ hit=true; p++; playSfx('pop'); b.style.display="none"; document.getElementById('bs').innerText=`أنت: ${p} | آلي: ${r}`; if(p>=15) showResult("هزمته!", "رائع", true); else setTimeout(move, 400); };
+                setTimeout(()=>{ if(!hit && currentGame==='ball'){ r++; playSfx('fail'); document.getElementById('bs').innerText=`أنت: ${p} | آلي: ${r}`; b.style.display="none"; if(r>=15) showResult("هرب الشبح", "", false); else setTimeout(move, 600); } }, 800);
             }
             move();
         }
 
         // --- 5. XO ---
         function loadXO(v) {
-            let b=["","","","","","","","",""], a=true;
+            let b=["","","","","","","","",""], active=true;
             const draw=()=>{ v.innerHTML=`<h3>تحدي X-O</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">${b.map((s,i)=>`<div class="cell" onclick="xoG(${i})">${s}</div>`).join('')}</div>`; };
-            window.xoG=(i)=>{ if(b[i]==="" && a){ b[i]="X"; check(); if(a) setTimeout(ai,200); draw(); } };
+            window.xoG=(i)=>{ if(b[i]==="" && active){ b[i]="X"; playSfx('pop'); check(); if(active) setTimeout(ai,200); draw(); } };
             const ai=()=>{ let e=b.map((s,i)=>s===""?i:null).filter(x=>x!==null); if(e.length>0){ b[e[Math.floor(Math.random()*e.length)]]="O"; check(); draw(); } };
-            const check=()=>{ const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w) if(b[p[0]] && b[p[0]]===b[p[1]] && b[p[0]]===b[p[2]]){ a=false; showResult(b[p[0]]==="X"?"فوز!":"خسارة!", "", b[p[0]]==="X"); } };
+            const check=()=>{ const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w) if(b[p[0]] && b[p[0]]===b[p[1]] && b[p[0]]===b[p[2]]){ active=false; showResult(b[p[0]]==="X"?"فوز!":"خسارة!", "", b[p[0]]==="X"); } };
             draw();
         }
 
@@ -190,21 +240,21 @@
             const i=['🍎','🍎','🍌','🍌','🍇','🍇','🍒','🍒','🍍','🍍','🥝','🥝'];
             let s=i.sort(()=>Math.random()-0.5), o=[], c=0;
             v.innerHTML=`<h3>الذاكرة</h3><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">${s.map(()=>`<div class="cell" onclick="mF(this)"></div>`).join('')}</div>`;
-            window.mF=(el)=>{ if(o.length<2 && !el.innerText){ el.innerText=s[[...el.parentNode.children].indexOf(el)]; o.push(el); if(o.length===2){ if(o[0].innerText===o[1].innerText){ o=[]; c++; if(c===6) showResult("بطل!", "", true); } else { setTimeout(()=>{o[0].innerText=''; o[1].innerText=''; o=[];}, 400); } } } };
+            window.mF=(el)=>{ if(o.length<2 && !el.innerText){ el.innerText=s[[...el.parentNode.children].indexOf(el)]; o.push(el); playSfx('pop'); if(o.length===2){ if(o[0].innerText===o[1].innerText){ o=[]; c++; if(c===6) showResult("بطل!", "", true); } else { playSfx('fail'); setTimeout(()=>{o[0].innerText=''; o[1].innerText=''; o=[];}, 400); } } } };
         }
 
         // --- 7. Speed ---
         function loadTap(v) {
             let c=0, t=5, s=false;
             v.innerHTML=`<h3>السرعة (25)</h3><h1 id="ts">5</h1><button class="btn" style="height:80px" id="tb">اضغط!</button><h2>عدد: <span id="tc">0</span></h2>`;
-            document.getElementById('tb').onclick=()=>{ if(!s){ s=true; timerInt=setInterval(()=>{t--; document.getElementById('ts').innerText=t; if(t<=0){ clearInterval(timerInt); showResult(c>=25?"برق!":"بطيء", `سجلت ${c}`, c>=25); }},1000); } c++; document.getElementById('tc').innerText=c; sfx(500,0.05); };
+            document.getElementById('tb').onclick=()=>{ if(!s){ s=true; timerInt=setInterval(()=>{t--; document.getElementById('ts').innerText=t; if(t<=0){ clearInterval(timerInt); showResult(c>=25?"برق!":"بطيء", `سجلت ${c}`, c>=25); }},1000); } c++; document.getElementById('tc').innerText=c; playSfx('pop'); };
         }
 
         // --- 8. Numbers ---
         function loadNum(v) {
             let n=1; let ns=[1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);
             v.innerHTML=`<h3>ترتيب الأرقام</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${ns.map(x=>`<div class="cell" onclick="nH(this,${x})">${x}</div>`).join('')}</div>`;
-            window.nH=(e,x)=>{ if(x===n){ e.style.opacity="0.2"; sfx(600); n++; if(n>9) showResult("رائع!", "", true); } else sfx(100); };
+            window.nH=(e,x)=>{ if(x===n){ e.style.opacity="0.2"; playSfx('pop'); n++; if(n>9) showResult("رائع!", "", true); } else playSfx('fail'); };
         }
     </script>
 </body>
