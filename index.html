@@ -3,48 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - Rocket Edition</title>
+    <title>BRSMAYKA AI STUDIO - 8 GAMES</title>
     <style>
-        :root { --primary: #0088ff; --bg: #050505; }
+        :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; }
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-        
-        /* القسم العلوي المحدث بالصواريخ */
-        .header-box { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 35px; padding: 10px; }
-        .header-box h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin: 0; letter-spacing: 2px; }
-
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 150px; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(0, 136, 255, 0.1); }
-
+        .header-box { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .header-box h1 { font-size: 1.8rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: var(--primary); transform: scale(1.05); }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 10vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
-        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        
-        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 20px; margin-bottom: 10px; }
+        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; min-height: 300px; }
+        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
+        .win-text { color: #00ff88; font-size: 2rem; text-shadow: 0 0 20px #00ff88; }
+        .lose-text { color: #ff3333; font-size: 2rem; text-shadow: 0 0 20px #ff3333; }
+        .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; height: 60px; font-size: 25px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        #arena { height: 200px; background: #000; position: relative; border-radius: 15px; border: 1px solid #333; overflow: hidden; }
+        #ball { width: 40px; height: 40px; background: yellow; border-radius: 50%; position: absolute; cursor: pointer; display: none; box-shadow: 0 0 20px yellow; }
     </style>
 </head>
 <body onclick="initAudio()">
     <div class="bg-layer"></div>
-    
     <div class="header-box">
-        <span style="font-size: 2.5rem;">🚀</span>
-        <h1>BRSMAYKA AI</h1>
-        <span style="font-size: 2.5rem;">🚀</span>
+        <h1>🎮 BRSMAYKA AI</h1>
+        <div style="background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:50px; border:1px solid var(--primary);">
+            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+        </div>
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="start('math')"> ➕ <h3>الحساب</h3> </div>
+        <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
         <div class="game-card" onclick="start('ball')"> 👻 <h3>الشبح</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>السرعة</h3> </div>
         <div class="game-card" onclick="start('mem')"> 🧠 <h3>الذاكرة</h3> </div>
+        <div class="game-card" onclick="start('tap')"> ⚡ <h3>السرعة</h3> </div>
+        <div class="game-card" onclick="start('math')"> ➕ <h3>الحساب</h3> </div>
+        <div class="game-card" onclick="start('color')"> 🎨 <h3>الألوان</h3> </div>
+        <div class="game-card" onclick="start('mine')"> 💣 <h3>الألغام</h3> </div>
+        <div class="game-card" onclick="start('hit')"> 🎯 <h3>الهدف</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
         <div class="modal-content">
-            <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:102;" onclick="stop()">&times;</span>
+            <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:101;" onclick="stop()">&times;</span>
             <div id="result-overlay">
                 <h1 id="result-msg"></h1>
                 <p id="result-details" style="color:#aaa;"></p>
@@ -54,55 +57,101 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
     <script>
         let ctx, timerInt, ballLoop, currentGame = '';
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         function sfx(f, d = 0.1) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); o.stop(ctx.currentTime + d); } }
-        
-        function showResult(msg, det, win) {
-            const ov = document.getElementById('result-overlay');
+        function winSnd() { [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => sfx(f, 0.2), i * 150)); }
+        function loseSnd() { [392, 349, 311, 261].forEach((f, i) => setTimeout(() => sfx(f, 0.4), i * 200)); }
+
+        function showResult(msg, details, isWin) {
+            const overlay = document.getElementById('result-overlay');
             document.getElementById('result-msg').innerText = msg;
-            document.getElementById('result-msg').style.color = win ? "#00ff88" : "#ff3333";
-            document.getElementById('result-details').innerText = det;
-            ov.style.display = 'flex';
+            document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
+            document.getElementById('result-details').innerText = details;
+            overlay.style.display = 'flex';
+            if(isWin) winSnd(); else loseSnd();
         }
 
+        function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentGame); }
+
         function start(m) {
-            currentGame = m; clearInterval(timerInt);
+            currentGame = m; clearInterval(timerInt); clearTimeout(ballLoop);
             document.getElementById('gameModal').style.display="block";
             const v = document.getElementById('game-view');
-            if(m==='math') loadMath(v);
+            v.innerHTML = '';
+            if(m==='xo') loadXO(v);
             if(m==='ball') loadBall(v);
-            if(m==='tap') loadTap(v);
             if(m==='mem') loadMem(v);
+            if(m==='tap') loadTap(v);
+            if(m==='math') loadMath(v);
+            if(m==='color') loadColor(v);
+            if(m==='mine') loadMine(v);
+            if(m==='hit') loadHit(v);
         }
 
         function stop() { clearInterval(timerInt); clearTimeout(ballLoop); document.getElementById('gameModal').style.display="none"; }
-        function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentGame); }
 
-        // --- لعبة الحساب المصلحة تماماً ---
+        // --- الألعاب الأربعة الجديدة ---
+
         function loadMath(v) {
-            let a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20), res = a+b, t = 10;
-            v.innerHTML = `<h3>أسرع حساب!</h3><h1 id="mtm">10</h1><h2>${a} + ${b} = ؟</h2>
-            <input type="number" id="ansInp" placeholder="ادخل الناتج">
-            <button class="btn" id="chkBtn">تحقق ✅</button>`;
-            
-            const inp = document.getElementById('ansInp');
-            const btn = document.getElementById('chkBtn');
-            setTimeout(() => inp.focus(), 100);
-
-            timerInt = setInterval(() => {
-                t--; document.getElementById('mtm').innerText = t;
-                if(t <= 0) { clearInterval(timerInt); showResult("انتهى الوقت!", `الناتج هو ${res}`, false); }
-            }, 1000);
-
-            btn.onclick = () => {
-                if(parseInt(inp.value) === res) { clearInterval(timerInt); showResult("بطل!", "إجابة صحيحة", true); }
-                else { sfx(150, 0.5); inp.value=""; inp.placeholder="خطأ! حاول ثانية"; }
-            };
+            let a=Math.floor(Math.random()*20), b=Math.floor(Math.random()*20), res=a+b, score=0, t=10;
+            v.innerHTML=`<h3>أسرع حساب!</h3><h1 id="mtm">10</h1><h2>${a} + ${b} = ?</h2><input type="number" id="ans" style="width:80%; padding:10px; border-radius:10px; text-align:center; font-size:20px;"><button class="btn" onclick="checkMath()">تحقق</button>`;
+            timerInt = setInterval(()=>{ t--; document.getElementById('mtm').innerText=t; if(t<=0){ clearInterval(timerInt); showResult("انتهى الوقت! 🤖", "الروبوت أسرع في الحساب", false); } },1000);
+            window.checkMath=()=>{ if(parseInt(document.getElementById('ans').value)===res) { clearInterval(timerInt); showResult("عبقري! 🎓", "إجابة صحيحة وسريعة", true); } else { sfx(150,0.3); } };
         }
 
-        // الألعاب الأخرى تضاف هنا بنفس النمط...
+        function loadColor(v) {
+            const names=["أحمر","أزرق","أخضر"], colors=["red","blue","green"];
+            let idxN=Math.floor(Math.random()*3), idxC=Math.floor(Math.random()*3);
+            v.innerHTML=`<h3>هل اللون متطابق؟</h3><h1 style="color:${colors[idxC]}">${names[idxN]}</h1><div style="display:flex; gap:10px;"><button class="btn" onclick="checkCol(true)">نعم</button><button class="btn" style="background:red" onclick="checkCol(false)">لا</button></div>`;
+            window.checkCol=(ans)=>{ if((idxN===idxC)===ans) showResult("تركيز عالٍ! 🎨", "لم يخدعك اللون", true); else showResult("خسارة! 🤖", "خدعك الروبوت بالألوان", false); };
+        }
+
+        function loadMine(v) {
+            let bomb=Math.floor(Math.random()*9);
+            v.innerHTML=`<h3>تجنب اللغم!</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="cell" onclick="checkMine(${i}, this)">?</div>`).join('')}</div>`;
+            let found=0;
+            window.checkMine=(i, el)=>{ if(i===bomb){ el.innerHTML="💣"; el.style.background="red"; showResult("انفجار! 💣", "اخترت مربع اللغم", false); } else { if(el.innerHTML!=="💎"){ el.innerHTML="💎"; el.style.background="green"; found++; sfx(800); if(found===3) showResult("ناجٍ محترف! 🏆", "تجنبت الألغام بنجاح", true); } } };
+        }
+
+        function loadHit(v) {
+            v.innerHTML=`<h3>اضغط عند اللون الأخضر!</h3><div id="arena" style="display:flex; align-items:center; justify-content:center;"><div id="box" style="width:100px; height:100px; background:red; border-radius:10px;"></div></div><button class="btn" onclick="checkHit()">اضغط!</button>`;
+            const box = document.getElementById('box');
+            let isGreen=false;
+            const cycle=()=>{ if(currentGame!=='hit') return; let time=Math.random()*2000+1000; setTimeout(()=>{ box.style.background="green"; isGreen=true; setTimeout(()=>{ if(isGreen){ box.style.background="red"; isGreen=false; cycle(); } }, 700); }, time); };
+            window.checkHit=()=>{ if(isGreen) showResult("قناص! 🎯", "رد فعلك سريع جداً", true); else showResult("تسرعت! 🤖", "الروبوت فاز ببرودة أعصابه", false); isGreen=false; };
+            cycle();
+        }
+
+        // --- إعادة تعريف الألعاب القديمة لتعمل مع النظام الجديد ---
+        function loadXO(v) {
+            let b=["","","","","","","","",""], a=true;
+            const draw=()=> { v.innerHTML=`<h3>X-O</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${b.map((s,i)=>`<div class="cell" onclick="clickXO(${i})">${s}</div>`).join('')}</div>`; };
+            window.clickXO=(i)=> { if(b[i]==="" && a) { b[i]="X"; sfx(600); if(!chk(b)) setTimeout(rob,400); draw(); } };
+            const rob=()=> { let e=b.map((s,i)=>s===""?i:null).filter(v=>v!==null); if(e.length>0 && a){ b[e[Math.floor(Math.random()*e.length)]]="O"; sfx(400); chk(b); draw(); } };
+            const chk=(x)=> { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w){ if(x[p[0]] && x[p[0]]===x[p[1]] && x[p[0]]===x[p[2]]){ a=false; showResult(x[p[0]]==="X"?"فزت! 🔥":"خسرت! 🤖", "", x[p[0]]==="X"); return true; } } if(!x.includes("")){ showResult("تعادل!", "", true); return true; } return false; };
+            draw();
+        }
+        function loadBall(v) {
+            let p=0, r=0; v.innerHTML=`<h3>الشبح (20)</h3><div id="arena"><div id="ball"></div></div><h4 id="sc">أنت: 0 | الـ AI: 0</h4>`;
+            const b=document.getElementById('ball');
+            const mv=()=> { b.style.display="block"; b.style.top=Math.random()*150+"px"; b.style.left=Math.random()*250+"px"; b.style.opacity="1"; let hit=false; b.onclick=()=>{ hit=true; p++; sfx(800); upd(); };
+            setTimeout(()=>{ if(!hit){ r++; upd(); } b.style.opacity="0"; if(p<20 && r<20) ballLoop=setTimeout(mv, 1500); else showResult(p>=20?"بطل!":"خسرت!", "", p>=20); }, 800); };
+            const upd=()=>{ document.getElementById('sc').innerText=`أنت: ${p} | الـ AI: ${r}`; }; mv();
+        }
+        function loadMem(v) {
+            const icons=['🍎','🍎','🍌','🍌','🍇','🍇','🍒','🍒'];
+            let s=icons.sort(()=>Math.random()-0.5), sel=[], err=0;
+            v.innerHTML=`<h3>الذاكرة</h3><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">${s.map(()=>`<div class="cell" onclick="memC(this)"></div>`).join('')}</div>`;
+            window.memC=(el)=>{ if(sel.length<2 && !el.innerText){ el.innerText=s[[...el.parentNode.children].indexOf(el)]; sel.push(el); if(sel.length===2){ if(sel[0].innerText===sel[1].innerText){ sfx(700); sel=[]; if([...el.parentNode.children].every(x=>x.innerText)) showResult("ممتاز!", "", true); } else { sfx(150,0.3); setTimeout(()=>{sel[0].innerText=''; sel[1].innerText=''; sel=[]; err++; if(err>=5) showResult("فشل!", "الروبوت ذاكرته أقوى", false);},500); } } } };
+        }
+        function loadTap(v) {
+            let c=0, t=5; v.innerHTML=`<h3>السرعة (25)</h3><h1 id="tt">5</h1><button class="btn" id="tbb">إبدأ!</button><h2>نقرات: <span id="cc">0</span></h2>`;
+            const b=document.getElementById('tbb');
+            b.onclick=()=>{ if(t===5){ timerInt=setInterval(()=>{ t--; document.getElementById('tt').innerText=t; if(t<=0){ clearInterval(timerInt); showResult(c>=25?"برق!":"بطيء!", `نقراتك: ${c}`, c>=25); } },1000); } c++; document.getElementById('cc').innerText=c; sfx(500,0.05); };
+        }
     </script>
 </body>
 </html>
