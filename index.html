@@ -64,6 +64,7 @@
         <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
         <div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory</h3> </div>
         <div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed</h3> </div>
+        <div class="game-card" onclick="start('num')"> 🔢 <h3>Numbers</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
@@ -108,6 +109,7 @@
             if(m==='xo') loadXO(v);
             if(m==='mem') loadMem(v);
             if(m==='tap') loadTap(v);
+            if(m==='num') loadNum(v);
         }
 
         function stop() { clearInterval(timerInt); clearTimeout(ballLoop); document.getElementById('gameModal').style.display="none"; currentGame = ''; }
@@ -182,6 +184,34 @@
                 } 
                 if(t > 0) { c++; document.getElementById('cc').innerText=c; sfx(500,0.05); }
             };
+        }
+
+        // --- اللعبة الجديدة: ترتيب الأرقام ---
+        function loadNum(v) {
+            let next = 1, t = 8;
+            let nums = [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-0.5);
+            v.innerHTML = `<h3>رتب الأرقام! (1-9)</h3><h1 id="ntm" style="color:yellow">8</h1><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="ngrid"></div>`;
+            const g = document.getElementById('ngrid');
+            nums.forEach(n => {
+                const d = document.createElement('div');
+                d.className = 'cell';
+                d.innerText = n;
+                d.onclick = () => {
+                    if(n === next) {
+                        sfx(600 + (n*50));
+                        d.style.background = "#00ff88";
+                        d.style.opacity = "0.3";
+                        d.onclick = null;
+                        next++;
+                        if(next > 9) { clearInterval(timerInt); showResult("سريع جداً!", "رتبت الكل بنجاح", true); }
+                    } else { sfx(200); d.style.background = "red"; setTimeout(()=>d.style.background="#222", 200); }
+                };
+                g.appendChild(d);
+            });
+            timerInt = setInterval(() => {
+                t--; document.getElementById('ntm').innerText = t;
+                if(t <= 0) { clearInterval(timerInt); showResult("انتهى الوقت!", "حاول أن تكون أسرع", false); }
+            }, 1000);
         }
     </script>
 </body>
