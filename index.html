@@ -3,207 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ستوديو ألعاب BRSMAYKA - النسخة العملاقة</title>
+    <title>ستوديو ألعاب BRSMAYKA - نسخة المؤثرات</title>
     <style>
-        :root { --primary: #00ffcc; --bg: #0a0a0a; --card: #161616; --accent: #ff7300; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; }
-        
-        .header { margin-bottom: 30px; }
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: auto; }
-
-        /* تصميم الكروت */
-        .game-card {
-            background: var(--card); border: 2px solid #333; width: 180px; border-radius: 15px;
-            padding: 20px; cursor: pointer; transition: 0.3s;
+        :root { 
+            --primary: #00ffcc; 
+            --secondary: #ff0055;
+            --bg: #050505; 
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --neon-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
         }
-        .game-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,255,204,0.1); }
-        .game-icon { font-size: 40px; margin-bottom: 10px; }
-        .play-btn { background: var(--primary); border: none; padding: 8px; border-radius: 5px; width: 100%; font-weight: bold; cursor: pointer; }
 
-        /* نافذة اللعب */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; padding-top: 30px; }
-        .modal-content { background: #1a1a1a; margin: auto; width: 90%; max-width: 450px; padding: 25px; border-radius: 20px; border: 2px solid var(--primary); position: relative; }
-        .close { position: absolute; left: 15px; top: 10px; font-size: 30px; cursor: pointer; color: #888; }
+        /* تأثير الخلفية المتحركة */
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            text-align: center;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        }
 
-        /* أنماط الألعاب الجديدة */
-        #game-screen { min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .memory-card { width: 60px; height: 60px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
-        
-        #dodge-area { width: 100%; height: 200px; background: #000; position: relative; overflow: hidden; border: 1px solid #444; }
-        #player-box { width: 30px; height: 30px; background: var(--primary); position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); transition: 0.1s; }
-        .enemy { width: 20px; height: 20px; background: red; position: absolute; border-radius: 50%; }
+        /* عنوان الموقع مع لمعان */
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
 
-        .xo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .cell { width: 70px; height: 70px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: bold; cursor: pointer; border-radius: 10px; }
-        
-        .reset-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 15px; display: none; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; text-shadow: 0 0 20px var(--primary); }
+        }
+
+        .container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 20px; 
+            margin-top: 40px; 
+        }
+
+        /* تصميم الكروت بتأثير الزجاج والنيون */
+        .game-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 200px;
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--primary);
+            box-shadow: var(--neon-shadow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* تأثير الضوء الذي يمر فوق الكارت */
+        .game-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        .game-card:hover::after { left: 100%; }
+
+        .game-icon { font-size: 50px; margin-bottom: 15px; display: block; }
+
+        /* الأزرار الاحترافية */
+        .btn {
+            background: var(--primary);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+        }
+        .btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px var(--primary); }
+
+        /* نافذة اللعب المتطورة */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(8px);
+            z-index: 1000; 
+        }
+        .modal-content { 
+            background: #111; 
+            margin: 5vh auto; 
+            width: 90%; 
+            max-width: 450px; 
+            padding: 30px; 
+            border-radius: 30px; 
+            border: 2px solid var(--primary); 
+            position: relative;
+            animation: bounceIn 0.5s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* تأثير اهتزاز عند الخطأ */
+        .shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        #arena { background: #000; border-radius: 20px; border: 1px solid #333; height: 250px; position: relative; overflow: hidden; }
+        .cell { background: #222; border-radius: 12px; transition: 0.3s; }
+        .cell:hover { background: #333; transform: scale(0.95); }
+
     </style>
 </head>
 <body onclick="initAudio()">
 
     <div class="header">
-        <h1 style="color: var(--primary);">🎮 ستوديو ألعاب BRSMAYKA المطور</h1>
-        <p>مكتبة تضم 5 ألعاب احترافية</p>
+        <h1>🎮 BRSMAYKA GAMING STUDIO</h1>
+        <p style="color: #aaa;">جرب الألعاب بتأثيرات بصرية وصوتية مذهلة</p>
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="openGame('xo')"> <div class="game-icon">🤖</div> <h3>X-O الذكية</h3> <button class="play-btn">العب</button> </div>
-        <div class="game-card" onclick="openGame('ball')"> <div class="game-icon">🎾</div> <h3>صيد الكرة</h3> <button class="play-btn">العب</button> </div>
-        
-        <div class="game-card" onclick="openGame('memory')"> <div class="game-icon">🧠</div> <h3>الذاكرة</h3> <button class="play-btn">العب</button> </div>
-        <div class="game-card" onclick="openGame('dodge')"> <div class="game-icon">🚀</div> <h3>تفادي الهجوم</h3> <button class="play-btn">العب</button> </div>
-        <div class="game-card" onclick="openGame('fast')"> <div class="game-icon">⚡</div> <h3>النقر السريع</h3> <button class="play-btn">العب</button> </div>
+        <div class="game-card" onclick="openGame('xo')">
+            <span class="game-icon">❌</span>
+            <h3>تحدي X-O</h3>
+            <button class="btn">العب الآن</button>
+        </div>
+        <div class="game-card" onclick="openGame('ball')">
+            <span class="game-icon">🎾</span>
+            <h3>صيد الكرة</h3>
+            <button class="btn">العب الآن</button>
+        </div>
+        <div class="game-card" onclick="openGame('fast')">
+            <span class="game-icon">⚡</span>
+            <h3>النقر السريع</h3>
+            <button class="btn">العب الآن</button>
+        </div>
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeGame()">&times;</span>
-            <div id="game-screen"></div>
-            <button id="resetBtn" class="reset-btn">إعادة المحاولة 🔄</button>
+        <div class="modal-content" id="modalBox">
+            <span style="position:absolute; left:20px; top:15px; cursor:pointer; font-size:30px;" onclick="closeGame()">&times;</span>
+            <div id="game-area"></div>
+            <button id="resetBtn" class="btn" style="margin-top:20px; background:#ff7300; color:white; display:none;">إعادة المحاولة 🔄</button>
         </div>
     </div>
 
 <script>
     let audioCtx;
-    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    function playSound(f) { if(audioCtx) { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.frequency.value = f; o.connect(g); g.connect(audioCtx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1); o.stop(audioCtx.currentTime + 0.1); } }
+    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    function playSfx(f) { 
+        if(!audioCtx) return;
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.frequency.value = f; o.connect(g); g.connect(audioCtx.destination);
+        o.start(); g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1); o.stop(audioCtx.currentTime + 0.1);
+    }
 
     function openGame(g) {
         document.getElementById('gameModal').style.display = "block";
-        document.getElementById('resetBtn').style.display = "none";
         if(g === 'xo') loadXO();
-        if(g === 'ball') startBallGame();
-        if(g === 'memory') loadMemory();
-        if(g === 'dodge') loadDodge();
-        if(g === 'fast') loadFastClick();
+        if(g === 'ball') loadBall();
+        if(g === 'fast') loadFast();
     }
 
-    // --- 1. لعبة الذاكرة ---
-    function loadMemory() {
-        const icons = ['🍎','🍎','🍌','🍌','💎','💎','🚀','🚀','⭐','⭐','👻','👻'];
-        const shuffled = icons.sort(() => Math.random() - 0.5);
-        let selected = [];
-        const screen = document.getElementById('game-screen');
-        screen.innerHTML = `<h3>طابق الصور المتشابهة!</h3><div class="memory-grid"></div>`;
-        const grid = screen.querySelector('.memory-grid');
-        shuffled.forEach((icon, i) => {
-            const card = document.createElement('div');
-            card.className = 'memory-card';
-            card.dataset.icon = icon;
-            card.onclick = function() {
-                if(selected.length < 2 && !this.innerText) {
-                    this.innerText = this.dataset.icon;
-                    selected.push(this);
-                    if(selected.length === 2) {
-                        if(selected[0].dataset.icon === selected[1].dataset.icon) {
-                            playSound(800); selected = [];
-                        } else {
-                            setTimeout(() => { selected[0].innerText = ''; selected[1].innerText = ''; selected = []; }, 500);
-                        }
-                    }
-                }
-            };
-            grid.appendChild(card);
-        });
-    }
-
-    // --- 2. لعبة تفادي العوائق ---
-    let dodgeInterval;
-    function loadDodge() {
-        const screen = document.getElementById('game-screen');
-        screen.innerHTML = `<h3>استخدم الأسهم أو الماوس للتفادي!</h3><div id="dodge-area"><div id="player-box"></div></div>`;
-        const area = document.getElementById('dodge-area');
-        const player = document.getElementById('player-box');
-        let px = 50;
-        
-        // تحريك بالماوس/اللمس
-        area.onmousemove = (e) => { 
-            let rect = area.getBoundingClientRect();
-            px = ((e.clientX - rect.left) / rect.width) * 100;
-            player.style.left = px + "%";
-        };
-
-        dodgeInterval = setInterval(() => {
-            const enemy = document.createElement('div');
-            enemy.className = 'enemy';
-            enemy.style.left = Math.random() * 90 + "%";
-            enemy.style.top = "0px";
-            area.appendChild(enemy);
-            let ty = 0;
-            let fall = setInterval(() => {
-                ty += 5; enemy.style.top = ty + "px";
-                if(ty > 200) { clearInterval(fall); enemy.remove(); }
-                // كشف التصادم
-                let pr = player.getBoundingClientRect();
-                let er = enemy.getBoundingClientRect();
-                if(!(pr.right < er.left || pr.left > er.right || pr.bottom < er.top || pr.top > er.bottom)) {
-                    clearInterval(dodgeInterval); clearInterval(fall);
-                    alert("انتهت اللعبة!"); closeGame();
-                }
-            }, 30);
-        }, 1000);
-    }
-
-    // --- 3. لعبة النقر السريع ---
-    function loadFastClick() {
-        let count = 0, time = 5;
-        const screen = document.getElementById('game-screen');
-        screen.innerHTML = `<h3>اضغط بأسرع ما يمكن!</h3><h1 id="timer">5</h1><button class="play-btn" style="height:100px; font-size:30px;" onclick="this.nextSibling.innerText=++count; playSound(400)">اضغط هنا!</button><h1>0</h1>`;
-        let itv = setInterval(() => {
-            time--; document.getElementById('timer').innerText = time;
-            if(time <= 0) { clearInterval(itv); alert("نتيجتك: " + count); closeGame(); }
-        }, 1000);
-    }
-
-    // (باقي وظائف X-O وصيد الكرة تبقى كما هي في كودك السابق لضمان العمل)
     function loadXO() {
         let b = ["","","","","","","","",""], active = true;
-        const screen = document.getElementById('game-screen');
+        const area = document.getElementById('game-area');
         const render = () => {
-            screen.innerHTML = `<h3>X-O ضد الروبوت</h3><div class="xo-grid">${b.map((v,i)=>`<div class="cell" onclick="move(${i})">${v}</div>`).join('')}</div><p id="st"></p>`;
+            area.innerHTML = `<h3>X-O ضد الروبوت</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:240px; margin:auto;">${b.map((v,i)=>`<div class="cell" style="height:75px; display:flex; align-items:center; justify-content:center; font-size:35px; font-weight:bold; cursor:pointer;" onclick="move(${i})">${v}</div>`).join('')}</div><h2 id="status"></h2>`;
         };
         window.move = (i) => {
             if(b[i]==="" && active) {
-                b[i]="X"; playSound(500);
-                if(!checkWin(b)) { setTimeout(robot, 400); }
+                b[i]="X"; playSfx(600);
+                if(!check(b)) setTimeout(robot, 400);
                 render();
             }
         };
         const robot = () => {
             let e = b.map((v,i)=> v===""?i:null).filter(v=>v!==null);
-            if(e.length > 0 && active) { b[e[Math.floor(Math.random()*e.length)]]="O"; checkWin(b); render(); }
+            if(e.length > 0 && active) { b[e[Math.floor(Math.random()*e.length)]]="O"; playSfx(400); check(b); render(); }
         };
-        const checkWin = (board) => {
+        const check = (board) => {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for(let p of w) {
                 if(board[p[0]] && board[p[0]]===board[p[1]] && board[p[0]]===board[p[2]]) {
-                    active = false; setTimeout(()=>alert(board[p[0]]==="X"?"فزت!":"خسرت!"), 100); return true;
+                    active = false;
+                    let winner = board[p[0]]==="X" ? "مبروك!" : "خسرت!";
+                    if(winner === "خسرت!") document.getElementById('modalBox').classList.add('shake');
+                    document.getElementById('status').innerText = winner;
+                    document.getElementById('resetBtn').style.display = "inline-block";
+                    document.getElementById('resetBtn').onclick = loadXO;
+                    return true;
                 }
             }
-            if(!board.includes("")) { active=false; alert("تعادل!"); return true; }
             return false;
         };
         render();
     }
 
-    function startBallGame() {
+    function loadBall() {
         let pts = 0;
-        const screen = document.getElementById('game-screen');
-        screen.innerHTML = `<div id="arena"><div id="target" style="display:block; width:40px; height:40px; background:yellow; border-radius:50%; position:absolute; cursor:pointer;"></div></div><h2>النقاط: <span id="pts">0</span></h2>`;
-        const t = document.getElementById('target');
-        const move = () => { t.style.top = Math.random()*160+"px"; t.style.left = Math.random()*360+"px"; };
-        t.onclick = () => { pts++; document.getElementById('pts').innerText = pts; playSound(600); move(); };
+        document.getElementById('game-area').innerHTML = `<h3>صيد الكرة</h3><div id="arena"><div id="target" onclick="hit()" style="width:40px; height:40px; background:yellow; border-radius:50%; position:absolute; cursor:pointer; box-shadow: 0 0 15px yellow;"></div></div><h2>النقاط: <span id="pts">0</span></h2>`;
+        window.hit = () => { pts++; document.getElementById('pts').innerText = pts; playSfx(800); move(); };
+        const move = () => { 
+            const t = document.getElementById('target');
+            if(t) { t.style.top = Math.random()*190+"px"; t.style.left = Math.random()*360+"px"; }
+        };
         move();
     }
 
-    function closeGame() {
-        clearInterval(dodgeInterval);
-        document.getElementById('gameModal').style.display = "none";
+    function loadFast() {
+        let count = 0, t = 5;
+        document.getElementById('game-area').innerHTML = `<h3>اضغط بسرعة!</h3><h1 id="timer">5</h1><button class="btn" style="width:100%; height:80px; font-size:30px;" onclick="clickMe()">اضغط!</button><h1>النقرات: <span id="c">0</span></h1>`;
+        window.clickMe = () => { count++; document.getElementById('c').innerText = count; playSfx(500); };
+        let timer = setInterval(() => {
+            t--; document.getElementById('timer').innerText = t;
+            if(t <= 0) { clearInterval(timer); alert("انتهى! نتيجتك: " + count); closeGame(); }
+        }, 1000);
+    }
+
+    function closeGame() { 
+        document.getElementById('gameModal').style.display = "none"; 
+        document.getElementById('modalBox').classList.remove('shake');
     }
 </script>
 
-<div style="margin-top:50px; border-top:1px solid #333; padding:20px;">
+<div style="margin-top:100px; padding:20px; background:rgba(255,255,255,0.02); border-radius:20px;">
     <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
     <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
 </div>
