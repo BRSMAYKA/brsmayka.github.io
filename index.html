@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - نظام الأصوات الكامل</title>
+    <title>BRSMAYKA AI - تحدي الـ 25</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -37,7 +37,7 @@
         <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
         <div class="game-card" onclick="start('ball')"> 👻 <h3>الشبح (20)</h3> </div>
         <div class="game-card" onclick="start('mem')"> 🧠 <h3>الذاكرة</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>السرعة</h3> </div>
+        <div class="game-card" onclick="start('tap')"> ⚡ <h3>السرعة (25)</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
@@ -57,7 +57,6 @@
         let ctx;
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         
-        // دالة الصوت الأساسي
         function sfx(f, d = 0.1) { 
             if(ctx) { 
                 const o=ctx.createOscillator(), g=ctx.createGain(); 
@@ -67,19 +66,8 @@
             } 
         }
 
-        // صوت الفوز (موسيقى متصاعدة)
-        function playWinSound() {
-            [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
-                setTimeout(() => sfx(f, 0.2), i * 150);
-            });
-        }
-
-        // صوت الخسارة (نغمة منخفضة)
-        function playLoseSound() {
-            [392.00, 349.23, 311.13, 261.63].forEach((f, i) => {
-                setTimeout(() => sfx(f, 0.4), i * 200);
-            });
-        }
+        function playWinSound() { [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => sfx(f, 0.2), i * 150)); }
+        function playLoseSound() { [392, 349, 311, 261].forEach((f, i) => setTimeout(() => sfx(f, 0.4), i * 200)); }
 
         function showResult(msg, details, isWin) {
             const overlay = document.getElementById('result-overlay');
@@ -87,8 +75,6 @@
             document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
             overlay.style.display = 'flex';
-            
-            // تشغيل الصوت بناءً على النتيجة
             if(isWin) playWinSound(); else playLoseSound();
         }
 
@@ -114,7 +100,7 @@
             const draw=()=> { v.innerHTML=`<h3>X-O الذكي</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${b.map((s,i)=>`<div class="cell ${s.toLowerCase()}" onclick="clickXO(${i})">${s}</div>`).join('')}</div>`; };
             window.clickXO=(i)=> { if(b[i]==="" && a) { b[i]="X"; sfx(600); if(!chk(b)) setTimeout(rob,400); draw(); } };
             const rob=()=> { let e=b.map((s,i)=>s===""?i:null).filter(v=>v!==null); if(e.length>0 && a){ b[e[Math.floor(Math.random()*e.length)]]="O"; sfx(400); chk(b); draw(); } };
-            const chk=(x)=> { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w){ if(x[p[0]] && x[p[0]]===x[p[1]] && x[p[0]]===x[p[2]]){ a=false; if(x[p[0]]==="X") showResult("فوز ساحق! 🔥", "لقد هزمت الروبوت", true); else showResult("خسرت! 🤖", "الروبوت كان أذكى", false); return true; } } if(!x.includes("")){ a=false; showResult("تعادل! 🤝", "لا يوجد خاسر هنا", true); return true; } return false; };
+            const chk=(x)=> { const w=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let p of w){ if(x[p[0]] && x[p[0]]===x[p[1]] && x[p[0]]===x[p[2]]){ a=false; if(x[p[0]]==="X") showResult("فزت! 🔥", "هزمت الروبوت بنجاح", true); else showResult("خسرت! 🤖", "الروبوت غلبك", false); return true; } } if(!x.includes("")){ a=false; showResult("تعادل! 🤝", "مستوى متقارب", true); return true; } return false; };
             draw();
         }
 
@@ -126,8 +112,8 @@
             const mv=()=> { 
                 clearTimeout(ballLoop); b.style.display="block"; b.style.top=Math.random()*150+"px"; b.style.left=Math.random()*300+"px"; b.style.opacity="1";
                 let hit=false;
-                b.onclick=(e)=>{ e.stopPropagation(); hit=true; p++; sfx(800); document.getElementById('sc').innerText=`أنت: ${p} | الروبوت: ${r}`; if(p>=20) showResult("زعيم الأشباح! 🏆", "سجلت 20 نقطة", true); else mv(); };
-                setTimeout(()=>{ if(!hit && currentGame==='ball'){ r++; sfx(200); document.getElementById('sc').innerText=`أنت: ${p} | الروبوت: ${r}`; if(r>=20) showResult("خسارة! 👻", "الروبوت أسرع منك", false); } b.style.opacity="0"; }, 750);
+                b.onclick=(e)=>{ e.stopPropagation(); hit=true; p++; sfx(800); document.getElementById('sc').innerText=`أنت: ${p} | الروبوت: ${r}`; if(p>=20) showResult("زعيم الأشباح! 🏆", "وصلت لـ 20 نقطة", true); else mv(); };
+                setTimeout(()=>{ if(!hit && currentGame==='ball'){ r++; sfx(200); document.getElementById('sc').innerText=`أنت: ${p} | الروبوت: ${r}`; if(r>=20) showResult("خسارة! 👻", "الروبوت كسب الرهان", false); } b.style.opacity="0"; }, 750);
                 ballLoop=setTimeout(mv, 1600);
             }; mv();
         }
@@ -139,17 +125,17 @@
             v.innerHTML=`<h3>اختبار الذاكرة</h3><p id="errs">الأخطاء: 0 / 6</p><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div>`;
             const g=v.querySelector('div:last-child');
             s.forEach(icon=>{ let c=document.createElement('div'); c.className='cell'; c.style.fontSize='20px'; c.onclick=()=>{
-                if(sel.length<2 && !c.innerText){ c.innerText=icon; sel.push(c); if(sel.length===2){ if(sel[0].innerText===sel[1].innerText){ sfx(700); sel=[]; if([...g.children].every(x=>x.innerText)) showResult("ذاكرة حديدية! 🧠", "أتممتها بنجاح", true); } else { sfx(150, 0.3); setTimeout(()=>{sel[0].innerText=''; sel[1].innerText=''; sel=[]; err++; document.getElementById('errs').innerText=`الأخطاء: ${err} / 6`; if(err>=6) showResult("فشل! 🤖", "الروبوت كسب التحدي", false); },500); } } }
+                if(sel.length<2 && !c.innerText){ c.innerText=icon; sel.push(c); if(sel.length===2){ if(sel[0].innerText===sel[1].innerText){ sfx(700); sel=[]; if([...g.children].every(x=>x.innerText)) showResult("ذاكرة حديدية! 🧠", "أتممت المهمة بنجاح", true); } else { sfx(150, 0.3); setTimeout(()=>{sel[0].innerText=''; sel[1].innerText=''; sel=[]; err++; document.getElementById('errs').innerText=`الأخطاء: ${err} / 6`; if(err>=6) showResult("فشل! 🤖", "الروبوت يتذكر أفضل منك", false); },500); } } }
             }; g.appendChild(c); });
         }
 
-        // --- Speed Tap ---
+        // --- Speed Tap (Target 25) ---
         function loadTap(v) {
-            let c=0, target=35, t=5;
-            v.innerHTML=`<h3>تحدي السرعة</h3><h1 id="tm">5</h1><button class="btn" id="tp">إبدأ!</button><h2>نقراتك: <span id="cc">0</span></h2>`;
+            let c=0, target=25, t=5;
+            v.innerHTML=`<h3>تحدي السرعة</h3><p>الهدف: تجاوز 25 نقرة</p><h1 id="tm">5</h1><button class="btn" id="tp">إبدأ النقر!</button><h2>نقراتك: <span id="cc">0</span></h2>`;
             const b=document.getElementById('tp');
             b.onclick=()=>{
-                if(t===5){ let i=setInterval(()=>{ t--; document.getElementById('tm').innerText=t; if(t<=0){ clearInterval(i); if(c > target) showResult("سرعة خرافية! ⚡", `حققت ${c} نقرة`, true); else showResult("بطيء! 🤖", `سجلت ${c} فقط`, false); } },1000); }
+                if(t===5){ let i=setInterval(()=>{ t--; document.getElementById('tm').innerText=t; if(t<=0){ clearInterval(i); if(c >= target) showResult("برق! ⚡", `حققت ${c} نقرة بنجاح`, true); else showResult("بطيء! 🤖", `نقراتك (${c}) لم تصل لـ 25`, false); } },1000); }
                 c++; document.getElementById('cc').innerText=c; sfx(500);
             };
         }
