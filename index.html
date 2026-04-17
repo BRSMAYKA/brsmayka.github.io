@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - التحديث الشامل 🚀</title>
+    <title>BRSMAYKA AI - مستويات X-O 🚀</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -26,7 +26,7 @@
         .game-card:hover { border-color: var(--primary); transform: scale(1.05); background: rgba(0, 136, 255, 0.1); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 8vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: 0.3s; }
+        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: 0.3s; }
         
         @keyframes shake { 0%, 100% { transform: translate(0, 0); } 20%, 60% { transform: translate(-10px, 0); } 40%, 80% { transform: translate(10px, 0); } }
         .lose-shake { animation: shake 0.4s both; border-color: var(--secondary) !important; }
@@ -39,9 +39,12 @@
         .lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; }
         
         .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin-top: 10px; }
-        .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 65px; font-size: 28px; border: 1px solid #333; cursor: pointer; }
+        .lvl-btn { background: #222; border: 1px solid var(--primary); color: white; padding: 5px 15px; border-radius: 10px; margin: 2px; cursor: pointer; font-size: 0.8rem; }
+        .lvl-btn.active { background: var(--primary); }
+        .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; font-size: 35px; border: 1px solid #333; cursor: pointer; }
         
         #stop-clock { font-size: 4rem; font-weight: 900; margin: 20px 0; color: #fff; font-family: monospace; }
+        #arena { height: 200px; background: #000; position: relative; border-radius: 15px; overflow: hidden; }
     </style>
 </head>
 <body onclick="initAudio()">
@@ -55,8 +58,8 @@
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="start('stop5')"> ⏱️ <h3>تحدي 5ث</h3> </div>
         <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
+        <div class="game-card" onclick="start('stop5')"> ⏱️ <h3>تحدي 5ث</h3> </div>
         <div class="game-card" onclick="start('ball')"> 👻 <h3>الشبح</h3> </div>
         <div class="game-card" onclick="start('mem')"> 🧠 <h3>الذاكرة</h3> </div>
         <div class="game-card" onclick="start('tap')"> ⚡ <h3>سرعة</h3> </div>
@@ -78,7 +81,7 @@
     <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
 
     <script>
-        let ctx, currentMode, score = 0, difficulty = 'easy', gameTimer, timeLeft, stopInterval;
+        let ctx, currentMode, score = 0, diffLvl = 1, gameTimer, timeLeft, stopInterval;
 
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         function sfx(f, d = 0.1) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); o.stop(ctx.currentTime + d); } }
@@ -99,37 +102,27 @@
         }
 
         function showResult(msg, details, isWin) {
-            clearInterval(gameTimer);
-            clearInterval(stopInterval);
+            clearInterval(gameTimer); clearInterval(stopInterval);
             const overlay = document.getElementById('result-overlay');
             const mContent = document.getElementById('m-content');
             document.getElementById('result-msg').innerText = msg;
             document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
-            
-            if(!isWin) {
-                mContent.classList.add('lose-shake');
-                sfx(100, 0.5); 
-                setTimeout(() => mContent.classList.remove('lose-shake'), 400);
-            } else {
-                sfx(800, 0.3);
-                createBubbles();
-            }
+            if(!isWin) { mContent.classList.add('lose-shake'); sfx(100, 0.5); setTimeout(() => mContent.classList.remove('lose-shake'), 400); }
+            else { sfx(800, 0.3); createBubbles(); }
             overlay.style.display = 'flex';
         }
 
         function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentMode); }
-
         function stop() { clearInterval(gameTimer); clearInterval(stopInterval); document.getElementById('gameModal').style.display = 'none'; }
 
         function startTimer(seconds) {
             timeLeft = 100;
-            const bar = document.getElementById('timer-bar');
             document.getElementById('timer-box').style.display = 'block';
             clearInterval(gameTimer);
             gameTimer = setInterval(() => {
                 timeLeft -= (100 / (seconds * 10)); 
-                bar.style.width = timeLeft + '%';
+                document.getElementById('timer-bar').style.width = timeLeft + '%';
                 if(timeLeft <= 0) { clearInterval(gameTimer); showResult('انتهى الوقت!', 'بطيء جداً 💀', false); }
             }, 100);
         }
@@ -141,38 +134,33 @@
             const view = document.getElementById('game-view');
             view.innerHTML = '';
 
-            if(mode === 'stop5') {
-                view.innerHTML = `<h3>أوقف الوقت عند 5.00!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px; font-size:1.5rem;">إيقاف! 🛑</button>`;
-                let count = 0;
-                const clock = document.getElementById('stop-clock');
-                stopInterval = setInterval(() => {
-                    count += 0.01;
-                    clock.innerText = count.toFixed(2);
-                    if(count > 6) { clearInterval(stopInterval); showResult('تعديت الوقت!', 'لقد تجاوزت الـ 6 ثوانٍ', false); }
-                }, 10);
-                document.getElementById('stop-btn').onclick = () => {
-                    clearInterval(stopInterval);
-                    const diff = Math.abs(5.00 - count);
-                    if(diff < 0.1) showResult('أسطوري! 🔥', `الزمن: ${count.toFixed(2)}`, true);
-                    else if(diff < 0.3) showResult('قريب جداً!', `الزمن: ${count.toFixed(2)}`, true);
-                    else showResult('بعيد جداً!', `الزمن: ${count.toFixed(2)}`, false);
-                };
-            }
-            else if(mode === 'xo') {
-                view.innerHTML = `<h3>X-O</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
+            if(mode === 'xo') {
+                view.innerHTML = `
+                    <h3>X-O: مستوى ${diffLvl === 1 ? 'مبتدئ' : diffLvl === 2 ? 'محترف' : 'أسطوري'}</h3>
+                    <div style="margin-bottom:15px;">
+                        <button class="lvl-btn ${diffLvl===1?'active':''}" onclick="diffLvl=1; start('xo')">1</button>
+                        <button class="lvl-btn ${diffLvl===2?'active':''}" onclick="diffLvl=2; start('xo')">2</button>
+                        <button class="lvl-btn ${diffLvl===3?'active':''}" onclick="diffLvl=3; start('xo')">3</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>
+                `;
                 let board = Array(9).fill('');
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell';
-                    c.onclick = () => { if(board[i] === '') { board[i] = 'X'; c.innerText = 'X'; sfx(400); if(!checkWin(board)) cpuMove(board); } };
+                    c.onclick = () => { if(board[i] === '') { board[i] = 'X'; c.innerText = 'X'; sfx(400); if(!checkWin(board)) setTimeout(() => aiMove(board), 400); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
                 startTimer(15);
             }
+            else if(mode === 'stop5') {
+                view.innerHTML = `<h3>أوقف الوقت عند 5.00!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px; font-size:1.5rem;">إيقاف! 🛑</button>`;
+                let count = 0;
+                stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) { clearInterval(stopInterval); showResult('تعديت الوقت!', '💀', false); } }, 10);
+                document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const diff = Math.abs(5.00 - count); if(diff < 0.1) showResult('أسطوري! 🔥', count.toFixed(2), true); else if(diff < 0.3) showResult('قريب جداً!', count.toFixed(2), true); else showResult('بعيد جداً!', count.toFixed(2), false); };
+            }
             else if(mode === 'ball') {
                 view.innerHTML = `<div id="arena"><div id="ball" style="display:block; position:absolute; font-size:40px; cursor:pointer;">👻</div></div><p>اصطد 20 شبحاً!</p>`;
-                const ball = document.getElementById('ball');
-                const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; };
-                move();
+                const ball = document.getElementById('ball'); const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; }; move();
                 ball.onclick = () => { score++; sfx(600); move(); if(score >= 20) showResult('قناص!','',true); };
                 startTimer(12);
             }
@@ -192,14 +180,29 @@
             }
         }
 
-        function cpuMove(b) {
+        function aiMove(b) {
+            let move;
             const empty = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
-            if(empty.length > 0) {
-                const m = empty[Math.floor(Math.random()*empty.length)];
-                b[m] = 'O'; document.getElementById('xo-grid').children[m].innerText = 'O';
-                document.getElementById('xo-grid').children[m].style.color = 'red';
-                checkWin(b);
+            if(empty.length === 0) return;
+
+            if(diffLvl === 1) move = empty[Math.floor(Math.random()*empty.length)];
+            else {
+                move = findBest(b, 'O') || (diffLvl >= 2 ? findBest(b, 'X') : null) || empty[Math.floor(Math.random()*empty.length)];
             }
+
+            b[move] = 'O'; document.getElementById('xo-grid').children[move].innerText = 'O';
+            document.getElementById('xo-grid').children[move].style.color = 'red';
+            checkWin(b);
+        }
+
+        function findBest(b, p) {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let w of wins) {
+                let count = w.filter(i => b[i] === p).length;
+                let empty = w.filter(i => b[i] === '');
+                if(count === 2 && empty.length === 1) return empty[0];
+            }
+            return null;
         }
 
         function checkWin(b) {
