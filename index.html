@@ -1,97 +1,108 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMES - PRO 🚀</title>
+    <title>BRSMAYKA GAMES 🚀</title>
     <style>
-        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; }
+        :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
+        
         * { box-sizing: border-box; touch-action: manipulation; }
         
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
 
-        /* تأثير الخلفية */
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #111 0%, #050505 100%); }
 
-        .header-box { margin-bottom: 30px; animation: fadeIn 1s; }
+        .header-box { margin-bottom: 35px; position: relative; z-index: 10; }
         .rocket-row { display: flex; align-items: center; justify-content: center; gap: 15px; }
         .header-box h1 { font-size: 2.2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; font-weight: 900; }
 
-        /* عداد الزوار */
-        .visitor-counter { background: rgba(0, 136, 255, 0.1); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--primary); display: inline-block; margin-top: 15px; font-weight: bold; }
+        .visitor-counter { 
+            background: rgba(0, 136, 255, 0.05); 
+            padding: 10px; 
+            border-radius: 50px; 
+            border: 1px solid var(--primary); 
+            display: inline-block; 
+            margin-top: 15px;
+            min-height: 40px;
+            min-width: 200px;
+        }
 
-        /* قائمة الألعاب */
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; z-index: 10; }
-        .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-8px); box-shadow: 0 0 20px rgba(0,136,255,0.3); background: rgba(0, 136, 255, 0.1); }
-
-        /* نافذة اللعبة */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; z-index: 20; }
         
-        /* شريط الوقت */
-        #t-container { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
-        #t-bar { width: 100%; height: 100%; background: var(--accent); transition: 0.1s linear; }
+        .game-card { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            width: 140px; 
+            border-radius: 24px; 
+            padding: 25px; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-8px); background: rgba(0, 136, 255, 0.1); box-shadow: 0 0 20px rgba(0,136,255,0.4); }
 
-        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        .win-text { color: #00ff88; font-size: 2rem; }
-        .lose-text { color: #ff3333; font-size: 2rem; }
+        /* النافذة المنبثقة - تم إصلاح الموضع هنا */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; backdrop-filter: blur(12px); }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 90%; max-width: 420px; padding: 30px; border-radius: 30px; border: 2px solid var(--primary); position: relative; }
+        
+        #game-timer-container { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
+        #game-timer-bar { height: 100%; width: 100%; background: var(--secondary); transition: 0.1s linear; }
 
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; font-size: 1.1rem; }
-        .cell { background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; height: 70px; font-size: 30px; border: 1px solid #333; }
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 22px; margin-bottom: 10px; }
+        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 28px; }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 18px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; font-size: 1.1rem; }
+        
+        .cell { background: #1a1a1a; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; height: 75px; font-size: 2rem; border: 1px solid #333; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 60% { transform: translateX(10px); } }
+        .shake-effect { animation: shake 0.2s ease-in-out; }
 
-        /* انيميشن الاهتزاز عند الخطأ */
-        @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} 100%{transform:translateX(0)} }
-        .error-shake { animation: shake 0.2s ease-in-out; border-color: red !important; }
-
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 22px; }
     </style>
 </head>
-<body onload="updateVisitorCount()">
+<body onclick="initAudio()">
     <div class="bg-layer"></div>
 
     <div class="header-box">
         <div class="rocket-row">
-            <span>🚀</span>
+            <span style="font-size: 2.5rem;">🚀</span>
             <h1>BRSMAYKA GAMES</h1>
-            <span>🚀</span>
+            <span style="font-size: 2.5rem;">🚀</span>
         </div>
         <div class="visitor-counter">
-            👤 الزوار: <span id="v-count">0</span>
+            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+            <script type="text/javascript" src="https://counter1.fc2.com/counter.php?id=39123456&main=1"></script>
         </div>
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="start('math')"> ➕ <h3>Math</h3> </div>
-        <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost</h3> </div>
-        <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed</h3> </div>
-        <div class="game-card" onclick="start('num')"> 🔢 <h3>Numbers</h3> </div>
+        <div class="game-card" onclick="start('math')"> <div style="font-size: 2.5rem;">➕</div> <h3>Math</h3> </div>
+        <div class="game-card" onclick="start('ball')"> <div style="font-size: 2.5rem;">👻</div> <h3>Ghost</h3> </div>
+        <div class="game-card" onclick="start('xo')"> <div style="font-size: 2.5rem;">❌</div> <h3>X-O</h3> </div>
+        <div class="game-card" onclick="start('tap')"> <div style="font-size: 2.5rem;">⚡</div> <h3>Speed</h3> </div>
+        <div class="game-card" onclick="start('num')"> <div style="font-size: 2.5rem;">🔢</div> <h3>Numbers</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content" id="modal-box">
-            <span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white; z-index:101;" onclick="stopGame()">&times;</span>
-            <div id="t-container"><div id="t-bar"></div></div>
+        <div class="modal-content" id="m-content">
+            <span style="position:absolute; left:20px; top:10px; font-size:35px; cursor:pointer; color:#666;" onclick="stop()">&times;</span>
             
+            <div id="game-timer-container"><div id="game-timer-bar"></div></div>
+
             <div id="result-overlay">
                 <h1 id="result-msg"></h1>
-                <button class="btn" onclick="retry()">Retry 🔄</button>
+                <button class="btn" onclick="hideResult()">إعادة المحاولة 🔄</button>
             </div>
+            
             <div id="game-view"></div>
         </div>
     </div>
 
     <script>
-        let timer, timeLeft, currentMode;
+        let timerInterval, timeLeft, currentMode, audioCtx;
 
-        function updateVisitorCount() {
-            let count = localStorage.getItem('visitor_count') || 0;
-            count++;
-            localStorage.setItem('visitor_count', count);
-            document.getElementById('v-count').innerText = count;
-        }
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
         function start(mode) {
             currentMode = mode;
@@ -101,11 +112,11 @@
             view.innerHTML = '';
             
             timeLeft = 100;
-            clearInterval(timer);
-            timer = setInterval(() => {
-                timeLeft -= 1.2;
-                document.getElementById('t-bar').style.width = timeLeft + '%';
-                if (timeLeft <= 0) { clearInterval(timer); showResult(false); }
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.8;
+                document.getElementById('game-timer-bar').style.width = timeLeft + '%';
+                if (timeLeft <= 0) { clearInterval(timerInterval); showResult(false); }
             }, 100);
 
             if(mode === 'math') loadMath(view);
@@ -115,42 +126,38 @@
             if(mode === 'num') loadNum(view);
         }
 
-        function triggerError() {
-            const box = document.getElementById('modal-box');
-            box.classList.add('error-shake');
-            setTimeout(() => box.classList.remove('error-shake'), 300);
-        }
-
         function showResult(win) {
-            clearInterval(timer);
+            clearInterval(timerInterval);
             const overlay = document.getElementById('result-overlay');
             const msg = document.getElementById('result-msg');
             overlay.style.display = 'flex';
-            msg.innerText = win ? 'WINNER! 🏆' : 'GAME OVER! 💀';
-            msg.className = win ? 'win-text' : 'lose-text';
+            msg.innerText = win ? 'كفو! بطل 🎉' : 'خسرت! حاول ثانية 💀';
+            msg.style.color = win ? '#00ff88' : '#ff3333';
         }
 
-        function retry() { start(currentMode); }
-        function stopGame() { document.getElementById('gameModal').style.display = 'none'; clearInterval(timer); }
+        function hideResult() { start(currentMode); }
+        function stop() { document.getElementById('gameModal').style.display = 'none'; clearInterval(timerInterval); }
 
-        // ألعاب مصغرة
+        function triggerError() {
+            const c = document.getElementById('m-content');
+            c.classList.add('shake-effect');
+            setTimeout(() => c.classList.remove('shake-effect'), 300);
+        }
+
+        // محركات الألعاب
         function loadMath(v) {
             let a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20);
-            v.innerHTML = `<h2>${a} + ${b} = ?</h2><input type="number" id="ans"><button class="btn" onclick="checkMath(${a+b})">CHECK</button>`;
+            v.innerHTML = `<h2>${a} + ${b} = ?</h2><input type="number" id="ma"><button class="btn" onclick="if(document.getElementById('ma').value==${a+b})showResult(true);else triggerError()">تحقق</button>`;
         }
-        window.checkMath = (res) => {
-            if(document.getElementById('ans').value == res) showResult(true);
-            else triggerError();
-        };
 
         function loadTap(v) {
             let c = 0;
-            v.innerHTML = `<button class="btn" style="height:100px" onclick="this.innerText=++c; if(c>=15)showResult(true)">TAP 15 TIMES!</button>`;
+            v.innerHTML = `<button class="btn" style="height:100px" onclick="this.innerText=++c; if(c>=15)showResult(true)">اضغط 15 مرة بسرعة!</button>`;
         }
 
         function loadGhost(v) {
-            v.innerHTML = `<div style="height:200px; position:relative; background:#000; border-radius:15px; overflow:hidden;">
-            <div id="gh" style="position:absolute; font-size:40px; cursor:pointer; transition:0.2s;">👻</div></div>`;
+            v.innerHTML = `<div style="height:200px; position:relative; background:#000; border-radius:15px;" id="arena">
+            <div id="gh" style="position:absolute; font-size:40px; cursor:pointer;">👻</div></div>`;
             const g = document.getElementById('gh');
             const move = () => { g.style.left = Math.random()*80+'%'; g.style.top = Math.random()*70+'%'; };
             move();
@@ -158,12 +165,12 @@
         }
 
         function loadXO(v) {
-            v.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">${Array(9).fill().map(()=>`<div class="cell" onclick="this.innerText='X'; this.style.pointerEvents='none'; setTimeout(()=>showResult(true),800)"></div>`).join('')}</div>`;
+            v.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${Array(9).fill().map(()=>`<div class="cell" onclick="this.innerText='X'; this.style.pointerEvents='none'; setTimeout(()=>showResult(true),1000)"></div>`).join('')}</div>`;
         }
 
         function loadNum(v) {
             let n = 1;
-            v.innerHTML = `<h3>Click: 1 ➜ 5</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+            v.innerHTML = `<h3>اضغط الأرقام بالترتيب (1-5)</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
             ${[1,2,3,4,5].sort(()=>Math.random()-0.5).map(x=>`<div class="cell" onclick="if(${x}==n){this.style.opacity=0.3; n++; if(n>5)showResult(true)}else triggerError()">${x}</div>`).join('')}</div>`;
         }
     </script>
