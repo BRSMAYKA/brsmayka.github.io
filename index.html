@@ -9,8 +9,9 @@
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
         
+        /* مربع النقاط الثابت */
         #persistent-score {
-            position: fixed; top: 15px; right: 15px;
+            position: fixed; top: 15px; left: 15px;
             background: rgba(0, 136, 255, 0.2);
             border: 2px solid var(--primary);
             padding: 10px 15px; border-radius: 12px;
@@ -19,51 +20,37 @@
             backdrop-filter: blur(5px);
         }
 
-        #point-pop {
+        /* تأثير النقاط المكتسبة والرموز */
+        #fx-layer {
             display: none; position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             z-index: 20000; pointer-events: none;
-            animation: popUp 1.2s ease-out forwards;
+            flex-direction: column; align-items: center;
         }
 
-        @keyframes popUp {
-            0% { transform: translate(-50%, 0%) scale(0.5); opacity: 0; }
-            30% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -150%) scale(1); opacity: 0; }
-        }
+        .fx-emoji { font-size: 6rem; filter: drop-shadow(0 0 20px var(--primary)); animation: bounce 0.6s infinite alternate; }
+        .fx-points { font-size: 3rem; font-weight: 900; color: #00ff88; text-shadow: 0 0 20px #00ff88; margin-top: 10px; }
 
-        .fx-icon { font-size: 5rem; display: block; filter: drop-shadow(0 0 20px var(--primary)); }
-        .fx-text { font-size: 2.5rem; font-weight: 900; color: #00ff88; text-shadow: 0 0 15px #00ff88; }
+        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.2); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-        .header-box { animation: slideDown 1s ease-out; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
-        @keyframes slideDown { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        .header-box { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
         .header-box h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin: 0; }
 
-        /* Visitor Counter Styling */
-        .counter-wrapper {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 1px solid var(--primary);
-            margin-top: 10px;
-            display: inline-block;
-            min-width: 150px;
-        }
+        .counter-wrapper { background: rgba(255, 255, 255, 0.05); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--primary); display: inline-block; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 130px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: scale(1.05); background: rgba(0, 136, 255, 0.1); }
+        .game-card:hover { border-color: var(--primary); transform: scale(1.05); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
         #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
         .win-text { color: #00ff88; font-size: 2.2rem; }
-        
         .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin-top: 10px; }
         .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; font-size: 35px; border: 1px solid #333; cursor: pointer; }
-        
         #timer-box { width: 100%; height: 8px; background: #222; border-radius: 4px; margin-bottom: 15px; overflow: hidden; display: none; }
         #timer-bar { height: 100%; width: 100%; background: var(--secondary); transition: linear; }
     </style>
@@ -73,9 +60,9 @@
     
     <div id="persistent-score">Score: <span id="total-points">0</span></div>
 
-    <div id="point-pop">
-        <span class="fx-icon" id="fx-emoji">🌟</span>
-        <span class="fx-text" id="fx-points">+0</span>
+    <div id="fx-layer">
+        <div class="fx-emoji" id="fx-emoji">🌟</div>
+        <div class="fx-points" id="fx-text">+0 Points</div>
     </div>
 
     <div class="header-box">
@@ -94,7 +81,7 @@
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content" id="m-content">
+        <div class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:35px; cursor:pointer; color:white; z-index:1001;" onclick="stop()">&times;</span>
             <div id="timer-box"><div id="timer-bar"></div></div>
             <div id="result-overlay">
@@ -109,29 +96,34 @@
     <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
 
     <script>
-        let ctx, currentMode, score = 0, diffLvl = 1, gameTimer, timeLeft, stopInterval;
+        let ctx, currentMode, score = 0, gameTimer, timeLeft, stopInterval;
         let globalPoints = 0;
 
-        const pointsAwarded = { 'xo': 15, 'stop5': 20, 'ball': 10, 'mem': 15, 'tap': 5 };
-        const gameEmojis = { 'xo': '❌', 'stop5': '⏱️', 'ball': '👻', 'mem': '🧠', 'tap': '⚡' };
+        const pointsMap = { 'xo': 15, 'stop5': 20, 'ball': 10, 'mem': 15, 'tap': 5 };
+        const emojiMap = { 'xo': '❌', 'stop5': '⏱️', 'ball': '👻', 'mem': '🧠', 'tap': '⚡' };
 
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brsmayka_score')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
         }
 
-        function updateGlobalScore(points) {
-            globalPoints += points;
-            localStorage.setItem('brsmayka_score', globalPoints);
-            document.getElementById('total-points').innerText = globalPoints;
-        }
+        function triggerWinFX(game) {
+            const fxLayer = document.getElementById('fx-layer');
+            const fxEmoji = document.getElementById('fx-emoji');
+            const fxText = document.getElementById('fx-text');
+            const pts = pointsMap[game];
 
-        function triggerPointFX(game) {
-            const pop = document.getElementById('point-pop');
-            document.getElementById('fx-emoji').innerText = gameEmojis[game];
-            document.getElementById('fx-points').innerText = `+${pointsAwarded[game]} Points`;
-            pop.style.display = 'block';
-            setTimeout(() => { pop.style.display = 'none'; }, 5000); 
+            fxEmoji.innerText = emojiMap[game];
+            fxText.innerText = `+${pts} Points`;
+            
+            fxLayer.style.display = 'flex';
+            fxLayer.style.animation = 'none';
+            
+            // يختفي بعد 5 ثوانٍ
+            setTimeout(() => {
+                fxLayer.style.animation = 'fadeOut 1s forwards';
+                setTimeout(() => { fxLayer.style.display = 'none'; }, 1000);
+            }, 4000);
         }
 
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
@@ -143,9 +135,12 @@
             document.getElementById('result-msg').innerText = msg;
             document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
+            
             if(isWin) {
-                updateGlobalScore(pointsAwarded[currentMode]); 
-                triggerPointFX(currentMode);
+                globalPoints += pointsMap[currentMode];
+                localStorage.setItem('brsmayka_score', globalPoints);
+                document.getElementById('total-points').innerText = globalPoints;
+                triggerWinFX(currentMode);
                 sfx(800, 0.3);
             } else {
                 sfx(100, 0.5);
@@ -162,7 +157,7 @@
             gameTimer = setInterval(() => {
                 timeLeft -= (100 / (seconds * 10)); 
                 document.getElementById('timer-bar').style.width = timeLeft + '%';
-                if(timeLeft <= 0) { clearInterval(gameTimer); showResult('Time Up!', '💀', false); }
+                if(timeLeft <= 0) showResult('Time Up!', '💀', false);
             }, 100);
         }
 
@@ -178,7 +173,7 @@
                 let board = Array(9).fill('');
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell';
-                    c.onclick = () => { if(board[i] === '') { board[i] = 'X'; c.innerText = 'X'; sfx(400); if(!checkWin(board)) setTimeout(() => aiMove(board), 400); } };
+                    c.onclick = () => { if(board[i] === '') { board[i] = 'X'; c.innerText = 'X'; if(!checkWin(board)) setTimeout(() => aiMove(board), 400); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
                 startTimer(15);
@@ -190,9 +185,9 @@
                 document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.2) showResult('Legend!', count.toFixed(2), true); else showResult('Off!', count.toFixed(2), false); };
             }
             else if(mode === 'ball') {
-                view.innerHTML = `<div id="arena" style="height:200px; position:relative; background:#000; border-radius:15px;"><div id="ball" style="position:absolute; font-size:40px; cursor:pointer;">👻</div></div>`;
+                view.innerHTML = `<div style="height:200px; position:relative; background:#000; border-radius:15px;"><div id="ball" style="position:absolute; font-size:40px; cursor:pointer;">👻</div></div>`;
                 const ball = document.getElementById('ball'); const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; }; move();
-                ball.onclick = () => { score++; sfx(600); move(); if(score >= 15) showResult('Exorcist!','🏆',true); };
+                ball.onclick = () => { score++; move(); if(score >= 15) showResult('Exorcist!','🏆',true); };
                 startTimer(12);
             }
             else if(mode === 'tap') {
@@ -212,19 +207,10 @@
         }
 
         function aiMove(b) {
-            let m; const e = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
+            let e = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
             if(e.length === 0) return;
-            m = findB(b, 'O') || findB(b, 'X') || e[Math.floor(Math.random()*e.length)];
+            let m = e[Math.floor(Math.random()*e.length)];
             b[m] = 'O'; document.getElementById('xo-grid').children[m].innerText = 'O'; checkWin(b);
-        }
-
-        function findB(b, p) {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of wins) {
-                let c = w.filter(i => b[i] === p).length; let em = w.filter(i => b[i] === '');
-                if(c === 2 && em.length === 1) return em[0];
-            }
-            return null;
         }
 
         function checkWin(b) {
