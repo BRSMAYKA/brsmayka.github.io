@@ -1,199 +1,76 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMES - ADS EDITION 🚀</title>
-    <style>
-        :root { --primary: #0088ff; --accent: #ff3333; --bg: #050505; }
-        * { box-sizing: border-box; touch-action: manipulation; }
-        
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
-
-        /* طبقة الخلفية */
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-
-        .header-box { margin-bottom: 30px; position: relative; z-index: 10; }
-        .rocket-row { display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .header-box h1 { font-size: 2.2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; font-weight: 900; }
-
-        /* عداد الزوار الحقيقي */
-        .visitor-counter { 
-            background: rgba(0, 136, 255, 0.1); 
-            padding: 10px 25px; 
-            border-radius: 50px; 
-            border: 1px solid var(--primary); 
-            display: inline-block; 
-            margin-top: 15px; 
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 136, 255, 0.2);
-        }
-
-        /* حاوية الألعاب */
-        .container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 20px; 
-            position: relative; 
-            z-index: 100; /* رفع الطبقة لضمان القابلية للضغط */
-            padding-top: 20px;
-        }
-
-        .game-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            width: 140px; 
-            border-radius: 20px; 
-            padding: 20px; 
-            cursor: pointer; 
-            transition: 0.3s;
-            pointer-events: auto; /* التأكد من أنها قابلة للضغط */
-        }
-
-        .game-card:hover { 
-            border-color: var(--primary); 
-            transform: translateY(-8px); 
-            background: rgba(0, 136, 255, 0.15);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        /* النافذة المنبثقة */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
-        
-        #t-container { width: 100%; height: 6px; background: #222; border-radius: 3px; margin-bottom: 15px; overflow: hidden; }
-        #t-bar { width: 100%; height: 100%; background: var(--accent); }
-
-        #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        
-        .btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; font-size: 1.1rem; }
-        
-        .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; height: 70px; font-size: 30px; border: 1px solid #333; }
-        
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); background: #222; color: white; text-align: center; font-size: 22px; outline: none; }
-
-        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } 100% { transform: translateX(0); } }
-        .error-shake { animation: shake 0.2s ease-in-out; border-color: red !important; }
-    </style>
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>BRSMAYKA AI - FIXED VERSION</title> 
+<style> 
+:root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; } 
+* { box-sizing: border-box; touch-action: manipulation; } 
+body { background: var(--bg); colour: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; } 
+.bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); } 
+.header-box { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; } 
+.header-box h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); } 
+.container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; } 
+.game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 160px; border-radius: 20px; padding: 20px; cursor:pointer; transition: 0.3s; } 
+.modal { display: none; position: fixed; set: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); } 
+.modal-content { background: #111; margin: 10vh auto; width: 85%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position:relative; } 
+#result-overlay { display: none; position: absolute; set: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; } 
+.win-text { color: #00ff88; font-size: 2.2rem; text-shadow: 0 0 20px #00ff88; } 
+.lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; } 
+.cell { background: #222; border-radius: 12px; display:flex; align-items: center; justify-content: center; font-weight: bold; cursor:pointer; height: 70px; font-size: 30px; } 
+.btn { background: var(--primary); colour: white; border:none; padding: 12px 25px; border-radius: 50px; cursor:pointer; font-weight: bold; width: 80%; margin-top: 15px; } 
+#arena { height: 220px; background: #000; position:relative; border-radius: 15px; border: 1px solid #333; overflow: hidden; } 
+#ball { width: 45px; height: 45px; background:yellow; border-radius: 50%; position: absolute; cursor:pointer; display:none; box-shadow: 0 0 20px yellow; } 
+</style>
 </head>
-<body onload="initApp()">
-    <div class="bg-layer"></div>
+<body onclick="initAudio()"> 
+<div class="bg-layer"></div> 
+<div class="header-box"> 
+<h1>🎮 BRSMAYKA AI</h1> 
+<div style="background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:50px; border:1px solid var(--primary);"> 
+<div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div> 
+</div> 
+</div> 
 
-    <div class="header-box">
-        <div class="rocket-row">
-            <span style="font-size: 2.5rem;">🚀</span>
-            <h1>BRSMAYKA GAMES</h1>
-            <span style="font-size: 2.5rem;">🚀</span>
-        </div>
-        <div class="visitor-counter">
-            👤 عدد الزيارات: <span id="v-count">0</span>
-        </div>
-    </div>
+<div class="container"> 
+<div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div> 
+<div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost (20)</h3> </div> 
+<div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory</h3> </div> 
+<div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed ​​(25)</h3> </div> 
+</div> 
 
-    <div class="container">
-        <div class="game-card" onclick="start('math')"> ➕ <h3>Math</h3> </div>
-        <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost</h3> </div>
-        <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed</h3> </div>
-        <div class="game-card" onclick="start('num')"> 🔢 <h3>Numbers</h3> </div>
-    </div>
+<div id="gameModal" class="modal"> 
+<div class="modal-content"> 
+<span style="position:absolute; left:20px; top:10px; font-size:30px; cursor:pointer; color:white;" onclick="stop()">&times;</span> 
+<div id="result-overlay"> 
+<h1 id="result-msg"></h1> 
+<p id="result-details" style="color:#aaa;"></p> 
+<button class="btn" onclick="hideResult()">Retry 🔄</button> 
+</div> 
+<div id="game-view"></div> 
+</div> 
+</div> 
 
-    <div id="gameModal" class="modal">
-        <div class="modal-content" id="m-box">
-            <span style="position:absolute; left:20px; top:10px; font-size:35px; cursor:pointer; color:white; z-index:101;" onclick="closeGame()">&times;</span>
-            <div id="t-container"><div id="t-bar"></div></div>
-            
-            <div id="result-overlay">
-                <h1 id="result-msg"></h1>
-                <button class="btn" onclick="retry()">إعادة المحاولة 🔄</button>
-            </div>
-            <div id="game-view"></div>
-        </div>
-    </div>
+<script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script> 
+<script> 
+let ctx; 
+function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); } 
 
-    <script>
-        let timer, timeLeft, currentMode;
+function sfx(f, d = 0.1) { 
+if(ctx) { 
+const o=ctx.createOscillator(), g=ctx.createGain(); 
+o.frequency.value=f; o.connect(g); g.connect(ctx.destination); 
+o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); 
+o.stop(ctx.currentTime + d); 
+} 
+} 
 
-        function initApp() {
-            // نظام عداد الزيارات الحقيقي
-            let visits = localStorage.getItem('br_visits') || 0;
-            visits++;
-            localStorage.setItem('br_visits', visits);
-            document.getElementById('v-count').innerText = visits;
-        }
+function playWinSound() { [523, 659, 783, 1046]. forEach((f, i) => setTimeout(() => sfx(f, 0.2), i * 150)); } 
+function playLoseSound() { [392, 349, 311, 261]. forEach((f, i) => setTimeout(() => sfx(f, 0.4), i * 200)); } 
 
-        function start(mode) {
-            currentMode = mode;
-            document.getElementById('gameModal').style.display = 'block';
-            document.getElementById('result-overlay').style.display = 'none';
-            const view = document.getElementById('game-view');
-            view.innerHTML = '';
-            
-            timeLeft = 100;
-            clearInterval(timer);
-            timer = setInterval(() => {
-                timeLeft -= 1.5;
-                document.getElementById('t-bar').style.width = timeLeft + '%';
-                if (timeLeft <= 0) { clearInterval(timer); finish(false); }
-            }, 100);
-
-            if(mode === 'math') loadMath(view);
-            if(mode === 'xo') loadXO(view);
-            if(mode === 'tap') loadTap(view);
-            if(mode === 'ball') loadGhost(view);
-            if(mode === 'num') loadNum(view);
-        }
-
-        function triggerError() {
-            const box = document.getElementById('m-box');
-            box.classList.add('error-shake');
-            setTimeout(() => box.classList.remove('error-shake'), 300);
-        }
-
-        function finish(win) {
-            clearInterval(timer);
-            const overlay = document.getElementById('result-overlay');
-            const msg = document.getElementById('result-msg');
-            overlay.style.display = 'flex';
-            msg.innerText = win ? 'فوز رائع! 🏆' : 'للأسف خسرت! 💀';
-            msg.style.color = win ? '#00ff88' : '#ff3333';
-        }
-
-        function retry() { start(currentMode); }
-        function closeGame() { document.getElementById('gameModal').style.display = 'none'; clearInterval(timer); }
-
-        // محركات الألعاب المصغرة
-        function loadMath(v) {
-            let a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20);
-            v.innerHTML = `<h2>${a} + ${b} = ?</h2><input type="number" id="ans" autofocus><button class="btn" onclick="if(document.getElementById('ans').value == ${a+b}) finish(true); else triggerError()">تحقق</button>`;
-        }
-
-        function loadTap(v) {
-            let c = 0;
-            v.innerHTML = `<button class="btn" style="height:120px; font-size:2rem;" onclick="this.innerText=++c; if(c>=15) finish(true)">اضغط 15 مرة!</button>`;
-        }
-
-        function loadGhost(v) {
-            v.innerHTML = `<div style="height:220px; position:relative; background:#000; border-radius:15px; overflow:hidden;" id="arena">
-            <div id="gh" style="position:absolute; font-size:45px; cursor:pointer; user-select:none;">👻</div></div>`;
-            const g = document.getElementById('gh');
-            const move = () => { g.style.left = Math.random()*80+'%'; g.style.top = Math.random()*70+'%'; };
-            move();
-            g.onclick = () => finish(true);
-        }
-
-        function loadXO(v) {
-            v.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">${Array(9).fill().map(()=>`<div class="cell" onclick="this.innerText='X'; this.style.pointerEvents='none'; setTimeout(()=>finish(true),800)"></div>`).join('')}</div>`;
-        }
-
-        function loadNum(v) {
-            let n = 1;
-            v.innerHTML = `<h3>اضغط الأرقام بالترتيب (1-5)</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
-            ${[1,2,3,4,5].sort(()=>Math.random()-0.5).map(x=>`<div class="cell" onclick="if(${x}==n){this.style.opacity=0.3; n++; if(n>5) finish(true)} else triggerError()">${x}</div>`).join('')}</div>`;
-        }
-    </script>
-</body>
-</html>
+function showResult(msg, details, isWin) { 
+const overlay = document. getElementById('result-overlay'); 
+document.getElementById('result-msg').innerText = msg; 
+document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text'; 
+document. getElemen
