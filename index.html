@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - Gaming Hub 🚀</title>
+    <title>BRSMAYKA AI - Ultra FX 🚀</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
         
-        /* Persistent Score Box */
+        /* Floating Score Display */
         #persistent-score {
             position: fixed; top: 15px; right: 15px;
             background: rgba(0, 136, 255, 0.2);
@@ -20,8 +20,24 @@
             backdrop-filter: blur(5px);
         }
 
+        /* تأثير النقاط المكتسبة */
+        #point-pop {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20000; pointer-events: none;
+            animation: popUp 1.2s ease-out forwards;
+        }
+
+        @keyframes popUp {
+            0% { transform: translate(-50%, 0%) scale(0.5); opacity: 0; }
+            30% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1); opacity: 0; }
+        }
+
+        .fx-icon { font-size: 5rem; display: block; filter: drop-shadow(0 0 20px var(--primary)); }
+        .fx-text { font-size: 2.5rem; font-weight: 900; color: #00ff88; text-shadow: 0 0 15px #00ff88; }
+
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-        
         @keyframes slideDown { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .header-box { animation: slideDown 1s ease-out; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
         .header-box h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin: 0; }
@@ -34,7 +50,7 @@
         .game-card:hover { border-color: var(--primary); transform: scale(1.05); background: rgba(0, 136, 255, 0.1); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: 0.3s; }
+        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
         @keyframes shake { 0%, 100% { transform: translate(0, 0); } 20%, 60% { transform: translate(-10px, 0); } 40%, 80% { transform: translate(10px, 0); } }
         .lose-shake { animation: shake 0.4s both; border-color: var(--secondary) !important; }
@@ -43,15 +59,12 @@
         #timer-bar { height: 100%; width: 100%; background: var(--secondary); transition: linear; }
 
         #result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        .win-text { color: #00ff88; font-size: 2.2rem; text-shadow: 0 0 20px #00ff88; }
-        .lose-text { color: #ff3333; font-size: 2.2rem; text-shadow: 0 0 20px #ff3333; }
+        .win-text { color: #00ff88; font-size: 2.2rem; }
         
         .btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin-top: 10px; }
-        .lvl-btn { background: #222; border: 1px solid var(--primary); color: white; padding: 5px 15px; border-radius: 10px; margin: 2px; cursor: pointer; font-size: 0.8rem; }
-        .lvl-btn.active { background: var(--primary); }
         .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; font-size: 35px; border: 1px solid #333; cursor: pointer; }
         
-        #stop-clock { font-size: 4rem; font-weight: 900; margin: 20px 0; color: #fff; font-family: monospace; }
+        #stop-clock { font-size: 4rem; font-weight: 900; margin: 20px 0; font-family: monospace; }
         #arena { height: 200px; background: #000; position: relative; border-radius: 15px; overflow: hidden; }
     </style>
 </head>
@@ -60,10 +73,15 @@
     
     <div id="persistent-score">Score: <span id="total-points">0</span></div>
 
+    <div id="point-pop">
+        <span class="fx-icon" id="fx-emoji">🌟</span>
+        <span class="fx-text" id="fx-points">+0</span>
+    </div>
+
     <div class="header-box">
         <h1>🎮 BRSMAYKA AI</h1>
         <div style="background:rgba(255,255,255,0.05); padding:5px 20px; border-radius:50px; border:1px solid var(--primary);">
-             <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
         </div>
     </div>
 
@@ -82,20 +100,18 @@
             <div id="result-overlay">
                 <h1 id="result-msg"></h1>
                 <p id="result-details" style="color:#aaa;"></p>
-                <button class="btn" onclick="hideResult()">Try Again 🔄</button>
+                <button class="btn" onclick="hideResult()">Continue 🔄</button>
             </div>
             <div id="game-view"></div>
         </div>
     </div>
 
-    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
-
     <script>
         let ctx, currentMode, score = 0, diffLvl = 1, gameTimer, timeLeft, stopInterval;
         let globalPoints = 0;
 
-        // Scoring Map
         const pointsAwarded = { 'xo': 15, 'stop5': 20, 'ball': 10, 'mem': 15, 'tap': 5 };
+        const gameEmojis = { 'xo': '❌', 'stop5': '⏱️', 'ball': '👻', 'mem': '🧠', 'tap': '⚡' };
 
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brsmayka_score')) || 0;
@@ -108,23 +124,19 @@
             document.getElementById('total-points').innerText = globalPoints;
         }
 
+        // تأثير النقاط الطائرة
+        function triggerPointFX(game) {
+            const pop = document.getElementById('point-pop');
+            document.getElementById('fx-emoji').innerText = gameEmojis[game];
+            document.getElementById('fx-points').innerText = `+${pointsAwarded[game]} Points`;
+            
+            pop.style.display = 'block';
+            // يختفي بعد 5 ثوان كما طلبت، لكن الحركة تنتهي أسرع لجمالية الموقع
+            setTimeout(() => { pop.style.display = 'none'; }, 5000); 
+        }
+
         function initAudio() { if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); }
         function sfx(f, d = 0.1) { if(ctx) { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=f; o.connect(g); g.connect(ctx.destination); o.start(); g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + d); o.stop(ctx.currentTime + d); } }
-
-        function createBubbles() {
-            for(let i=0; i<20; i++) {
-                setTimeout(() => {
-                    const b = document.createElement('div');
-                    b.className = 'bubble';
-                    const size = Math.random() * 30 + 10 + 'px';
-                    b.style.width = size; b.style.height = size;
-                    b.style.left = Math.random() * 100 + 'vw';
-                    b.style.background = `hsla(${Math.random() * 360}, 70%, 60%, 0.4)`;
-                    document.body.appendChild(b);
-                    setTimeout(() => b.remove(), 3000);
-                }, i * 100);
-            }
-        }
 
         function showResult(msg, details, isWin) {
             clearInterval(gameTimer); clearInterval(stopInterval);
@@ -136,7 +148,8 @@
             
             if(isWin) {
                 updateGlobalScore(pointsAwarded[currentMode]); 
-                sfx(800, 0.3); createBubbles();
+                triggerPointFX(currentMode); // تشغيل التأثير
+                sfx(800, 0.3);
             } else {
                 mContent.classList.add('lose-shake'); sfx(100, 0.5);
                 setTimeout(() => mContent.classList.remove('lose-shake'), 400);
@@ -148,13 +161,12 @@
         function stop() { clearInterval(gameTimer); clearInterval(stopInterval); document.getElementById('gameModal').style.display = 'none'; }
 
         function startTimer(seconds) {
-            timeLeft = 100;
-            document.getElementById('timer-box').style.display = 'block';
+            timeLeft = 100; document.getElementById('timer-box').style.display = 'block';
             clearInterval(gameTimer);
             gameTimer = setInterval(() => {
                 timeLeft -= (100 / (seconds * 10)); 
                 document.getElementById('timer-bar').style.width = timeLeft + '%';
-                if(timeLeft <= 0) { clearInterval(gameTimer); showResult('Time Up!', 'Too slow! 💀', false); }
+                if(timeLeft <= 0) { clearInterval(gameTimer); showResult('Time Up!', '💀', false); }
             }, 100);
         }
 
@@ -166,7 +178,7 @@
             view.innerHTML = '';
 
             if(mode === 'xo') {
-                view.innerHTML = `<h3>Tic-Tac-Toe</h3><div style="margin-bottom:10px;"><button class="lvl-btn ${diffLvl===1?'active':''}" onclick="diffLvl=1; start('xo')">Easy</button><button class="lvl-btn ${diffLvl===2?'active':''}" onclick="diffLvl=2; start('xo')">Pro</button><button class="lvl-btn ${diffLvl===3?'active':''}" onclick="diffLvl=3; start('xo')">Elite</button></div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
+                view.innerHTML = `<h3>Tic-Tac-Toe</h3><div style="margin-bottom:10px;"><button class="lvl-btn ${diffLvl===1?'active':''}" onclick="diffLvl=1; start('xo')">Easy</button><button class="lvl-btn ${diffLvl===2?'active':''}" onclick="diffLvl=2; start('xo')">Elite</button></div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
                 let board = Array(9).fill('');
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell';
@@ -176,19 +188,19 @@
                 startTimer(15);
             }
             else if(mode === 'stop5') {
-                view.innerHTML = `<h3>Stop at 5.00s!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px; font-size:1.5rem;">STOP! 🛑</button>`;
+                view.innerHTML = `<h3>Stop at 5.00s!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px;">STOP!</button>`;
                 let count = 0;
-                stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) { clearInterval(stopInterval); showResult('Missed!', 'Too late! ❌', false); } }, 10);
-                document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.15) showResult('Legendary!', count.toFixed(2), true); else showResult('Off Beat!', count.toFixed(2), false); };
+                stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) showResult('Late!', '', false); }, 10);
+                document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.2) showResult('Legend!', count.toFixed(2), true); else showResult('Off!', count.toFixed(2), false); };
             }
             else if(mode === 'ball') {
-                view.innerHTML = `<div id="arena"><div id="ball" style="display:block; position:absolute; font-size:40px; cursor:pointer;">👻</div></div><p>Catch 20 Ghosts!</p>`;
+                view.innerHTML = `<div id="arena"><div id="ball" style="display:block; position:absolute; font-size:40px; cursor:pointer;">👻</div></div>`;
                 const ball = document.getElementById('ball'); const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; }; move();
-                ball.onclick = () => { score++; sfx(600); move(); if(score >= 20) showResult('Exorcist!','🏆',true); };
+                ball.onclick = () => { score++; sfx(600); move(); if(score >= 15) showResult('Exorcist!','🏆',true); };
                 startTimer(12);
             }
             else if(mode === 'tap') {
-                view.innerHTML = `<h3>Tap 25 Times!</h3><button id="tap-btn" class="btn" style="height:120px; font-size:3rem; width:100%;" onclick="score++; document.getElementById('tap-btn').innerText=score; sfx(400); if(score>=25) showResult('Speedster!','⚡',true)">0</button>`;
+                view.innerHTML = `<h3>Tap 25x!</h3><button id="tap-btn" class="btn" style="height:120px; font-size:3rem;" onclick="score++; document.getElementById('tap-btn').innerText=score; if(score>=25) showResult('Speed!','⚡',true)">0</button>`;
                 startTimer(8);
             }
             else if(mode === 'mem') {
@@ -196,7 +208,7 @@
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"></div>`;
                 nums.forEach(n => {
                     const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
-                    c.onclick = () => { if(f.length < 2 && c.innerText === '?') { c.innerText = n; f.push({c, n}); if(f.length === 2) { if(f[0].n === f[1].n) { score++; f = []; if(score === 4) showResult('Genius!','🧠',true); } else { setTimeout(() => { f[0].c.innerText = '?'; f[1].c.innerText = '?'; f = []; }, 400); } } } };
+                    c.onclick = () => { if(f.length < 2 && c.innerText === '?') { c.innerText = n; f.push({c, n}); if(f.length === 2) { if(f[0].n === f[1].n) { score++; f = []; if(score === 4) showResult('Smart!','🧠',true); } else { setTimeout(() => { f[0].c.innerText = '?'; f[1].c.innerText = '?'; f = []; }, 400); } } } };
                     view.querySelector('div').appendChild(c);
                 });
                 startTimer(20);
@@ -206,10 +218,8 @@
         function aiMove(b) {
             let m; const e = b.map((v,i) => v==='' ? i : null).filter(v => v!==null);
             if(e.length === 0) return;
-            if(diffLvl === 1) m = e[Math.floor(Math.random()*e.length)];
-            else m = findB(b, 'O') || (diffLvl >= 2 ? findB(b, 'X') : null) || e[Math.floor(Math.random()*e.length)];
-            b[m] = 'O'; document.getElementById('xo-grid').children[m].innerText = 'O'; document.getElementById('xo-grid').children[m].style.color = 'red';
-            checkWin(b);
+            m = findB(b, 'O') || findB(b, 'X') || e[Math.floor(Math.random()*e.length)];
+            b[m] = 'O'; document.getElementById('xo-grid').children[m].innerText = 'O'; checkWin(b);
         }
 
         function findB(b, p) {
@@ -223,7 +233,7 @@
 
         function checkWin(b) {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of wins) if(b[w[0]] && b[w[0]]===b[w[1]] && b[w[0]]===b[w[2]]) { showResult(b[w[0]]==='X'?'Winner!':'Defeat!', '', b[w[0]]==='X'); return true; }
+            for(let w of wins) if(b[w[0]] && b[w[0]]===b[w[1]] && b[w[0]]===b[w[2]]) { showResult(b[w[0]]==='X'?'Winner!':'Lost!', '', b[w[0]]==='X'); return true; }
             if(!b.includes('')) { showResult('Draw!', '', true); return true; }
             return false;
         }
