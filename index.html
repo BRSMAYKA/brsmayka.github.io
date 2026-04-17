@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - Ultra Gaming 🚀</title>
+    <title>BRSMAYKA AI - Ultra FX 🚀</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
         
-        /* Floating UI Elements */
         #persistent-score {
             position: fixed; top: 15px; right: 15px;
             background: rgba(0, 136, 255, 0.2);
@@ -37,22 +36,20 @@
         .fx-text { font-size: 2.5rem; font-weight: 900; color: #00ff88; text-shadow: 0 0 15px #00ff88; }
 
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
-        
         .header-box { animation: slideDown 1s ease-out; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
         @keyframes slideDown { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .header-box h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin: 0; }
 
         /* Visitor Counter Styling */
-        .counter-box {
+        .counter-wrapper {
             background: rgba(255, 255, 255, 0.05);
-            padding: 5px 15px;
+            padding: 10px 20px;
             border-radius: 50px;
             border: 1px solid var(--primary);
             margin-top: 10px;
-            font-size: 0.9rem;
-            color: #aaa;
+            display: inline-block;
+            min-width: 150px;
         }
-        #visit-count { color: var(--primary); font-weight: bold; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 130px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
@@ -71,7 +68,7 @@
         #timer-bar { height: 100%; width: 100%; background: var(--secondary); transition: linear; }
     </style>
 </head>
-<body onload="initSystem()" onclick="initAudio()">
+<body onload="loadGlobalScore()" onclick="initAudio()">
     <div class="bg-layer"></div>
     
     <div id="persistent-score">Score: <span id="total-points">0</span></div>
@@ -83,8 +80,8 @@
 
     <div class="header-box">
         <h1>🎮 BRSMAYKA AI</h1>
-        <div class="counter-box">
-            Total Visits: <span id="visit-count">0</span>
+        <div class="counter-wrapper">
+            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
         </div>
     </div>
 
@@ -109,6 +106,8 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
+
     <script>
         let ctx, currentMode, score = 0, diffLvl = 1, gameTimer, timeLeft, stopInterval;
         let globalPoints = 0;
@@ -116,16 +115,9 @@
         const pointsAwarded = { 'xo': 15, 'stop5': 20, 'ball': 10, 'mem': 15, 'tap': 5 };
         const gameEmojis = { 'xo': '❌', 'stop5': '⏱️', 'ball': '👻', 'mem': '🧠', 'tap': '⚡' };
 
-        function initSystem() {
-            // Load Score
+        function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brsmayka_score')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
-
-            // Load & Update Visitor Counter (Local Implementation)
-            let visits = parseInt(localStorage.getItem('brsmayka_visits')) || 0;
-            visits++;
-            localStorage.setItem('brsmayka_visits', visits);
-            document.getElementById('visit-count').innerText = visits;
         }
 
         function updateGlobalScore(points) {
@@ -151,7 +143,6 @@
             document.getElementById('result-msg').innerText = msg;
             document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
-            
             if(isWin) {
                 updateGlobalScore(pointsAwarded[currentMode]); 
                 triggerPointFX(currentMode);
@@ -193,7 +184,7 @@
                 startTimer(15);
             }
             else if(mode === 'stop5') {
-                view.innerHTML = `<h3>Stop at 5.00s!</h3><div id="timer-box" style="display:block; height:4px;"><div id="timer-bar" style="width:100%"></div></div><h1 id="stop-clock">0.00</h1><button id="stop-btn" class="btn" style="height:80px;">STOP!</button>`;
+                view.innerHTML = `<h3>Stop at 5.00s!</h3><h1 id="stop-clock">0.00</h1><button id="stop-btn" class="btn" style="height:80px;">STOP!</button>`;
                 let count = 0;
                 stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) showResult('Late!', '', false); }, 10);
                 document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.2) showResult('Legend!', count.toFixed(2), true); else showResult('Off!', count.toFixed(2), false); };
