@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - نظام الحفظ 🚀</title>
+    <title>BRSMAYKA AI - Gaming Hub 🚀</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
         
-        /* مربع النقاط الثابت في الزاوية اليسرى */
+        /* Persistent Score Box */
         #persistent-score {
-            position: fixed; top: 15px; left: 15px;
+            position: fixed; top: 15px; right: 15px;
             background: rgba(0, 136, 255, 0.2);
             border: 2px solid var(--primary);
             padding: 10px 15px; border-radius: 12px;
@@ -58,31 +58,31 @@
 <body onload="loadGlobalScore()" onclick="initAudio()">
     <div class="bg-layer"></div>
     
-    <div id="persistent-score">نقاطك: <span id="total-points">0</span></div>
+    <div id="persistent-score">Score: <span id="total-points">0</span></div>
 
     <div class="header-box">
         <h1>🎮 BRSMAYKA AI</h1>
         <div style="background:rgba(255,255,255,0.05); padding:5px 20px; border-radius:50px; border:1px solid var(--primary);">
-            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+             <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
         </div>
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="start('xo')"> ❌ <h3>X-O</h3> </div>
-        <div class="game-card" onclick="start('stop5')"> ⏱️ <h3>تحدي 5ث</h3> </div>
-        <div class="game-card" onclick="start('ball')"> 👻 <h3>الشبح</h3> </div>
-        <div class="game-card" onclick="start('mem')"> 🧠 <h3>الذاكرة</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>سرعة</h3> </div>
+        <div class="game-card" onclick="start('xo')"> ❌ <h3>Tic-Tac-Toe</h3> </div>
+        <div class="game-card" onclick="start('stop5')"> ⏱️ <h3>Stop at 5s</h3> </div>
+        <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost Hunt</h3> </div>
+        <div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory</h3> </div>
+        <div class="game-card" onclick="start('tap')"> ⚡ <h3>Speed Tap</h3> </div>
     </div>
 
     <div id="gameModal" class="modal">
         <div class="modal-content" id="m-content">
-            <span style="position:absolute; left:20px; top:10px; font-size:35px; cursor:pointer; color:white; z-index:1001;" onclick="stop()">&times;</span>
+            <span style="position:absolute; right:20px; top:10px; font-size:35px; cursor:pointer; color:white; z-index:1001;" onclick="stop()">&times;</span>
             <div id="timer-box"><div id="timer-bar"></div></div>
             <div id="result-overlay">
                 <h1 id="result-msg"></h1>
                 <p id="result-details" style="color:#aaa;"></p>
-                <button class="btn" onclick="hideResult()">إعادة 🔄</button>
+                <button class="btn" onclick="hideResult()">Try Again 🔄</button>
             </div>
             <div id="game-view"></div>
         </div>
@@ -94,7 +94,9 @@
         let ctx, currentMode, score = 0, diffLvl = 1, gameTimer, timeLeft, stopInterval;
         let globalPoints = 0;
 
-        // وظائف حفظ وتحميل النقاط من المتصفح
+        // Scoring Map
+        const pointsAwarded = { 'xo': 15, 'stop5': 20, 'ball': 10, 'mem': 15, 'tap': 5 };
+
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brsmayka_score')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
@@ -133,7 +135,7 @@
             document.getElementById('result-details').innerText = details;
             
             if(isWin) {
-                updateGlobalScore(10); // إضافة 10 نقاط عند كل فوز
+                updateGlobalScore(pointsAwarded[currentMode]); 
                 sfx(800, 0.3); createBubbles();
             } else {
                 mContent.classList.add('lose-shake'); sfx(100, 0.5);
@@ -152,7 +154,7 @@
             gameTimer = setInterval(() => {
                 timeLeft -= (100 / (seconds * 10)); 
                 document.getElementById('timer-bar').style.width = timeLeft + '%';
-                if(timeLeft <= 0) { clearInterval(gameTimer); showResult('انتهى الوقت!', '💀', false); }
+                if(timeLeft <= 0) { clearInterval(gameTimer); showResult('Time Up!', 'Too slow! 💀', false); }
             }, 100);
         }
 
@@ -164,7 +166,7 @@
             view.innerHTML = '';
 
             if(mode === 'xo') {
-                view.innerHTML = `<h3>X-O</h3><div style="margin-bottom:10px;"><button class="lvl-btn ${diffLvl===1?'active':''}" onclick="diffLvl=1; start('xo')">1</button><button class="lvl-btn ${diffLvl===2?'active':''}" onclick="diffLvl=2; start('xo')">2</button><button class="lvl-btn ${diffLvl===3?'active':''}" onclick="diffLvl=3; start('xo')">3</button></div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
+                view.innerHTML = `<h3>Tic-Tac-Toe</h3><div style="margin-bottom:10px;"><button class="lvl-btn ${diffLvl===1?'active':''}" onclick="diffLvl=1; start('xo')">Easy</button><button class="lvl-btn ${diffLvl===2?'active':''}" onclick="diffLvl=2; start('xo')">Pro</button><button class="lvl-btn ${diffLvl===3?'active':''}" onclick="diffLvl=3; start('xo')">Elite</button></div><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
                 let board = Array(9).fill('');
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell';
@@ -174,19 +176,19 @@
                 startTimer(15);
             }
             else if(mode === 'stop5') {
-                view.innerHTML = `<h3>أوقف الوقت عند 5.00!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px; font-size:1.5rem;">إيقاف! 🛑</button>`;
+                view.innerHTML = `<h3>Stop at 5.00s!</h3><div id="stop-clock">0.00</div><button id="stop-btn" class="btn" style="height:80px; font-size:1.5rem;">STOP! 🛑</button>`;
                 let count = 0;
-                stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) { clearInterval(stopInterval); showResult('تجاوزت!', '❌', false); } }, 10);
-                document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.15) showResult('أسطوري!', count.toFixed(2), true); else showResult('بعيد!', count.toFixed(2), false); };
+                stopInterval = setInterval(() => { count += 0.01; document.getElementById('stop-clock').innerText = count.toFixed(2); if(count > 6) { clearInterval(stopInterval); showResult('Missed!', 'Too late! ❌', false); } }, 10);
+                document.getElementById('stop-btn').onclick = () => { clearInterval(stopInterval); const d = Math.abs(5.00 - count); if(d < 0.15) showResult('Legendary!', count.toFixed(2), true); else showResult('Off Beat!', count.toFixed(2), false); };
             }
             else if(mode === 'ball') {
-                view.innerHTML = `<div id="arena"><div id="ball" style="display:block; position:absolute; font-size:40px; cursor:pointer;">👻</div></div><p>اصطد 20!</p>`;
+                view.innerHTML = `<div id="arena"><div id="ball" style="display:block; position:absolute; font-size:40px; cursor:pointer;">👻</div></div><p>Catch 20 Ghosts!</p>`;
                 const ball = document.getElementById('ball'); const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; }; move();
-                ball.onclick = () => { score++; sfx(600); move(); if(score >= 20) showResult('بطل!','🏆',true); };
+                ball.onclick = () => { score++; sfx(600); move(); if(score >= 20) showResult('Exorcist!','🏆',true); };
                 startTimer(12);
             }
             else if(mode === 'tap') {
-                view.innerHTML = `<h3>اضغط 25 مرة!</h3><button id="tap-btn" class="btn" style="height:120px; font-size:3rem; width:100%;" onclick="score++; document.getElementById('tap-btn').innerText=score; sfx(400); if(score>=25) showResult('برق!','⚡',true)">0</button>`;
+                view.innerHTML = `<h3>Tap 25 Times!</h3><button id="tap-btn" class="btn" style="height:120px; font-size:3rem; width:100%;" onclick="score++; document.getElementById('tap-btn').innerText=score; sfx(400); if(score>=25) showResult('Speedster!','⚡',true)">0</button>`;
                 startTimer(8);
             }
             else if(mode === 'mem') {
@@ -194,7 +196,7 @@
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"></div>`;
                 nums.forEach(n => {
                     const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
-                    c.onclick = () => { if(f.length < 2 && c.innerText === '?') { c.innerText = n; f.push({c, n}); if(f.length === 2) { if(f[0].n === f[1].n) { score++; f = []; if(score === 4) showResult('ذكي!','🧠',true); } else { setTimeout(() => { f[0].c.innerText = '?'; f[1].c.innerText = '?'; f = []; }, 400); } } } };
+                    c.onclick = () => { if(f.length < 2 && c.innerText === '?') { c.innerText = n; f.push({c, n}); if(f.length === 2) { if(f[0].n === f[1].n) { score++; f = []; if(score === 4) showResult('Genius!','🧠',true); } else { setTimeout(() => { f[0].c.innerText = '?'; f[1].c.innerText = '?'; f = []; }, 400); } } } };
                     view.querySelector('div').appendChild(c);
                 });
                 startTimer(20);
@@ -221,8 +223,8 @@
 
         function checkWin(b) {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let w of wins) if(b[w[0]] && b[w[0]]===b[w[1]] && b[w[0]]===b[w[2]]) { showResult(b[w[0]]==='X'?'فزت!':'خسرت!', '', b[w[0]]==='X'); return true; }
-            if(!b.includes('')) { showResult('تعادل!', '', true); return true; }
+            for(let w of wins) if(b[w[0]] && b[w[0]]===b[w[1]] && b[w[0]]===b[w[2]]) { showResult(b[w[0]]==='X'?'Winner!':'Defeat!', '', b[w[0]]==='X'); return true; }
+            if(!b.includes('')) { showResult('Draw!', '', true); return true; }
             return false;
         }
     </script>
