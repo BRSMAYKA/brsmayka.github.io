@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA AI - تحدي الوقت ⏱️</title>
+    <title>BRSMAYKA AI - النسخة التفاعلية 🚀</title>
     <style>
         :root { --primary: #0088ff; --secondary: #ff3333; --bg: #050505; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -11,17 +11,40 @@
         
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #111, #050505); }
         
-        .header-box { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 25px; }
-        .header-box h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; }
+        /* تأثير نزول الاسم من الأعلى */
+        @keyframes slideDown {
+            0% { transform: translateY(-100px); opacity: 0; }
+            60% { transform: translateY(20px); opacity: 1; }
+            100% { transform: translateY(0); }
+        }
+
+        .header-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 25px; 
+            animation: slideDown 1s ease-out; /* تطبيق التأثير */
+        }
+
+        .header-box h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin: 0; font-weight: 900; }
         
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
         .game-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 140px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--primary); transform: scale(1.05); background: rgba(0, 136, 255, 0.1); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 8vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
-        /* شريط الوقت الموحد */
+        /* تأثير الاهتزاز عند الخسارة */
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-10px, 0); }
+            20%, 40%, 60%, 80% { transform: translate(10px, 0); }
+        }
+        .lose-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--secondary) !important; }
+
+        .modal-content { background: #111; margin: 8vh auto; width: 90%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: 0.3s; }
+        
         #timer-box { width: 100%; height: 8px; background: #222; border-radius: 4px; margin-bottom: 15px; overflow: hidden; display: none; }
         #timer-bar { height: 100%; width: 100%; background: var(--secondary); transition: linear; }
 
@@ -33,7 +56,7 @@
         .cell { background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; font-size: 30px; border: 1px solid #333; cursor: pointer; }
         
         #arena { height: 230px; background: #000; position: relative; border-radius: 15px; border: 1px solid #333; overflow: hidden; margin-bottom: 10px; }
-        #ball { width: 50px; height: 50px; font-size: 40px; position: absolute; cursor: pointer; display: none; z-index: 10; }
+        #ball { width: 50px; height: 50px; font-size: 40px; position: absolute; cursor: pointer; display: none; z-index: 10; user-select: none; }
         
         .lvl-btn { padding: 5px 12px; border-radius: 8px; border: 1px solid var(--primary); background: none; color: white; cursor: pointer; margin: 2px; font-size: 0.8rem; }
         .lvl-active { background: var(--primary); font-weight: bold; }
@@ -58,7 +81,7 @@
     </div>
 
     <div id="gameModal" class="modal">
-        <div class="modal-content" id="m-box">
+        <div class="modal-content" id="m-content">
             <span style="position:absolute; left:20px; top:10px; font-size:35px; cursor:pointer; color:white; z-index:1001;" onclick="stop()">&times;</span>
             <div id="timer-box"><div id="timer-bar"></div></div>
             <div id="result-overlay">
@@ -89,11 +112,22 @@
             clearInterval(gameTimer);
             const overlay = document.getElementById('result-overlay');
             const resMsg = document.getElementById('result-msg');
+            const mContent = document.getElementById('m-content');
+            
             resMsg.innerText = msg;
             resMsg.className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
+            
+            // إضافة الاهتزاز عند الخسارة
+            if(!isWin) {
+                mContent.classList.add('lose-shake');
+                sfx(100, 0.5); 
+                setTimeout(() => mContent.classList.remove('lose-shake'), 500);
+            } else {
+                sfx(800, 0.3);
+            }
+
             overlay.style.display = 'flex';
-            isWin ? sfx(800, 0.3) : sfx(150, 0.5);
         }
 
         function hideResult() {
@@ -128,7 +162,7 @@
 
             if(mode === 'xo') {
                 view.innerHTML = `
-                    <h3>X-O تحدي الوقت</h3>
+                    <h3>تحدي X-O</h3>
                     <div style="margin-bottom:10px;">
                         <button class="lvl-btn ${difficulty==='easy'?'lvl-active':''}" onclick="difficulty='easy'; start('xo')">سهل</button>
                         <button class="lvl-btn ${difficulty==='medium'?'lvl-active':''}" onclick="difficulty='medium'; start('xo')">متوسط</button>
@@ -149,23 +183,16 @@
                     };
                     grid.appendChild(c);
                 }
-                startTimer(15); // 15 ثانية لإنهاء مباراة X-O
+                startTimer(15);
             } 
             else if(mode === 'ball') {
-                view.innerHTML = `
-                    <div id="arena"><div id="ball">👻</div></div>
-                    <div class="score-display">التقدم: <span id="ghost-score">0</span> / 20</div>
-                `;
+                view.innerHTML = `<div id="arena"><div id="ball">👻</div></div><div class="score-display">الصيد: <span id="ghost-score">0</span> / 20</div>`;
                 const ball = document.getElementById('ball');
                 const scoreTxt = document.getElementById('ghost-score');
                 ball.style.display = 'block';
                 const move = () => { ball.style.left = Math.random()*85+'%'; ball.style.top = Math.random()*75+'%'; };
                 move();
-                ball.onclick = (e) => {
-                    e.stopPropagation(); score++; scoreTxt.innerText = score;
-                    sfx(600); move();
-                    if(score >= 20) showResult('صياد بارع!', 'طردت الأشباح 🏆', true);
-                };
+                ball.onclick = (e) => { e.stopPropagation(); score++; scoreTxt.innerText = score; sfx(600); move(); if(score >= 20) showResult('كفو!', 'طردت كل الأشباح 🏆', true); };
                 startTimer(12);
             }
             else if(mode === 'tap') {
@@ -184,31 +211,24 @@
                         if(flipped.length < 2 && c.innerText === '?') {
                             c.innerText = n; flipped.push({c, n});
                             if(flipped.length === 2) {
-                                if(flipped[0].n === flipped[1].n) {
-                                    score++; flipped = []; sfx(800);
-                                    if(score === 4) showResult('ذاكرة حديدية!', 'أحسنت 🧠', true);
-                                } else {
-                                    setTimeout(() => { flipped[0].c.innerText = '?'; flipped[1].c.innerText = '?'; flipped = []; }, 400);
-                                }
+                                if(flipped[0].n === flipped[1].n) { score++; flipped = []; sfx(800); if(score === 4) showResult('عبقري!', 'ذاكرة قوية 🧠', true); }
+                                else { setTimeout(() => { flipped[0].c.innerText = '?'; flipped[1].c.innerText = '?'; flipped = []; }, 400); }
                             }
                         }
                     };
                     grid.appendChild(c);
                 });
-                startTimer(20); // 20 ثانية للذاكرة
+                startTimer(20);
             }
         }
 
-        // منطق X-O والكمبيوتر
         function cpuLogic(board, grid) {
             let move;
             const empty = board.map((v,i) => v==='' ? i : null).filter(v => v!==null);
             if(empty.length === 0 || timeLeft <= 0) return;
-
             if(difficulty === 'easy') move = empty[Math.floor(Math.random()*empty.length)];
             else if(difficulty === 'medium') move = findBestMove(board, 'O') || empty[Math.floor(Math.random()*empty.length)];
             else move = findBestMove(board, 'O') || findBestMove(board, 'X') || empty[Math.floor(Math.random()*empty.length)];
-
             board[move] = 'O'; grid.children[move].innerText = 'O'; grid.children[move].style.color = 'red';
             checkWin(board);
         }
@@ -227,17 +247,17 @@
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for(let w of wins) {
                 if(b[w[0]] && b[w[0]]===b[w[1]] && b[w[0]]===b[w[2]]) {
-                    showResult(b[w[0]]==='X'?'فزت بالذكاء!':'هزمك الكمبيوتر!', '', b[w[0]]==='X'); return true;
+                    showResult(b[w[0]]==='X'?'فوز مستحق!':'للأسف خسرت!', '', b[w[0]]==='X'); return true;
                 }
             }
-            if(!b.includes('')) { showResult('تعادل!', 'مباراة قوية', true); return true; }
+            if(!b.includes('')) { showResult('تعادل!', '', true); return true; }
             return false;
         }
 
         function handleTap() {
             score++; document.getElementById('tap-btn').innerText = score;
             sfx(400 + score*5);
-            if(score >= 25) showResult('سرعة برقية!', 'أنت مذهل ⚡', true);
+            if(score >= 25) showResult('سرعة خرافية!', 'تم كسر الرقم ⚡', true);
         }
     </script>
 </body>
