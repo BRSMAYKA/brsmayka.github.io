@@ -18,14 +18,12 @@
             backdrop-filter: blur(8px);
         }
 
-        .header-box { margin-bottom: 25px; }
         .header-box h1 { font-size: 2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); margin: 0; }
         
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-        .game-card { background: #151515; border: 1px solid #333; width: 145px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); background: #1a1a1a; }
-        .game-card h3 { margin: 10px 0 5px; font-size: 1rem; }
-        .game-card small { color: var(--secondary); font-weight: bold; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
+        .game-card { background: #151515; border: 1px solid #333; width: 145px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .game-card small { color: var(--secondary); display: block; margin-top: 5px; font-weight: bold; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #111; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; min-height: 450px; display: flex; flex-direction: column; align-items: center; }
@@ -34,31 +32,30 @@
         #timer-bar { height: 100%; width: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
         #result-overlay { display: none; position: absolute; inset: 0; background: #111; z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; padding: 20px; }
-        .win-text { color: #00ff88; font-size: 2rem; text-shadow: 0 0 15px #00ff88; }
-        .lose-text { color: var(--secondary); font-size: 2rem; text-shadow: 0 0 15px var(--secondary); }
+        .win-text { color: #00ff88; font-size: 2rem; }
+        .lose-text { color: var(--secondary); font-size: 2rem; }
         
-        .btn { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 50px; cursor: pointer; font-weight: 800; width: 85%; margin-top: 15px; text-transform: uppercase; }
-        .cell { background: #1a1a1a; border-radius: 15px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 30px; border: 1px solid #333; cursor: pointer; color: var(--primary); transition: 0.2s; }
-        .flipped { background: #222; border-color: var(--primary); }
+        .btn { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 50px; cursor: pointer; font-weight: 800; width: 85%; margin-top: 10px; }
+        .cell { background: #1a1a1a; border-radius: 15px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--primary); transition: 0.2s; }
+        .cell.taken { cursor: default; }
     </style>
 </head>
-<body onload="loadGlobalScore()" onclick="initAudio()">
+<body onload="loadGlobalScore()" onclick="handleStartAudio()">
 
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
 
     <div class="header-box">
         <h1>BRSMAYKA GAMING</h1>
-        <div class="counter-wrapper">
-            <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-        </div>
+        <p id="hint">Tap anywhere for Sound 🔊</p>
+        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
     </div>
 
     <div class="container">
-        <div class="game-card" onclick="playStartSfx(); start('mem')"> 🧠 <h3>Memory IQ</h3><small>30s</small> </div>
-        <div class="game-card" onclick="playStartSfx(); start('math')"> ➗ <h3>Math Dash</h3><small>5s</small> </div>
-        <div class="game-card" onclick="playStartSfx(); start('xo')"> ❌ <h3>Tic-Tac-Toe</h3><small>15s</small> </div>
-        <div class="game-card" onclick="playStartSfx(); start('ball')"> 👻 <h3>Ghost Hunt</h3><small>15s</small> </div>
-        <div class="game-card" onclick="playStartSfx(); start('tap')"> ⚡ <h3>Hyper Tap</h3><small>7s</small> </div>
+        <div class="game-card" onclick="start('xo')"> 🤖 <h3>XO vs Bot</h3><small>15s</small> </div>
+        <div class="game-card" onclick="start('math')"> ➗ <h3>Math Dash</h3><small>5s</small> </div>
+        <div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory IQ</h3><small>30s</small> </div>
+        <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost Hunt</h3><small>15s</small> </div>
+        <div class="game-card" onclick="start('tap')"> ⚡ <h3>Hyper Tap</h3><small>7s</small> </div>
     </div>
 
     <div id="gameModal" class="modal">
@@ -78,26 +75,29 @@
 
     <script>
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, totalTime, globalPoints = 0;
-        let flippedCards = [];
+        let board = [], canPlay = true;
 
-        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        
-        // دالة توليد الأصوات
-        function playSound(f, t, d, v=0.1) {
-            if(!audioCtx) return;
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            o.connect(g); g.connect(audioCtx.destination);
-            g.gain.setValueAtTime(v, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.start(); o.stop(audioCtx.currentTime + d);
+        function handleStartAudio() {
+            if(!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                playSfx([261, 329, 392, 523], 'sine', 0.1);
+                document.getElementById('hint').style.opacity = '0';
+            }
         }
 
-        // أصوات اللعبة
-        const playStartSfx = () => { playSound(400, 'square', 0.1); setTimeout(()=>playSound(600, 'square', 0.15), 50); };
-        const winSfx = () => { playSound(523, 'sine', 0.2); setTimeout(()=>playSound(659, 'sine', 0.2), 100); setTimeout(()=>playSound(783, 'sine', 0.3), 200); };
-        const loseSfx = () => { playSound(150, 'sawtooth', 0.5); };
-        const clickSfx = () => { playSound(800, 'sine', 0.05, 0.05); };
+        function playSfx(freqs, type, vol) {
+            if(!audioCtx) return;
+            freqs.forEach((f, i) => {
+                setTimeout(() => {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.type = type; o.frequency.value = f;
+                    o.connect(g); g.connect(audioCtx.destination);
+                    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    o.start(); o.stop(audioCtx.currentTime + 0.3);
+                }, i * 100);
+            });
+        }
 
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brs_gaming_score')) || 0;
@@ -106,9 +106,8 @@
 
         function updateTimer() {
             timeLeft -= 0.1;
-            const percent = (timeLeft / totalTime) * 100;
-            document.getElementById('timer-bar').style.width = percent + '%';
-            if(timeLeft <= 0) showResult('TIME OVER!', 'You were too slow!', false);
+            document.getElementById('timer-bar').style.width = (timeLeft/totalTime)*100 + '%';
+            if(timeLeft <= 0) showResult('TIME OVER!', 'Robot wins!', false);
         }
 
         function showResult(msg, details, isWin) {
@@ -118,11 +117,11 @@
             document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
             document.getElementById('result-details').innerText = details;
             if(isWin) {
-                winSfx();
+                playSfx([523, 659, 783], 'sine', 0.1);
                 globalPoints += 50;
                 localStorage.setItem('brs_gaming_score', globalPoints);
                 document.getElementById('total-points').innerText = globalPoints;
-            } else { loseSfx(); }
+            } else { playSfx([150], 'sawtooth', 0.1); }
             overlay.style.display = 'flex';
         }
 
@@ -130,61 +129,88 @@
         function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
 
         function start(mode) {
-            currentMode = mode; score = 0; flippedCards = [];
+            currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
             clearInterval(gameTimer);
             document.getElementById('gameModal').style.display = 'block';
             const view = document.getElementById('game-view');
             view.innerHTML = '';
 
-            const configs = { mem: 30, math: 5, xo: 15, ball: 15, tap: 7 };
+            const configs = { xo: 15, math: 5, mem: 30, ball: 15, tap: 7 };
             totalTime = timeLeft = configs[mode];
             gameTimer = setInterval(updateTimer, 100);
 
-            if(mode === 'mem') {
+            if(mode === 'xo') {
+                view.innerHTML = `<h3>You (X) vs Robot (O)</h3><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
+                for(let i=0; i<9; i++) {
+                    const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
+                    c.onclick = () => playerMove(i);
+                    document.getElementById('xo-grid').appendChild(c);
+                }
+            } else if(mode === 'math') {
+                const a = Math.floor(Math.random()*15), b = Math.floor(Math.random()*15), ans = a+b;
+                const opts = [ans, ans+2, ans-1, ans+5].sort(()=>Math.random()-0.5);
+                view.innerHTML = `<h2>Solve:</h2><h1 style="font-size:3.5rem">${a} + ${b}</h1><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%">${opts.map(o=>`<button class="btn" onclick="checkMath(${o},${ans})">${o}</button>`).join('')}</div>`;
+            } else if(mode === 'tap') {
+                view.innerHTML = `<h2>TAP 30x!</h2><button id="t-btn" class="btn" style="height:150px; font-size:4rem;" onclick="playSfx([800],'sine',0.05); score++; this.innerText=score; if(score>=30) showResult('SONIC!','Speed Demon!',true)">0</button>`;
+            } else if(mode === 'ball') {
+                view.innerHTML = `<div style="height:300px; position:relative; background:#000; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:50px; cursor:pointer;">👻</div></div>`;
+                const g = document.getElementById('ghost'); const move = () => { g.style.left = Math.random()*80+'%'; g.style.top = Math.random()*80+'%'; }; move();
+                g.onclick = () => { playSfx([900],'sine',0.05); score++; move(); if(score>=10) showResult('EXORCIST!','Winner!',true); };
+            } else if(mode === 'mem') {
                 const fruits = ['🍎','🍎','🍌','🍌','🍇','🍇','🍉','🍉','🍓','🍓','🍍','🍍'].sort(()=>Math.random()-0.5);
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; justify-items:center;" id="grid"></div>`;
+                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="grid"></div>`;
+                let flipped = [];
                 fruits.forEach(f => {
                     const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
                     c.onclick = () => {
-                        if(flippedCards.length < 2 && !c.classList.contains('flipped')) {
-                            clickSfx(); c.innerText = f; c.classList.add('flipped');
-                            flippedCards.push({el: c, val: f});
-                            if(flippedCards.length === 2) {
-                                if(flippedCards[0].val === flippedCards[1].val) {
-                                    score++; flippedCards = []; if(score===6) showResult('WINNER!', 'God Memory!', true);
-                                } else {
-                                    setTimeout(() => { flippedCards.forEach(x=>{x.el.innerText='?'; x.el.classList.remove('flipped');}); flippedCards=[]; }, 500);
-                                }
+                        if(flipped.length<2 && !c.classList.contains('taken')) {
+                            playSfx([600],'sine',0.05); c.innerText=f; c.classList.add('taken'); flipped.push({el:c, val:f});
+                            if(flipped.length===2) {
+                                if(flipped[0].val===flipped[1].val){ score++; flipped=[]; if(score===6) showResult('WINNER!','IQ 200!',true); }
+                                else { setTimeout(()=>{ flipped.forEach(x=>{x.el.innerText='?'; x.el.classList.remove('taken');}); flipped=[]; },500); }
                             }
                         }
                     };
                     document.getElementById('grid').appendChild(c);
                 });
-            } else if(mode === 'math') {
-                const a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20), ans = a+b;
-                const opts = [ans, ans+Math.floor(Math.random()*5+1), ans-Math.floor(Math.random()*3+1), ans+10].sort(()=>Math.random()-0.5);
-                view.innerHTML = `<h2>Solve This:</h2><h1 style="font-size:3.5rem; margin:10px 0;">${a} + ${b}</h1><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%">${opts.map(o=>`<button class="btn" style="width:100%" onclick="clickSfx(); o===${ans}?showResult('CORRECT','IQ 200!',true):showResult('WRONG','Incorrect!',false)">${o}</button>`).join('')}</div>`;
-            } else if(mode === 'tap') {
-                view.innerHTML = `<h2>TAP 30 TIMES!</h2><button id="t-btn" class="btn" style="height:150px; font-size:4rem;" onclick="clickSfx(); score++; this.innerText=score; if(score>=30) showResult('SONIC!','Super Speed!',true)">0</button>`;
-            } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:300px; position:relative; background:#000; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:50px; cursor:pointer;">👻</div></div><p>Catch 10 Ghosts!</p>`;
-                const g = document.getElementById('ghost'); const move = () => { g.style.left = Math.random()*80+'%'; g.style.top = Math.random()*80+'%'; }; move();
-                g.onclick = () => { clickSfx(); score++; move(); if(score>=10) showResult('HUNTER!','10/10 Ghosts!',true); };
-            } else if(mode === 'xo') {
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; justify-items:center;" id="xo-grid"></div>`;
-                let b = Array(9).fill('');
-                for(let i=0; i<9; i++) {
-                    const c = document.createElement('div'); c.className = 'cell';
-                    c.onclick = () => { if(!b[i]){ clickSfx(); b[i]='X'; c.innerText='X'; checkWinXO(b); } };
-                    document.getElementById('xo-grid').appendChild(c);
-                }
             }
         }
 
-        function checkWinXO(b) {
+        function checkMath(clicked, correct) {
+            playSfx([clicked === correct ? 800 : 200], 'sine', 0.05);
+            if(clicked === correct) showResult('CORRECT!', 'Fast Math!', true);
+            else showResult('WRONG!', 'Try again!', false);
+        }
+
+        function playerMove(i) {
+            if(!canPlay || board[i] !== '') return;
+            playSfx([400], 'sine', 0.05);
+            board[i] = 'X';
+            document.getElementById('c'+i).innerText = 'X';
+            document.getElementById('c'+i).style.color = 'white';
+            if(checkWin('X')) return showResult('YOU WIN!', 'Beat the Robot!', true);
+            if(!board.includes('')) return showResult('DRAW!', 'Good game!', true);
+            
+            canPlay = false;
+            setTimeout(robotMove, 500);
+        }
+
+        function robotMove() {
+            let empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+            if(empty.length > 0) {
+                let move = empty[Math.floor(Math.random() * empty.length)];
+                board[move] = 'O';
+                document.getElementById('c'+move).innerText = 'O';
+                document.getElementById('c'+move).style.color = 'var(--secondary)';
+                if(checkWin('O')) return showResult('ROBOT WINS!', 'Try again!', false);
+                if(!board.includes('')) return showResult('DRAW!', 'Good game!', true);
+            }
+            canPlay = true;
+        }
+
+        function checkWin(p) {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let s of w) if(b[s[0]] && b[s[0]]===b[s[1]] && b[s[0]]===b[s[2]]) return showResult('WINNER!','🏆 You beat it!',true);
-            if(!b.includes('')) showResult('DRAW!','🤝 Fair play!',true);
+            return w.some(s => s.every(i => board[i] === p));
         }
     </script>
 </body>
