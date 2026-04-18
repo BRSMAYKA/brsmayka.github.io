@@ -3,75 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - 2026 🚀</title>
+    <title>BRSMAYKA GAMING - 2026</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; }
         * { box-sizing: border-box; touch-action: manipulation; }
-        body { background: var(--bg); color: white; font-family: 'Lexend', sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 20px; text-align: center; overflow: hidden; }
         
-        /* شاشة الدخول */
+        /* Splash Screen */
         #splash-screen {
             position: fixed; inset: 0; background: var(--bg);
             z-index: 30000; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
-        .loader { width: 50px; height: 50px; border: 5px solid #222; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         #persistent-score {
             position: fixed; top: 15px; left: 15px;
-            background: rgba(0, 255, 204, 0.15); border: 2px solid var(--primary);
-            padding: 10px 15px; border-radius: 12px; font-weight: bold; z-index: 10001;
+            background: rgba(0, 255, 204, 0.1); border: 1px solid var(--primary);
+            padding: 10px; border-radius: 8px; z-index: 10001;
         }
 
-        .header-box h1 { font-size: 2.2rem; color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+        .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; }
+        .game-card:hover { border-color: var(--primary); }
 
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
-        .game-card { background: #151515; border: 1px solid #333; width: 145px; border-radius: 20px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; display: flex; flex-direction: column; align-items: center; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; }
+        .modal-content { background: #111; margin: 5vh auto; width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; border: 2px solid var(--primary); position: relative; }
         
-        #timer-bar { width: 100%; height: 8px; background: var(--primary); margin: 15px 0; border-radius: 5px; }
+        #timer-bar-container { width: 100%; height: 8px; background: #222; border-radius: 5px; margin: 15px 0; }
+        #timer-bar { height: 100%; width: 100%; background: var(--primary); border-radius: 5px; }
 
-        #result-overlay { display: none; position: absolute; inset: 0; background: #111; z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-        .btn { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: 800; width: 90%; margin-top: 10px; }
-        .cell { background: #1a1a1a; border-radius: 15px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--primary); }
+        #result-overlay { display: none; position: absolute; inset: 0; background: #111; z-index: 100; flex-direction: column; align-items: center; justify-content: center; border-radius: 18px; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 80%; margin: 5px; }
+        .cell { background: #1a1a1a; border-radius: 10px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 28px; border: 1px solid #333; cursor: pointer; }
     </style>
 </head>
 <body onload="loadGlobalScore()">
 
     <div id="splash-screen">
-        <div class="loader"></div>
         <h1 style="color:var(--primary)">BRSMAYKA OS</h1>
-        <p>System Ready...</p>
         <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
     </div>
 
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
 
-    <div class="header-box">
-        <h1>BRSMAYKA GAMING</h1>
-        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-    </div>
+    <h1>BRSMAYKA GAMING</h1>
 
     <div class="container">
-        <div class="game-card" onclick="start('xo')"> 🤖 <h3>XO AI</h3> </div>
-        <div class="game-card" onclick="start('math')"> ➗ <h3>Math</h3> </div>
-        <div class="game-card" onclick="start('mem')"> 🧠 <h3>Memory</h3> </div>
-        <div class="game-card" onclick="start('ball')"> 👻 <h3>Ghost</h3> </div>
-        <div class="game-card" onclick="start('tap')"> ⚡ <h3>Tap</h3> </div>
+        <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
+        <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
+        <div class="game-card" onclick="start('mem')">🧠 <h3>Memory</h3></div>
+        <div class="game-card" onclick="start('ball')">👻 <h3>Ghost</h3></div>
+        <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
     </div>
 
     <div id="gameModal" class="modal">
         <div class="modal-content">
-            <span style="position:absolute; right:20px; top:15px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
-            <div id="timer-bar"></div>
-            <div id="game-view" style="width:100%"></div>
+            <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
+            <div id="timer-bar-container"><div id="timer-bar"></div></div>
+            <div id="game-view" style="min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;"></div>
             <div id="result-overlay">
-                <h1 id="result-msg"></h1>
-                <p id="result-details"></p>
+                <h2 id="result-msg"></h2>
                 <button class="btn" onclick="hideResult()">RETRY</button>
             </div>
         </div>
@@ -79,19 +70,17 @@
 
     <script>
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, totalTime, globalPoints = 0;
-        let board = [], canPlay = true;
+        let board = [], canPlay = true, flipped = [];
 
-        // دالة الدخول وتشغيل الصوت
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const notes = [196, 261, 329, 523]; 
-            notes.forEach((f, i) => {
-                setTimeout(() => playSfx(f, 'triangle', 0.15, 0.8), i * 200);
+            [196, 261, 329, 523].forEach((f, i) => {
+                setTimeout(() => playSfx(f, 'triangle', 0.1, 0.6), i * 200);
             });
             document.getElementById('splash-screen').style.display = 'none';
         }
 
-        function playSfx(f, type, vol, dur = 0.3) {
+        function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
             const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
             o.type = type; o.frequency.value = f;
@@ -106,63 +95,100 @@
             document.getElementById('total-points').innerText = globalPoints;
         }
 
-        function showResult(msg, details, isWin) {
+        function showResult(msg, isWin) {
             clearInterval(gameTimer);
-            const overlay = document.getElementById('result-overlay');
+            document.getElementById('result-overlay').style.display = 'flex';
             document.getElementById('result-msg').innerText = msg;
-            document.getElementById('result-msg').className = isWin ? 'win-text' : 'lose-text';
-            document.getElementById('result-details').innerText = details;
             if(isWin) {
-                playSfx(523, 'sine', 0.1);
+                playSfx(523, 'sine', 0.1, 0.5);
                 globalPoints += 50;
                 localStorage.setItem('brs_gaming_score', globalPoints);
                 document.getElementById('total-points').innerText = globalPoints;
-            }
-            overlay.style.display = 'flex';
+            } else { playSfx(150, 'sawtooth', 0.1, 0.5); }
         }
 
         function hideResult() { document.getElementById('result-overlay').style.display = 'none'; start(currentMode); }
         function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
 
         function start(mode) {
-            playSfx(440, 'sine', 0.05, 0.1);
-            currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
-            clearInterval(gameTimer);
+            currentMode = mode; score = 0; canPlay = true; board = Array(9).fill(''); flipped = [];
             document.getElementById('gameModal').style.display = 'block';
+            document.getElementById('result-overlay').style.display = 'none';
             const view = document.getElementById('game-view');
             view.innerHTML = '';
             
-            totalTime = timeLeft = (mode === 'math' ? 5 : mode === 'mem' ? 30 : 15);
+            totalTime = (mode === 'math' ? 5 : mode === 'mem' ? 30 : 15);
+            timeLeft = totalTime;
+            clearInterval(gameTimer);
             gameTimer = setInterval(() => {
                 timeLeft -= 0.1;
                 document.getElementById('timer-bar').style.width = (timeLeft/totalTime)*100 + '%';
-                if(timeLeft <= 0) showResult('TIMEOUT', 'Robot wins!', false);
+                if(timeLeft <= 0) showResult('TIME OVER!', false);
             }, 100);
 
             if(mode === 'xo') {
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;" id="xo-grid"></div>`;
+                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,75px); gap:5px;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
                     c.onclick = () => {
                         if(!canPlay || board[i] !== '') return;
-                        board[i] = 'X'; c.innerText = 'X';
-                        if(checkWin('X')) return showResult('WIN!', 'Master!', true);
+                        board[i] = 'X'; c.innerText = 'X'; playSfx(400, 'sine', 0.05, 0.1);
+                        if(checkWin('X')) return showResult('YOU WIN!', true);
                         canPlay = false;
                         setTimeout(() => {
                             let empty = board.map((v, idx) => v === '' ? idx : null).filter(v => v !== null);
                             if(empty.length > 0) {
-                                let move = empty[Math.floor(Math.random() * empty.length)];
+                                let move = empty[Math.floor(Math.random()*empty.length)];
                                 board[move] = 'O'; document.getElementById('c'+move).innerText = 'O';
-                                if(checkWin('O')) return showResult('LOST', 'AI Wins!', false);
+                                if(checkWin('O')) showResult('ROBOT WIN!', false);
                             }
                             canPlay = true;
                         }, 500);
                     };
-                    document.getElementById('xo-grid').appendChild(c);
+                    view.firstChild.appendChild(c);
                 }
             } else if(mode === 'math') {
                 const a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20), ans = a+b;
-                view.innerHTML = `<h1>${a} + ${b}</h1><button class="btn" onclick="this.innerText==${ans}?showResult('WIN','Nice!',true):showResult('FAIL','Wrong',false)">${ans}</button><button class="btn" onclick="showResult('FAIL','Wrong',false)">${ans+2}</button>`;
+                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
+                [ans, ans+2, ans-1].sort(()=>Math.random()-0.5).forEach(o => {
+                    const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = o;
+                    btn.onclick = () => o === ans ? showResult('CORRECT!', true) : showResult('WRONG!', false);
+                    view.appendChild(btn);
+                });
+            } else if(mode === 'tap') {
+                view.innerHTML = `<h2>TAP 30 TIMES!</h2><button class="btn" style="height:100px; font-size:30px" id="tap-btn">0</button>`;
+                document.getElementById('tap-btn').onclick = function() {
+                    score++; this.innerText = score; playSfx(600, 'sine', 0.05, 0.1);
+                    if(score >= 30) showResult('FAST HANDS!', true);
+                };
+            } else if(mode === 'ball') {
+                view.innerHTML = `<div id="area" style="width:100%; height:200px; position:relative; background:#000; border-radius:10px; overflow:hidden;">
+                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer;">👻</div>
+                </div><p>Catch 10!</p>`;
+                const g = document.getElementById('ghost');
+                const move = () => { g.style.left = Math.random()*80+'%'; g.style.top = Math.random()*80+'%'; };
+                move();
+                g.onclick = () => { score++; playSfx(800, 'sine', 0.05, 0.1); move(); if(score>=10) showResult('EXORCIST!', true); };
+            } else if(mode === 'mem') {
+                const icons = ['🍎','🍎','🍌','🍌','🍇','🍇','🍓','🍓','🍒','🍒','🍍','🍍'].sort(()=>Math.random()-0.5);
+                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:5px;"></div>`;
+                icons.forEach(icon => {
+                    const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
+                    c.onclick = () => {
+                        if(flipped.length<2 && !c.classList.contains('done')) {
+                            c.innerText = icon; flipped.push({el:c, val:icon});
+                            if(flipped.length === 2) {
+                                if(flipped[0].val === flipped[1].val) {
+                                    flipped.forEach(f=>f.el.classList.add('done')); score++; flipped=[];
+                                    if(score===6) showResult('MEMORY MASTER!', true);
+                                } else {
+                                    setTimeout(()=>{ flipped.forEach(f=>f.el.innerText='?'); flipped=[]; }, 500);
+                                }
+                            }
+                        }
+                    };
+                    view.firstChild.appendChild(c);
+                });
             }
         }
 
