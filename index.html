@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Full Timer Edition</title>
+    <title>BRSMAYKA GAMING - Audio & Timer Edition</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -34,7 +34,7 @@
             60% { transform: translate(-2px, 1px); }
             100% { transform: translate(0, 0); }
         }
-        .shake-fx { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--secondary) !important; }
+        .shake-fx { animation: shake 0.4s both; border-color: var(--secondary) !important; }
         .win-fx { box-shadow: 0 0 50px var(--accent-green) !important; border-color: var(--accent-green) !important; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
@@ -50,7 +50,6 @@
             border-radius: 23px; padding: 20px;
         }
 
-        /* تنسيق المؤقت والخط */
         #timer-container { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
         #timer-bar-container { flex-grow: 1; height: 8px; background: #222; border-radius: 10px; overflow: hidden; }
         #timer-bar { height: 100%; width: 100%; background: var(--accent-green); transition: 0.1s linear; }
@@ -111,20 +110,30 @@
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, totalTime, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard';
 
-        function bootSystem() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            [311, 466, 622, 932].forEach((f, i) => { setTimeout(() => playSfx(f, 'sine', 0.1, 1), i * 200); });
-            document.getElementById('splash-screen').style.display = 'none';
-        }
-
+        // دالة توليد الأصوات (الطقطقة)
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = type; o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(vol, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + dur);
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(f, audioCtx.currentTime);
+                g.gain.setValueAtTime(vol, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.start();
+                o.stop(audioCtx.currentTime + dur);
+            } catch(e) { console.log("Audio Error"); }
+        }
+
+        function bootSystem() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            // طقطقة الدخول
+            [311, 466, 622, 932].forEach((f, i) => { 
+                setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 150); 
+            });
+            document.getElementById('splash-screen').style.display = 'none';
         }
 
         function loadGlobalScore() {
@@ -144,12 +153,12 @@
             if(isWin) {
                 titleEl.style.color = "var(--accent-green)";
                 box.classList.add('win-fx');
-                playSfx(523, 'sine', 0.1, 0.5);
+                playSfx(523, 'sine', 0.1, 0.5); // صوت فوز
                 globalPoints += 50;
             } else {
                 titleEl.style.color = "var(--secondary)";
                 box.classList.add('shake-fx');
-                playSfx(110, 'sawtooth', 0.15, 0.5);
+                playSfx(110, 'sawtooth', 0.15, 0.5); // صوت خسارة
             }
 
             localStorage.setItem('brs_gaming_score', globalPoints);
@@ -158,36 +167,34 @@
         }
 
         function hideResult() { 
-            const box = document.getElementById('game-box');
-            box.classList.remove('win-fx', 'shake-fx');
+            playSfx(800, 'sine', 0.05, 0.1); // طقطقة زر
+            document.getElementById('game-box').classList.remove('win-fx', 'shake-fx');
             document.getElementById('custom-result-overlay').style.display = 'none'; 
             start(currentMode); 
         }
 
         function stop() { 
+            playSfx(200, 'sine', 0.05, 0.1); // طقطقة إغلاق
             clearInterval(gameTimer);
             document.getElementById('game-box').classList.remove('win-fx', 'shake-fx');
             document.getElementById('gameModal').style.display = 'none'; 
         }
 
         function start(mode) {
+            playSfx(600, 'sine', 0.05, 0.1); // طقطقة بدء اللعبة
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
             const view = document.getElementById('game-view');
             view.innerHTML = '';
 
-            // ضبط الوقت لكل لعبة
             totalTime = (mode === 'math' ? 6 : mode === 'tap' ? 12 : 20);
             timeLeft = totalTime;
 
             clearInterval(gameTimer);
             gameTimer = setInterval(() => {
                 timeLeft -= 0.1;
-                if(timeLeft <= 0) {
-                    timeLeft = 0;
-                    showResult('TIME OVER', 'System timeout!', false);
-                }
+                if(timeLeft <= 0) { timeLeft = 0; showResult('TIME OVER', 'Too slow!', false); }
                 document.getElementById('timer-bar').style.width = (timeLeft/totalTime)*100 + '%';
                 document.getElementById('timer-text').innerText = timeLeft.toFixed(1) + 's';
             }, 100);
@@ -202,7 +209,13 @@
                     <div style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => { if(canPlay && board[i] === '') { board[i] = 'X'; c.innerText = 'X'; if(!checkXO()) { canPlay = false; setTimeout(aiMove, 500); } } };
+                    c.onclick = () => { 
+                        if(canPlay && board[i] === '') { 
+                            playSfx(1000, 'sine', 0.05, 0.05); // طقطقة الضغط على المربع
+                            board[i] = 'X'; c.innerText = 'X'; 
+                            if(!checkXO()) { canPlay = false; setTimeout(aiMove, 500); } 
+                        } 
+                    };
                     view.lastChild.appendChild(c);
                 }
             } else if(mode === 'math') {
@@ -210,13 +223,13 @@
                 view.innerHTML = `<h1 style="font-size:3rem; margin:20px 0;">${a} + ${b}</h1>`;
                 [ans, ans+4, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
                     const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = o;
-                    btn.onclick = () => o === ans ? showResult('CORRECT!', '+50 Points', true) : showResult('WRONG!', 'Try again!', false);
+                    btn.onclick = () => { playSfx(1000, 'sine', 0.05, 0.05); o === ans ? showResult('CORRECT!', '+50 Points', true) : showResult('WRONG!', 'Try again!', false); };
                     view.appendChild(btn);
                 });
             } else if(mode === 'tap') {
-                view.innerHTML = `<h2>TAP 30x!</h2><button id="tap-btn" class="btn" style="height:120px; font-size:45px;" onclick="score++; this.innerText=score; if(score>=30) showResult('VICTORY','Ultra Speed!',true)">0</button>`;
+                view.innerHTML = `<h2>TAP 30x!</h2><button id="tap-btn" class="btn" style="height:120px; font-size:45px;" onclick="score++; this.innerText=score; playSfx(1200, 'sine', 0.03, 0.05); if(score>=30) showResult('VICTORY','Ultra Speed!',true)">0</button>`;
             } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:45px; cursor:pointer;" onclick="score++; this.style.left=Math.random()*85+'%'; this.style.top=Math.random()*85+'%'; if(score>=10) showResult('WINNER','Ghost Hunter!',true)">👻</div></div>`;
+                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:45px; cursor:pointer;" onclick="score++; playSfx(1500, 'sine', 0.05, 0.05); this.style.left=Math.random()*85+'%'; this.style.top=Math.random()*85+'%'; if(score>=10) showResult('WINNER','Ghost Hunter!',true)">👻</div></div>`;
             } else if(mode === 'mem') {
                 const icons = ['🔥','🔥','💎','💎','⚡','⚡','🍒','🍒','🍀','🍀','⭐','⭐'].sort(()=>Math.random()-0.5);
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
@@ -225,6 +238,7 @@
                     const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
                     c.onclick = () => {
                         if(flipped.length<2 && c.innerText=='?') {
+                            playSfx(1000, 'sine', 0.05, 0.05);
                             c.innerText = icon; flipped.push({el:c, val:icon});
                             if(flipped.length===2) {
                                 if(flipped[0].val===flipped[1].val) { score++; flipped=[]; if(score===6) showResult('PERFECT','Memory Master!',true); }
@@ -237,12 +251,12 @@
             }
         }
 
-        // --- XO AI Logic ---
         function checkXO() {
             if(checkWin(board, 'X')) { showResult('VICTORY', 'You beat the AI!', true); return true; }
             if(!board.includes('')) { showResult('DRAW', 'No one wins', true); return true; }
             return false;
         }
+
         function aiMove() {
             let move;
             if(difficulty === 'easy') move = getRandomMove();
@@ -250,20 +264,24 @@
             else move = minimax(board, 'O').index;
             if(move === undefined) return;
             board[move] = 'O';
+            playSfx(400, 'sine', 0.05, 0.1); // طقطقة حركة الروبوت
             document.getElementById('c'+move).innerText = 'O';
             document.getElementById('c'+move).style.color = 'var(--secondary)';
             if(checkWin(board, 'O')) showResult('DEFEAT', 'AI is too smart!', false);
             else if(!board.includes('')) showResult('DRAW', 'Fair game', true);
             else canPlay = true;
         }
+
         function getRandomMove() {
             let empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
             return empty[Math.floor(Math.random() * empty.length)];
         }
+
         function checkWin(b, p) {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             return w.some(s => s.every(i => b[i] === p));
         }
+
         function minimax(newBoard, player) {
             let avail = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
             if(checkWin(newBoard, 'X')) return {score: -10};
