@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Pro Edition</title>
+    <title>BRSMAYKA GAMING - Chill Edition</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -27,31 +27,28 @@
             padding: 10px; display: inline-block; border-radius: 10px; border: 1px dashed #333;
         }
 
-        /* تأثير الاهتزاز */
         @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-3px, 0px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            100% { transform: translate(0px, 0px) rotate(0deg); }
+            0% { transform: translate(2px, 2px); }
+            20% { transform: translate(-3px, -2px); }
+            40% { transform: translate(3px, 2px); }
+            60% { transform: translate(-2px, 1px); }
+            100% { transform: translate(0, 0); }
         }
-        .shake-active { animation: shake 0.4s; }
+        .shake-fx { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--secondary) !important; }
+        .win-fx { box-shadow: 0 0 50px var(--accent-green) !important; border-color: var(--accent-green) !important; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--accent-green); position: relative; box-shadow: 0 0 30px rgba(0, 255, 68, 0.2); }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: 0.3s; }
         
-        /* واجهة النتيجة الجديدة بدلاً من جوجل */
         #custom-result-overlay {
-            display: none; position: absolute; inset: 0; background: #0a0a0a;
+            display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95);
             z-index: 10000; flex-direction: column; align-items: center; justify-content: center;
             border-radius: 23px; padding: 20px;
         }
-        .result-title { font-size: 2rem; font-weight: 900; margin-bottom: 10px; }
-        .win-style { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); }
-        .lose-style { color: var(--secondary); text-shadow: 0 0 15px var(--secondary); }
 
         #timer-bar-container { width: 100%; height: 6px; background: #222; margin: 15px 0; border-radius: 10px; overflow: hidden; }
         #timer-bar { height: 100%; width: 100%; background: var(--accent-green); }
@@ -59,17 +56,15 @@
         .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
         .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--accent-green); }
         
-        .level-select { margin-bottom: 15px; display: flex; gap: 5px; justify-content: center; }
-        .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; text-transform: uppercase; }
-        .lvl-btn.active { background: var(--accent-green); color: black; border-color: var(--accent-green); }
+        .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; }
+        .lvl-btn.active { background: var(--accent-green); color: black; }
     </style>
 </head>
 <body onload="loadGlobalScore()">
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
-        <p style="color: #555;">SYSTEM BOOTING...</p>
-        <button class="btn" style="width:200px; margin-top:20px;" onclick="bootSystem()">ENTER SYSTEM</button>
+        <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
     </div>
 
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
@@ -93,20 +88,19 @@
         <div id="game-box" class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
             <div id="timer-bar-container"><div id="timer-bar"></div></div>
-            
             <div id="game-view"></div>
 
             <div id="custom-result-overlay">
-                <h1 id="res-title" class="result-title"></h1>
+                <h1 id="res-title" style="font-size: 2.5rem;"></h1>
                 <p id="res-desc" style="margin-bottom: 20px;"></p>
-                <button class="btn" onclick="hideResult()">TRY AGAIN</button>
-                <button class="btn" style="background:#222; color:white;" onclick="stop()">CLOSE</button>
+                <button class="btn" onclick="hideResult()">PLAY AGAIN</button>
+                <button class="btn" style="background:#333; color:white;" onclick="stop()">QUIT</button>
             </div>
         </div>
     </div>
 
     <script>
-        let audioCtx, currentMode, score = 0, gameTimer, timeLeft, totalTime, globalPoints = 0;
+        let audioCtx, currentMode, score = 0, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard';
 
         function bootSystem() {
@@ -125,67 +119,58 @@
             o.start(); o.stop(audioCtx.currentTime + dur);
         }
 
-        function triggerShake() {
-            const box = document.getElementById('game-box');
-            box.classList.add('shake-active');
-            setTimeout(() => box.classList.remove('shake-active'), 400);
-        }
-
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brs_gaming_score')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
         }
 
-        // دالة عرض النتيجة الاحترافية داخل الموقع
         function showResult(title, desc, isWin) {
-            clearInterval(gameTimer);
             const overlay = document.getElementById('custom-result-overlay');
+            const box = document.getElementById('game-box');
             const titleEl = document.getElementById('res-title');
             
             titleEl.innerText = title;
-            titleEl.className = 'result-title ' + (isWin ? 'win-style' : 'lose-style');
             document.getElementById('res-desc').innerText = desc;
             
-            if(!isWin) { triggerShake(); playSfx(150, 'sawtooth', 0.1, 0.5); }
-            else { 
-                playSfx(523, 'sine', 0.1, 0.5); 
+            if(isWin) {
+                titleEl.style.color = "var(--accent-green)";
+                box.classList.add('win-fx');
+                playSfx(523, 'sine', 0.1, 0.5); playSfx(659, 'sine', 0.1, 0.6);
                 globalPoints += 50;
-                localStorage.setItem('brs_gaming_score', globalPoints);
-                document.getElementById('total-points').innerText = globalPoints;
+            } else {
+                titleEl.style.color = "var(--secondary)";
+                box.classList.add('shake-fx');
+                playSfx(110, 'sawtooth', 0.15, 0.5);
             }
+
+            localStorage.setItem('brs_gaming_score', globalPoints);
+            document.getElementById('total-points').innerText = globalPoints;
             overlay.style.display = 'flex';
         }
 
         function hideResult() { 
+            const box = document.getElementById('game-box');
+            box.classList.remove('win-fx', 'shake-fx');
             document.getElementById('custom-result-overlay').style.display = 'none'; 
             start(currentMode); 
         }
 
         function stop() { 
-            clearInterval(gameTimer); 
+            document.getElementById('game-box').classList.remove('win-fx', 'shake-fx');
             document.getElementById('gameModal').style.display = 'none'; 
-            document.getElementById('custom-result-overlay').style.display = 'none';
         }
 
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
+            document.getElementById('timer-bar').style.width = '100%'; // يبقى الشريط ممتلئاً
             const view = document.getElementById('game-view');
             view.innerHTML = '';
-            
-            totalTime = (mode === 'math' ? 5 : 20);
-            timeLeft = totalTime;
-            clearInterval(gameTimer);
-            gameTimer = setInterval(() => {
-                timeLeft -= 0.1;
-                document.getElementById('timer-bar').style.width = (timeLeft/totalTime)*100 + '%';
-                if(timeLeft <= 0) showResult('TIME EXPIRED', 'Robot won this round!', false);
-            }, 100);
 
             if(mode === 'xo') {
                 view.innerHTML = `
-                    <div class="level-select">
+                    <div style="margin-bottom:10px; display:flex; gap:5px; justify-content:center;">
                         <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy'; start('xo')">Easy</button>
                         <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med'; start('xo')">Med</button>
                         <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard'; start('xo')">Hard</button>
@@ -199,15 +184,15 @@
             } else if(mode === 'math') {
                 const a = Math.floor(Math.random()*30), b = Math.floor(Math.random()*30), ans = a+b;
                 view.innerHTML = `<h1 style="font-size:3rem; margin:20px 0;">${a} + ${b}</h1>`;
-                [ans, ans+5, ans-3].sort(()=>Math.random()-0.5).forEach(o => {
+                [ans, ans+5, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
                     const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = o;
-                    btn.onclick = () => o === ans ? showResult('CORRECT!', '+50 Points Added', true) : showResult('WRONG!', 'Calculation Error', false);
+                    btn.onclick = () => o === ans ? showResult('EXCELLENT!', '+50 Points Added', true) : showResult('WRONG!', 'Try again!', false);
                     view.appendChild(btn);
                 });
             } else if(mode === 'tap') {
-                view.innerHTML = `<h2>TAP 30x FAST!</h2><button id="tap-btn" class="btn" style="height:120px; font-size:45px;" onclick="score++; this.innerText=score; playSfx(600,'sine',0.05,0.1); if(score>=30) showResult('VICTORY','You are too fast!',true)">0</button>`;
+                view.innerHTML = `<h2>TAP 30x!</h2><button id="tap-btn" class="btn" style="height:120px; font-size:45px;" onclick="score++; this.innerText=score; playSfx(600,'sine',0.05,0.1); if(score>=30) showResult('VICTORY','Ultra Speed!',true)">0</button>`;
             } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:45px; cursor:pointer;" onclick="score++; playSfx(800,'sine',0.05,0.1); this.style.left=Math.random()*85+'%'; this.style.top=Math.random()*85+'%'; if(score>=10) showResult('MISSION COMPLETE','Ghosts Cleared',true)">👻</div></div>`;
+                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:45px; cursor:pointer;" onclick="score++; playSfx(800,'sine',0.05,0.1); this.style.left=Math.random()*85+'%'; this.style.top=Math.random()*85+'%'; if(score>=10) showResult('WINNER','Ghost Hunter!',true)">👻</div></div>`;
             } else if(mode === 'mem') {
                 const icons = ['🔥','🔥','💎','💎','⚡','⚡','🍒','🍒','🍀','🍀','⭐','⭐'].sort(()=>Math.random()-0.5);
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
@@ -218,7 +203,7 @@
                         if(flipped.length<2 && c.innerText=='?') {
                             c.innerText = icon; flipped.push({el:c, val:icon});
                             if(flipped.length===2) {
-                                if(flipped[0].val===flipped[1].val) { score++; flipped=[]; if(score===6) showResult('SYSTEM RESTORED','Memory Matched',true); }
+                                if(flipped[0].val===flipped[1].val) { score++; flipped=[]; if(score===6) showResult('PERFECT','Memory Master!',true); }
                                 else { setTimeout(()=>{ flipped.forEach(f=>f.el.innerText='?'); flipped=[]; }, 500); }
                             }
                         }
@@ -229,8 +214,8 @@
         }
 
         function checkXO() {
-            if(checkWin(board, 'X')) { showResult('ACCESS GRANTED', 'You beat the system!', true); return true; }
-            if(!board.includes('')) { showResult('DRAW', 'Fair game', true); return true; }
+            if(checkWin(board, 'X')) { showResult('VICTORY', 'You beat the AI!', true); return true; }
+            if(!board.includes('')) { showResult('DRAW', 'No one wins', true); return true; }
             return false;
         }
 
@@ -243,8 +228,8 @@
             board[move] = 'O';
             document.getElementById('c'+move).innerText = 'O';
             document.getElementById('c'+move).style.color = 'var(--secondary)';
-            if(checkWin(board, 'O')) showResult('SYSTEM FAILURE', 'Robot is superior!', false);
-            else if(!board.includes('')) showResult('DRAW', 'Fair match', true);
+            if(checkWin(board, 'O')) showResult('DEFEAT', 'AI is too smart!', false);
+            else if(!board.includes('')) showResult('DRAW', 'Fair game', true);
             else canPlay = true;
         }
 
@@ -263,7 +248,6 @@
             if(checkWin(newBoard, 'X')) return {score: -10};
             if(checkWin(newBoard, 'O')) return {score: 10};
             if(avail.length === 0) return {score: 0};
-
             let moves = [];
             for(let i=0; i<avail.length; i++) {
                 let move = {}; move.index = avail[i];
