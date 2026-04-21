@@ -340,19 +340,23 @@
             return moves[bestMove];
         }
     </script>
-    <footer style="margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center; font-family: sans-serif;">
-        <div style="margin-bottom: 15px;">
-            <a onclick="alert('Privacy Policy:\nنقاطك وبياناتك تُحفظ في متصفحك فقط. نحن لا نجمع أي معلومات شخصية.')" 
-               style="color: #00ffcc; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 14px; border: 1px solid #00ffcc; padding: 5px 15px; border-radius: 20px;">
-               Privacy Policy
-            </a>
-        </div>
-        <div style="color: #888; font-size: 15px;">
-            Location: <span style="color: #ffffff; font-weight: bold;">Morocco 🇲🇦</span>
-        </div>
-        <p style="color: #444; font-size: 11px; margin-top: 15px;">© 2026 BrsMayka Gaming</p>
-    </footer>
+<div id="privacyModal" class="brs-modal">
+    <div class="brs-modal-content">
+        <h2>Privacy Policy</h2>
+        <p>نحن نحترم خصوصيتك تماماً. نقاطك وبيانات ألعابك تُحفظ داخل متصفحك فقط. نحن لا نجمع أي معلومات شخصية عن الزوار.</p>
+        <button class="btn" onclick="closePrivacy()" style="width: 100px;">إغلاق</button>
+    </div>
+</div>
 
-</body> </html>
+<footer style="margin-top: 40px; padding: 20px; border-top: 1px solid #222; text-align: center;">
+    <div style="margin-bottom: 15px;">
+        <a onclick="openPrivacy()" style="color: #00ffcc; text-decoration: none; cursor: pointer; font-weight: bold; font-size: 14px; border: 1px solid #00ffcc; padding: 5px 15px; border-radius: 20px;">
+           Privacy Policy
+        </a>
+    </div>
+    <div style="color: #888;">
+        Location: <span style="color: #ffffff; font-weight: bold;">Morocco 🇲🇦</span>
+    </div>
+</footer>
 </body>
 </html>
