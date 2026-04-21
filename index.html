@@ -4,7 +4,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Full Professional Edition</title>
+    <title>BRSMAYKA GAMING - Pro Sounds Edition</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
         * { box-sizing: border-box; touch-action: manipulation; }
@@ -14,24 +14,17 @@
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
         
-        .share-container { margin: 20px auto; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; max-width: 400px; }
-        .share-btn { display: inline-block; margin: 5px; padding: 10px 15px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 13px; }
-        .wa { background: #25D366; } .fb { background: #1877F2; }
-
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
+        .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); box-shadow: 0 0 10px var(--accent-green); }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--accent-green); position: relative; }
         
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
-        .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 28px; border: 1px solid #333; cursor: pointer; color: var(--accent-green); }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; font-size: 1rem; }
+        .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--accent-green); }
 
-        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #333; }
-        .footer-links a { color: var(--accent-green); text-decoration: none; margin: 0 10px; cursor: pointer; }
-        .info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 40000; justify-content: center; align-items: center; }
-        .info-card { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 2px solid var(--accent-green); width: 85%; max-width: 350px; text-align: right; }
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #333; font-size: 14px; color: #666; }
     </style>
 </head>
 <body onload="loadGlobalScore()">
@@ -44,47 +37,61 @@
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
     <h1 class="brand-name">BRSMAYKA GAMING</h1>
 
-    <div class="share-container">
-        <a href="https://api.whatsapp.com/send?text=Play on BrsMayka: https://brsmayka.github.io" class="share-btn wa">WhatsApp</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" class="share-btn fb">Facebook</a>
-    </div>
-
     <div class="container">
         <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
         <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
-        <div class="game-card" onclick="start('mem')">🧠 <h3>Memory</h3></div>
-        <div class="game-card" onclick="start('ball')">👻 <h3>Ghost</h3></div>
-        <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
+        <div class="game-card" onclick="start('tap')">⚡ <h3>Speed Tap</h3></div>
     </div>
 
     <div id="gameModal" class="modal">
-        <div id="game-box" class="modal-content">
-            <span style="float:right; font-size:30px; cursor:pointer; color:white;" onclick="stop()">&times;</span>
+        <div class="modal-content">
+            <span style="float:right; font-size:30px; cursor:pointer; color:#ff3366;" onclick="stop()">&times;</span>
             <div id="game-view" style="margin-top:30px;"></div>
         </div>
     </div>
 
     <footer>
-        <div class="footer-links">
-            <a onclick="showOwnerInfo()">Owner Info</a>
-            <a onclick="alert('Privacy Policy: We respect your privacy.')">Privacy Policy</a>
-        </div>
+        <p>© 2026 BrsMayka Gaming - All Sounds Interactive</p>
     </footer>
 
-    <div id="owner-modal" class="info-overlay">
-        <div class="info-card">
-            <h2>المطور</h2>
-            <p><strong>الاسم:</strong> BrsMayka</p>
-            <p><strong>الموقع:</strong> Morocco</p>
-            <button class="btn" onclick="hideOwnerInfo()">إغلاق</button>
-        </div>
-    </div>
-
     <script>
-        let audioCtx, globalPoints = 0, currentScore = 0;
+        let audioCtx, globalPoints = 0;
+
+        // محرك الأصوات المتطور
+        function playSfx(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'win') { // صوت الفوز
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } 
+            else if (type === 'lose') { // صوت الخسارة
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+            else if (type === 'click') { // صوت النقر
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            }
+        }
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            playSfx('win'); // نغمة ترحيبية
             document.getElementById('splash-screen').style.display = 'none';
         }
 
@@ -99,45 +106,52 @@
             document.getElementById('total-points').innerText = globalPoints;
         }
 
-        function showOwnerInfo() { document.getElementById('owner-modal').style.display = 'flex'; }
-        function hideOwnerInfo() { document.getElementById('owner-modal').style.display = 'none'; }
-        function stop() { document.getElementById('gameModal').style.display = 'none'; }
-
         function start(mode) {
-            document.getElementById('gameModal').style.display = 'block';
+            playSfx('click');
             const view = document.getElementById('game-view');
+            document.getElementById('gameModal').style.display = 'block';
             view.innerHTML = '';
-            
-            if(mode === 'math') {
-                let a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20);
+
+            if (mode === 'math') {
+                let a = Math.floor(Math.random()*15), b = Math.floor(Math.random()*15), res = a + b;
                 view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [a+b, a+b+2, a+b-1].sort(()=>Math.random()-0.5).forEach(ans => {
-                    let b = document.createElement('button'); b.className = 'btn'; b.innerText = ans;
-                    b.onclick = () => { if(ans === a+b) { alert('Correct!'); updateScore(10); start('math'); } else { alert('Wrong!'); stop(); }};
-                    view.appendChild(b);
+                [res, res+2, res-1].sort(()=>Math.random()-0.5).forEach(opt => {
+                    let btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = opt;
+                    btn.onclick = () => {
+                        if(opt === res) { playSfx('win'); updateScore(10); start('math'); }
+                        else { playSfx('lose'); alert('خسرت! الإجابة هي ' + res); stop(); }
+                    };
+                    view.appendChild(btn);
                 });
-            } else if(mode === 'tap') {
-                currentScore = 0;
-                view.innerHTML = `<h2>Tap 20 times!</h2><button class="btn" id="t-btn" style="height:100px; font-size:30px;" onclick="tapFunc()">0</button>`;
-            } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:200px; position:relative; background:#111; border-radius:10px;">
-                <div id="gh" style="position:absolute; font-size:40px; cursor:pointer;" onclick="this.style.left=Math.random()*80+'%'; this.style.top=Math.random()*80+'%'; updateScore(5);">👻</div></div>`;
-            } else if(mode === 'xo') {
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,70px); gap:5px; justify-content:center;" id="xo-b"></div>`;
+            }
+
+            if (mode === 'tap') {
+                let count = 0;
+                view.innerHTML = `<h2>اضغط 15 مرة بسرعة!</h2><button id="tbtn" class="btn" style="height:100px; font-size:40px;">0</button>`;
+                document.getElementById('tbtn').onclick = () => {
+                    count++; playSfx('click');
+                    document.getElementById('tbtn').innerText = count;
+                    if(count >= 15) { playSfx('win'); updateScore(20); alert('فوز سريع!'); stop(); }
+                };
+            }
+
+            if (mode === 'xo') {
+                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,75px); gap:10px; justify-content:center;" id="xob"></div>`;
                 for(let i=0; i<9; i++) {
-                    let c = document.createElement('div'); c.className = 'cell'; c.onclick = () => { if(c.innerText===''){c.innerText='X'; updateScore(2);}};
-                    document.getElementById('xo-b').appendChild(c);
+                    let c = document.createElement('div'); c.className = 'cell';
+                    c.onclick = () => { 
+                        if(c.innerText === '') { 
+                            playSfx('click'); c.innerText = 'X'; 
+                            // محاكاة فوز بسيطة للتدريب
+                            if(Math.random() > 0.8) { playSfx('win'); updateScore(5); alert('حركة ذكية!'); }
+                        }
+                    };
+                    document.getElementById('xob').appendChild(c);
                 }
-            } else if(mode === 'mem') {
-                view.innerHTML = `<h2>Memory Game</h2><p>Coming very soon!</p><button class="btn" onclick="stop()">Close</button>`;
             }
         }
 
-        function tapFunc() {
-            currentScore++;
-            document.getElementById('t-btn').innerText = currentScore;
-            if(currentScore >= 20) { alert('Finished!'); updateScore(20); stop(); }
-        }
+        function stop() { document.getElementById('gameModal').style.display = 'none'; }
     </script>
 </body>
 </html>
