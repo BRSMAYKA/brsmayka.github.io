@@ -19,8 +19,8 @@
         #timer-bar { height: 100%; width: 100%; background: var(--accent-green); transition: 0.1s linear; }
         #timer-text { font-family: monospace; color: var(--accent-green); font-weight: bold; min-width: 50px; }
 
-        /* Visitor Counter UI */
-        .counter-box { margin: 15px auto; font-size: 14px; color: #888; }
+        /* Real Visitor Counter Style */
+        .visitor-stat-box { margin: 15px auto; padding: 10px; background: #111; border-radius: 15px; border: 1px solid #222; display: inline-block; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
@@ -49,8 +49,9 @@
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
         <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
-        <div class="counter-box">
-            Visitors: <img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=brsmayka_gaming" border="0" style="vertical-align: middle;">
+        <div class="visitor-stat-box">
+            <span style="font-size:12px; color:#666;">Total Visitors:</span><br>
+            <a href="https://www.freecounterstat.com" title="hit counter"><img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=brsmayka_gaming" border="0" alt="hit counter"></a>
         </div>
     </div>
 
@@ -85,14 +86,11 @@
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
-            
             <div id="timer-container">
                 <div id="timer-bar-container"><div id="timer-bar"></div></div>
                 <div id="timer-text">0.0s</div>
             </div>
-
             <div id="game-view"></div>
-
             <div id="custom-result-overlay">
                 <h1 id="res-title"></h1>
                 <p id="res-desc"></p>
@@ -131,7 +129,7 @@
             } else {
                 document.getElementById('res-title').style.color = "var(--secondary)";
                 document.getElementById('game-box').classList.add('shake-fx');
-                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // الاهتزاز عند الخسارة
             }
             
             localStorage.setItem('brs_gaming_score', globalPoints);
@@ -153,7 +151,6 @@
             document.getElementById('custom-result-overlay').style.display = 'none';
             const view = document.getElementById('game-view'); view.innerHTML = '';
             
-            // عداد الثواني (إرجاع الميزة)
             totalTime = (mode === 'math' ? 7 : mode === 'tap' ? 10 : 20);
             timeLeft = totalTime;
             clearInterval(gameTimer);
@@ -165,9 +162,9 @@
             }, 100);
 
             if(mode === 'math') {
-                const a = Math.floor(Math.random()*30), b = Math.floor(Math.random()*30), ans = a+b;
+                const a = Math.floor(Math.random()*25), b = Math.floor(Math.random()*25), ans = a+b;
                 view.innerHTML = `<h1 style="font-size:3rem;">${a} + ${b}</h1>`;
-                [ans, ans+3, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
+                [ans, ans+4, ans-1].sort(()=>Math.random()-0.5).forEach(o => {
                     const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = o;
                     btn.onclick = () => o === ans ? showResult('CORRECT', '+50 Pts', true) : showResult('WRONG', 'Try again', false);
                     view.appendChild(btn);
