@@ -306,7 +306,30 @@
                 for(let i=0; i<moves.length; i++) { if(moves[i].score < bestScore) { bestScore = moves[i].score; bestMove = i; } }
             }
             return moves[bestMove];
-        }
-    </script>
+        }// ... نهاية كود الميني ماكس ...
+} 
+
+// كود المشاركة (يجب أن يكون قبل إغلاق script)
+document.getElementById('shareBtn').onclick = async () => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'ألعاب رائعة!',
+                text: 'جرب هذه اللعبة الممتعة على موقعي!',
+                url: window.location.href
+            });
+        } catch (err) { console.log('Cancelled'); }
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('تم نسخ الرابط!');
+    }
+};
+
+</script>
+
+<button id="shareBtn" style="padding: 10px 20px; background-color: #25d366; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+  شارك الموقع مع أصدقائك 🚀
+</button>
+
 </body>
 </html>
