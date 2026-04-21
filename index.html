@@ -307,32 +307,21 @@
             }
             return moves[bestMove];
      <script>
-// --- Smart Share Function ---
-const shareButton = document.getElementById('shareBtn');
-
-shareButton.onclick = async () => {
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: 'AI Challenge!',
-                text: 'Can you beat this AI? Try it now on my website!',
-                url: window.location.href
-            });
-            console.log('Successful share');
-        } catch (error) {
-            console.log('Error sharing:', error);
-        }
-    } else {
-        // Fallback for browsers that do not support Web Share API
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard! Share it with your friends.');
-    }
-};
-</script>
-
-<button id="shareBtn" style="padding: 12px 25px; background-color: #25d366; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 20px auto; display: block;">
-  Share with Friends 🚀
-</button>
-
-</body>
-</html>
+<div style="position: fixed; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 9999;">
+    <button id="shareBtn" style="
+        padding: 15px 30px; 
+        background-color: #25d366; 
+        color: white; 
+        border: none; 
+        border-radius: 50px; 
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+        cursor: pointer; 
+        font-weight: bold; 
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 10px;">
+        <span>Share with Friends</span> 🚀
+    </button>
+</div>
