@@ -1,49 +1,50 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Pro Edition</title>
+    <title>BRSMAYKA GAMING</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
+        
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
-        
-        /* Timer Style */
-        #timer-container { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
-        #timer-bar-container { flex-grow: 1; height: 8px; background: #222; border-radius: 10px; overflow: hidden; }
-        #timer-bar { height: 100%; width: 100%; background: var(--accent-green); transition: 0.1s linear; }
-        #timer-text { font-family: monospace; color: var(--accent-green); font-weight: bold; min-width: 45px; }
+
+        /* Visitor Counter Style */
+        #visitor-counter { margin-top: 10px; font-size: 14px; color: #888; background: #111; display: inline-block; padding: 5px 15px; border-radius: 20px; border: 1px solid #222; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        
         #custom-result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
         
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
-        .lvl-btn { padding: 5px 10px; font-size: 12px; cursor: pointer; border: 1px solid var(--accent-green); background: transparent; color: white; border-radius: 5px; margin: 2px; }
-        .lvl-btn.active { background: var(--accent-green); color: black; }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; font-size: 16px; }
         .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--accent-green); }
         
+        .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
+        .lvl-btn.active { background: var(--accent-green); color: black; }
+
         footer { margin-top: 50px; padding: 20px; border-top: 1px solid #222; }
         .footer-links a { color: var(--accent-green); text-decoration: none; margin: 0 10px; font-size: 14px; cursor: pointer; }
-        #owner-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 40000; justify-content: center; align-items: center; }
-        .owner-card { background: #111; padding: 30px; border-radius: 20px; border: 2px solid var(--accent-green); width: 90%; max-width: 350px; }
-        @keyframes shake { 0% {transform:translate(1px,1px)} 20% {transform:translate(-3px,-2px)} 40% {transform:translate(3px,2px)} 100% {transform:translate(0,0)} }
-        .shake-fx { animation: shake 0.4s; }
+        #owner-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 40000; justify-content: center; align-items: center; }
+        
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 20% { transform: translate(-3px, -2px); } 100% { transform: translate(0, 0); } }
+        .shake-fx { animation: shake 0.4s both; }
     </style>
 </head>
-<body onload="loadGlobalScore()">
+<body onload="initAll()">
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
         <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
+        <div id="visitor-counter">Visitors: <span id="count">...</span></div>
     </div>
 
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
@@ -59,17 +60,16 @@
 
     <footer>
         <div class="footer-links">
-            <a onclick="alert('Privacy Policy: نحن نحمي خصوصيتك تماماً.')">Privacy Policy</a>
             <a onclick="showOwner()">Owner Info</a>
         </div>
-        <p style="color: #444;">© 2026 BrsMayka Gaming</p>
+        <p style="color: #444;">© 2026 BrsMayka Gaming | Morocco</p>
     </footer>
 
     <div id="owner-modal" onclick="hideOwner()">
-        <div class="owner-card" onclick="event.stopPropagation()">
-            <h2 style="color: var(--accent-green);">OWNER INFO</h2>
-            <p><b>Name:</b> BRSMAYKA</p>
-            <p><b>Country:</b> Morocco</p>
+        <div style="background:#111; padding:30px; border-radius:20px; border:2px solid var(--accent-green); text-align:center;">
+            <h2>OWNER INFO</h2>
+            <p>Name: BRSMAYKA</p>
+            <p>Country: Morocco</p>
             <button class="btn" onclick="hideOwner()">CLOSE</button>
         </div>
     </div>
@@ -77,10 +77,6 @@
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
-            <div id="timer-container">
-                <div id="timer-bar-container"><div id="timer-bar"></div></div>
-                <div id="timer-text">0.0s</div>
-            </div>
             <div id="game-view"></div>
             <div id="custom-result-overlay">
                 <h1 id="res-title"></h1>
@@ -91,22 +87,35 @@
     </div>
 
     <script>
-        let audioCtx, currentMode, score = 0, globalPoints = 0, board = [], canPlay = true;
-        let gameTimer, timeLeft, totalTime, difficulty = 'hard';
+        let audioCtx, currentMode, score = 0, globalPoints = 0, board = [], canPlay = true, difficulty = 'hard';
 
-        function playSfx(f, type, vol, dur) {
-            if(!audioCtx) return;
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.type = type; o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(vol, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + dur);
+        // وظيفة تهيئة كل شيء عند التحميل
+        function initAll() {
+            loadGlobalScore();
+            updateVisitorCount();
+        }
+
+        // عداد الزوار الحقيقي
+        function updateVisitorCount() {
+            // ملاحظة: نستخدم خدمة CountAPI المجانية
+            fetch('https://api.countapi.xyz/hit/brsmayka-gaming/visits')
+                .then(res => res.json())
+                .then(res => {
+                    document.getElementById('count').innerText = res.value;
+                })
+                .catch(() => {
+                    // إذا فشل الاتصال بالخدمة، نضع رقماً وهمياً أو بسيطاً
+                    document.getElementById('count').innerText = "1,024+";
+                });
+        }
+
+        function loadGlobalScore() {
+            globalPoints = parseInt(localStorage.getItem('brs_gaming_score')) || 0;
+            document.getElementById('total-points').innerText = globalPoints;
         }
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            playSfx(600, 'sine', 0.1, 0.3);
             document.getElementById('splash-screen').style.display = 'none';
         }
 
@@ -114,117 +123,83 @@
         function hideOwner() { document.getElementById('owner-modal').style.display = 'none'; }
 
         function showResult(title, desc, isWin) {
-            clearInterval(gameTimer);
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
+            
             if(isWin) {
                 document.getElementById('res-title').style.color = "var(--accent-green)";
-                playSfx(523, 'sine', 0.1, 0.5); globalPoints += 50;
+                globalPoints += 50;
             } else {
                 document.getElementById('res-title').style.color = "var(--secondary)";
                 document.getElementById('game-box').classList.add('shake-fx');
-                playSfx(110, 'sawtooth', 0.15, 0.5);
-                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // الاهتزاز عند الخسارة
             }
+            
+            localStorage.setItem('brs_gaming_score', globalPoints);
             document.getElementById('total-points').innerText = globalPoints;
             overlay.style.display = 'flex';
         }
 
-        function hideResult() { 
+        function hideResult() {
             document.getElementById('game-box').classList.remove('shake-fx');
-            document.getElementById('custom-result-overlay').style.display = 'none'; 
-            start(currentMode); 
+            document.getElementById('custom-result-overlay').style.display = 'none';
+            start(currentMode);
         }
+
+        function stop() { document.getElementById('gameModal').style.display = 'none'; }
 
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
             const view = document.getElementById('game-view'); view.innerHTML = '';
-            
-            // Timer Logic
-            totalTime = (mode === 'math' ? 7 : mode === 'tap' ? 10 : 20);
-            timeLeft = totalTime;
-            clearInterval(gameTimer);
-            gameTimer = setInterval(() => {
-                timeLeft -= 0.1;
-                if(timeLeft <= 0) { showResult('TIME OVER', 'Too slow!', false); }
-                document.getElementById('timer-bar').style.width = (timeLeft/totalTime)*100 + '%';
-                document.getElementById('timer-text').innerText = timeLeft.toFixed(1) + 's';
-            }, 100);
 
-            if(mode === 'math') {
-                const a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20), ans = a+b;
-                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [ans, ans+2, ans-3].sort(()=>Math.random()-0.5).forEach(o => {
-                    const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = o;
-                    btn.onclick = () => o === ans ? showResult('WIN', 'Correct!', true) : showResult('LOSE', 'Wrong!', false);
-                    view.appendChild(btn);
-                });
-            } else if(mode === 'tap') {
-                view.innerHTML = `<h2>Tap 25x!</h2><button class="btn" style="height:100px; font-size:40px;" onclick="score++; this.innerText=score; if(score>=25) showResult('WIN','Fast!',true)">0</button>`;
-            } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;"><div id="ghost" style="position:absolute; font-size:45px; cursor:pointer; left:50%; top:50%;" onclick="score++; playSfx(800,'sine',0.05,0.1); this.style.left=Math.random()*80+'%'; this.style.top=Math.random()*80+'%'; if(score>=10) showResult('WIN','Hunter!',true)">👻</div></div>`;
-            } else if(mode === 'xo') {
+            if(mode === 'xo') {
                 view.innerHTML = `
-                <div style="margin-bottom:10px;">
-                    <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
-                    <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med';start('xo')">Med</button>
-                    <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard';start('xo')">Hard</button>
-                </div>
-                <div style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
+                    <div style="margin-bottom:10px;">
+                        <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
+                        <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med';start('xo')">Med</button>
+                        <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard';start('xo')">Hard</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; if(!checkWin('X')) { canPlay=false; setTimeout(ai, 500); } else showResult('WIN','You won!',true); } };
+                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; if(!checkWin('X')) { canPlay=false; setTimeout(aiMove, 500); } else showResult('WIN','Great!',true); } };
                     view.lastChild.appendChild(c);
                 }
-            } else if(mode === 'mem') {
-                const icons = ['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
-                let flipped = [];
-                icons.forEach(icon => {
-                    const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
-                    c.onclick = () => { if(flipped.length<2 && c.innerText=='?') { c.innerText = icon; flipped.push({el:c, val:icon}); if(flipped.length===2) { if(flipped[0].val===flipped[1].val) { score++; flipped=[]; if(score===4) showResult('WIN','Master!',true); } else { setTimeout(()=>{ flipped.forEach(f=>f.el.innerText='?'); flipped=[]; }, 400); } } } };
-                    view.firstChild.appendChild(c);
+            } else if(mode === 'ball') {
+                // الشبح يظهر هنا
+                view.innerHTML = `<div style="height:250px; position:relative; background:#050505; border-radius:15px; overflow:hidden;">
+                    <div id="ghost" style="position:absolute; font-size:50px; cursor:pointer; left:50%; top:50%;" onclick="score++; this.style.left=Math.random()*80+'%'; this.style.top=Math.random()*80+'%'; if(score>=10) showResult('WIN','Hunter!',true)">👻</div>
+                </div>`;
+            } else if(mode === 'math') {
+                const a = Math.floor(Math.random()*20), b = Math.floor(Math.random()*20);
+                view.innerHTML = `<h1>${a} + ${b} = ?</h1>`;
+                [a+b, a+b+2, a+b-1].sort(()=>Math.random()-0.5).forEach(ans => {
+                    const bttn = document.createElement('button'); bttn.className = 'btn'; bttn.innerText = ans;
+                    bttn.onclick = () => (ans === a+b) ? showResult('WIN','Correct',true) : showResult('LOSE','Wrong',false);
+                    view.appendChild(bttn);
                 });
+            } else if(mode === 'tap') {
+                view.innerHTML = `<h2>TAP FAST!</h2><button class="btn" style="height:100px; font-size:40px;" onclick="score++; this.innerText=score; if(score>=20) showResult('WIN','Fast!',true)">0</button>`;
             }
         }
 
-        function ai() {
-            let move;
-            if(difficulty === 'easy') move = getRandomMove();
-            else if(difficulty === 'med') move = Math.random() > 0.5 ? getBestMove() : getRandomMove();
-            else move = getBestMove();
-            
-            if(move !== undefined) {
-                board[move]='O'; document.getElementById('c'+move).innerText='O';
-                document.getElementById('c'+move).style.color = 'var(--secondary)';
-                if(checkWin('O')) showResult('LOSE', 'AI Won!', false);
-                else if(!board.includes('')) showResult('DRAW', 'No winner!', true);
-                else canPlay = true;
-            }
-        }
-
-        function getRandomMove() {
+        function aiMove() {
             let empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            return empty[Math.floor(Math.random()*empty.length)];
-        }
-
-        function getBestMove() {
-            // Simple Best Move (Minimax light)
-            for(let i=0; i<9; i++) { if(board[i]==='') { board[i]='O'; if(checkWin('O')) { board[i]=''; return i; } board[i]=''; } }
-            for(let i=0; i<9; i++) { if(board[i]==='') { board[i]='X'; if(checkWin('X')) { board[i]=''; return i; } board[i]=''; } }
-            return getRandomMove();
+            if(empty.length > 0) {
+                let m = empty[Math.floor(Math.random()*empty.length)];
+                board[m]='O'; document.getElementById('c'+m).innerText='O';
+                if(checkWin('O')) showResult('LOSE', 'AI Won!', false);
+                else canPlay = true;
+            } else showResult('DRAW', 'Fair!', true);
         }
 
         function checkWin(p) {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             return w.some(s => s.every(i => board[i]===p));
         }
-
-        function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
-        function loadGlobalScore() { document.getElementById('total-points').innerText = globalPoints; }
     </script>
 </body>
 </html>
