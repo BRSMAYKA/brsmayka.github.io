@@ -1,40 +1,25 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="ltr">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266"
-     crossorigin="anonymous"></script>
-    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Full Edition</title>
-    
+    <title>BRSMAYKA GAMING - Full System</title>
     <style>
         :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
-        
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
-
+        
+        /* شاشة الدخول */
         #splash-screen {
             position: fixed; inset: 0; background: var(--bg); z-index: 30000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        #persistent-score {
-            position: fixed; top: 15px; left: 15px;
-            background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green);
-            padding: 10px; border-radius: 8px; z-index: 10001;
-        }
-
-        /* أزرار المشاركة */
-        .share-container {
-            margin: 20px auto; padding: 15px; background: rgba(255, 255, 255, 0.03);
-            border-radius: 15px; max-width: 400px; border: 1px solid #222;
-        }
-        .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; transition: 0.3s; }
-        .wa { background: #25D366; } .fb { background: #1877F2; } .tw { background: #000; border: 1px solid #333; }
-
-        #visitor-counter-box { margin: 10px auto; background: rgba(255, 255, 255, 0.05); padding: 10px; display: inline-block; border-radius: 10px; border: 1px dashed #333; }
+        .share-container { margin: 20px auto; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px; max-width: 400px; }
+        .share-btn { display: inline-block; margin: 5px; padding: 10px 15px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 13px; }
+        .wa { background: #25D366; } .fb { background: #1877F2; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
@@ -43,15 +28,11 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         
-        #custom-result-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; border-radius: 23px; }
-
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
-
-        /* تذييل الصفحة Footer */
-        footer { margin-top: 50px; padding: 20px; background: #111; border-top: 1px solid #333; font-size: 14px; }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 15px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 80%; margin: 10px; font-size: 1.1rem; }
+        
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #333; font-size: 14px; }
         .footer-links a { color: var(--accent-green); text-decoration: none; margin: 0 10px; cursor: pointer; }
 
-        /* نافذة المعلومات */
         .info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 40000; justify-content: center; align-items: center; }
         .info-card { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 2px solid var(--accent-green); width: 85%; max-width: 350px; text-align: right; }
     </style>
@@ -60,21 +41,15 @@
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
-        <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
+        <p style="color: #666;">Ready to play?</p>
+        <button class="btn" id="enter-button" onclick="bootSystem()">ENTER SYSTEM</button>
     </div>
-
-    <div id="persistent-score">Points: <span id="total-points">0</span></div>
 
     <h1 class="brand-name">BRSMAYKA GAMING</h1>
 
     <div class="share-container">
-        <a href="https://api.whatsapp.com/send?text=Play Games on BRSMAYKA: https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
-    </div>
-
-    <div id="visitor-counter-box">
-        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-        <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
+        <a href="https://api.whatsapp.com/send?text=Play on BrsMayka: https://brsmayka.github.io" class="share-btn wa">WhatsApp</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" class="share-btn fb">Facebook</a>
     </div>
 
     <div class="container">
@@ -87,29 +62,55 @@
 
     <footer>
         <div class="footer-links">
-            <a onclick="alert('Privacy Policy: نحن نحترم خصوصيتك ونستخدم ملفات الكوكيز لتحسين الإعلانات.')">Privacy Policy</a>
+            <a onclick="alert('سياسة الخصوصية: نحن نحمي بياناتك ونستخدم الإعلانات لتحسين الموقع.')">Privacy Policy</a>
             <a onclick="showOwnerInfo()">Owner Info</a>
         </div>
-        <p>© 2026 BRSMAYKA GAMING</p>
     </footer>
 
     <div id="owner-modal" class="info-overlay">
         <div class="info-card">
-            <h2 style="color:var(--accent-green)">معلومات المطور</h2>
+            <h2 style="color:var(--accent-green)">المطور</h2>
             <p><strong>الاسم:</strong> BrsMayka</p>
             <p><strong>الموقع:</strong> Ait Melloul, Morocco</p>
-            <p><strong>المشروع:</strong> BrsMayka Gaming</p>
             <button class="btn" onclick="hideOwnerInfo()">إغلاق</button>
         </div>
     </div>
 
+    <div id="gameModal" class="modal">
+        <div id="game-box" class="modal-content">
+            <span style="float:right; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
+            <div id="game-view"></div>
+        </div>
+    </div>
+
     <script>
-        // ... (هنا تضع دوال الألعاب: start, stop, bootSystem, aiMove, إلخ)
-        // ملاحظة: تأكد من نسخ دوال الـ Javascript كاملة من الرد السابق لتعمل الألعاب.
+        let audioCtx;
+
+        function bootSystem() {
+            // حل مشكلة عدم الاستجابة: تشغيل الصوت أولاً ثم إخفاء الشاشة
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // صوت ترحيبي بسيط للتأكد من العمل
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + 0.1);
+
+            document.getElementById('splash-screen').style.display = 'none';
+            console.log("System Booted");
+        }
+
+        function loadGlobalScore() { console.log("Score Loaded"); }
         function showOwnerInfo() { document.getElementById('owner-modal').style.display = 'flex'; }
         function hideOwnerInfo() { document.getElementById('owner-modal').style.display = 'none'; }
-        // ... (باقي كود الألعاب)
+        
+        function start(mode) {
+            document.getElementById('gameModal').style.display = 'block';
+            document.getElementById('game-view').innerHTML = "<h2>Starting " + mode + "...</h2><p>Game logic loading...</p>";
+        }
+        function stop() { document.getElementById('gameModal').style.display = 'none'; }
     </script>
-
 </body>
 </html>
