@@ -1,157 +1,82 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Pro Sounds Edition</title>
+    <title>BrsMayka Gaming</title>
+    
     <style>
-        :root { --primary: #00ffcc; --secondary: #ff3366; --bg: #0a0a0a; --accent-green: #00ff44; }
-        * { box-sizing: border-box; touch-action: manipulation; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
-        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
+        /* ستايل الموقع الأصلي */
+        body { background-color: #0a0a0a; color: white; font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .brand { color: #00ff44; font-size: 32px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 10px #00ff44; }
         
-        #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
-        
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
-        .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); box-shadow: 0 0 10px var(--accent-green); }
+        /* تذييل الصفحة (Privacy & Owner) */
+        footer {
+            margin-top: 100px;
+            padding: 20px;
+            border-top: 1px solid #222;
+            font-size: 14px;
+        }
+        .footer-links { margin-bottom: 10px; }
+        .footer-links a {
+            color: #00ff44;
+            text-decoration: none;
+            margin: 0 15px;
+            cursor: pointer;
+        }
+        .footer-links a:hover { text-decoration: underline; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--accent-green); position: relative; }
-        
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; font-size: 1rem; }
-        .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 32px; border: 1px solid #333; cursor: pointer; color: var(--accent-green); }
-
-        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #333; font-size: 14px; color: #666; }
+        /* نافذة المعلومات المنبثقة */
+        #owner-popup {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #111;
+            border: 2px solid #00ff44;
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 9999;
+            box-shadow: 0 0 30px rgba(0, 255, 68, 0.2);
+            width: 280px;
+        }
+        .close-btn { color: #ff3366; cursor: pointer; float: left; font-weight: bold; }
     </style>
 </head>
-<body onload="loadGlobalScore()">
+<body>
 
-    <div id="splash-screen">
-        <h1 class="brand-name">BRSMAYKA OS</h1>
-        <button class="btn" onclick="bootSystem()">ENTER SYSTEM</button>
-    </div>
+    <div class="brand">BRSMAYKA GAMING</div>
 
-    <div id="persistent-score">Points: <span id="total-points">0</span></div>
-    <h1 class="brand-name">BRSMAYKA GAMING</h1>
-
-    <div class="container">
-        <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
-        <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
-        <div class="game-card" onclick="start('tap')">⚡ <h3>Speed Tap</h3></div>
-    </div>
-
-    <div id="gameModal" class="modal">
-        <div class="modal-content">
-            <span style="float:right; font-size:30px; cursor:pointer; color:#ff3366;" onclick="stop()">&times;</span>
-            <div id="game-view" style="margin-top:30px;"></div>
+    <div id="game-container">
         </div>
-    </div>
 
     <footer>
-        <p>© 2026 BrsMayka Gaming - All Sounds Interactive</p>
+        <div class="footer-links">
+            <a onclick="alert('Privacy Policy: نحن نستخدم ملفات الكوكيز لتحسين تجربتك وعرض إعلانات مناسبة.')">Privacy Policy</a>
+            <a onclick="showOwner()">Owner Info</a>
+        </div>
+        <p style="color: #444;">© 2026 BrsMayka. All rights reserved.</p>
     </footer>
 
+    <div id="owner-popup">
+        <span class="close-btn" onclick="hideOwner()">X</span>
+        <h3 style="color:#00ff44;">معلومات المالك</h3>
+        <p><b>الاسم:</b> BrsMayka</p>
+        <p><b>الدولة:</b> المغرب</p>
+        <p><b>المدينة:</b> Ait Melloul</p>
+        <p><b>التخصص:</b> مطور ألعاب ويب</p>
+    </div>
+
     <script>
-        let audioCtx, globalPoints = 0;
-
-        // محرك الأصوات المتطور
-        function playSfx(type) {
-            if (!audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'win') { // صوت الفوز
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            } 
-            else if (type === 'lose') { // صوت الخسارة
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-            }
-            else if (type === 'click') { // صوت النقر
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-            }
+        function showOwner() {
+            document.getElementById('owner-popup').style.display = 'block';
         }
-
-        function bootSystem() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            playSfx('win'); // نغمة ترحيبية
-            document.getElementById('splash-screen').style.display = 'none';
+        function hideOwner() {
+            document.getElementById('owner-popup').style.display = 'none';
         }
-
-        function loadGlobalScore() {
-            globalPoints = parseInt(localStorage.getItem('brs_score')) || 0;
-            document.getElementById('total-points').innerText = globalPoints;
-        }
-
-        function updateScore(p) {
-            globalPoints += p;
-            localStorage.setItem('brs_score', globalPoints);
-            document.getElementById('total-points').innerText = globalPoints;
-        }
-
-        function start(mode) {
-            playSfx('click');
-            const view = document.getElementById('game-view');
-            document.getElementById('gameModal').style.display = 'block';
-            view.innerHTML = '';
-
-            if (mode === 'math') {
-                let a = Math.floor(Math.random()*15), b = Math.floor(Math.random()*15), res = a + b;
-                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [res, res+2, res-1].sort(()=>Math.random()-0.5).forEach(opt => {
-                    let btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = opt;
-                    btn.onclick = () => {
-                        if(opt === res) { playSfx('win'); updateScore(10); start('math'); }
-                        else { playSfx('lose'); alert('خسرت! الإجابة هي ' + res); stop(); }
-                    };
-                    view.appendChild(btn);
-                });
-            }
-
-            if (mode === 'tap') {
-                let count = 0;
-                view.innerHTML = `<h2>اضغط 15 مرة بسرعة!</h2><button id="tbtn" class="btn" style="height:100px; font-size:40px;">0</button>`;
-                document.getElementById('tbtn').onclick = () => {
-                    count++; playSfx('click');
-                    document.getElementById('tbtn').innerText = count;
-                    if(count >= 15) { playSfx('win'); updateScore(20); alert('فوز سريع!'); stop(); }
-                };
-            }
-
-            if (mode === 'xo') {
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(3,75px); gap:10px; justify-content:center;" id="xob"></div>`;
-                for(let i=0; i<9; i++) {
-                    let c = document.createElement('div'); c.className = 'cell';
-                    c.onclick = () => { 
-                        if(c.innerText === '') { 
-                            playSfx('click'); c.innerText = 'X'; 
-                            // محاكاة فوز بسيطة للتدريب
-                            if(Math.random() > 0.8) { playSfx('win'); updateScore(5); alert('حركة ذكية!'); }
-                        }
-                    };
-                    document.getElementById('xob').appendChild(c);
-                }
-            }
-        }
-
-        function stop() { document.getElementById('gameModal').style.display = 'none'; }
     </script>
+
 </body>
 </html>
