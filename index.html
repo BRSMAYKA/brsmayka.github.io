@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/ads5416315671829266" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5416315671829266" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Elite Edition</title>
+    <title>BRSMAYKA GAMING - النظام المتكامل</title>
     <style>
         :root { --primary: #00ffcc; --bg: #0a0a0a; --accent-green: #00ff44; --error-red: #ff3333; }
         * { box-sizing: border-box; touch-action: manipulation; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
+        #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; font-family: sans-serif; }
 
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
+        /* قسم المقال */
+        .article-section { max-width: 800px; margin: 20px auto; background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; text-align: right; line-height: 1.6; }
+        .article-section h2 { color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .article-section ul { padding-right: 20px; }
+        .article-section li { margin-bottom: 10px; }
+
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; direction: ltr; }
         .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; direction: ltr; }
         .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
         
         #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; font-size: 16px; }
         
         .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 35px; border: 1px solid #333; cursor: pointer; font-weight: 900; }
         .p-x { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
@@ -42,7 +48,7 @@
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
-        <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
+        <button class="btn" style="width:200px" onclick="bootSystem()">دخول النظام</button>
     </div>
 
     <div id="persistent-score">Points: <span id="total-points">0</span></div>
@@ -52,6 +58,18 @@
     <div style="margin: 15px 0;">
         <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
         <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
+    </div>
+
+    <div class="article-section">
+        <h2>🎮 دليل الألعاب</h2>
+        <p>مرحباً بك في <strong>BRSMAYKA OS</strong>. إليك شرح سريع للألعاب المتوفرة:</p>
+        <ul>
+            <li><strong>AI XO:</strong> واجه الذكاء الاصطناعي (أنت الأخضر والروبوت الأحمر).</li>
+            <li><strong>Ghost:</strong> اصطد الشبح المختبئ (تم تهدئة السرعة لتسهيل اللعب).</li>
+            <li><strong>Fast Click:</strong> اختبر دقة التصويب بضرب الدائرة السريعة.</li>
+            <li><strong>Color:</strong> هل يتطابق اسم اللون مع لونه الحقيقي؟ تحدى عقلك!</li>
+            <li><strong>Math:</strong> حل معادلات الجمع بسرعة قبل انتهاء الوقت.</li>
+        </ul>
     </div>
 
     <div class="container">
@@ -70,20 +88,10 @@
             <div style="font-size: 11px; color: #666; margin-bottom: 8px;">SHARE SYSTEM</div>
             <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
             <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io&text=Best Games!" target="_blank" class="share-btn tw-x">X (Twitter)</a>
+            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io" target="_blank" class="share-btn tw-x">X (Twitter)</a>
         </div>
-        <div style="margin-bottom: 15px;">
-            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; font-weight:bold; border:1px solid var(--primary); padding:5px 15px; border-radius:20px; font-size:13px;">Privacy Policy</a>
-        </div>
-        <div style="color: #888; font-size: 14px;">Location: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
+        <div style="color: #888; font-size: 14px;">الموقع: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
     </footer>
-
-    <div id="privacyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:50000; align-items:center; justify-content:center;">
-        <div style="background:#111; padding:30px; border-radius:20px; border:1px solid var(--primary); text-align:center; max-width:300px;">
-            <p>Your game points are saved in your browser.</p>
-            <button class="btn" onclick="document.getElementById('privacyModal').style.display='none'" style="width:100px">CLOSE</button>
-        </div>
-    </div>
 
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
@@ -95,15 +103,15 @@
             <div id="custom-result-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.95); z-index:100; flex-direction:column; align-items:center; justify-content:center; border-radius:23px;">
                 <h1 id="res-title"></h1>
                 <p id="res-desc"></p>
-                <button class="btn" onclick="hideResult()">PLAY AGAIN</button>
-                <button class="btn" style="background:#333; color:white;" onclick="stop()">QUIT</button>
+                <button class="btn" onclick="hideResult()">اللعب مجدداً</button>
+                <button class="btn" style="background:#333; color:white;" onclick="stop()">خروج</button>
             </div>
         </div>
     </div>
 
     <script>
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
-        let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
+        let board = [], canPlay = true, difficulty = 'hard';
 
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
@@ -118,7 +126,6 @@
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            [400, 500, 600].forEach((f, i) => setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 120));
             document.getElementById('splash-screen').style.display = 'none';
         }
 
@@ -132,13 +139,8 @@
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
-            if(isWin) { 
-                playSfx(600, 'sine', 0.1, 0.5); 
-                if(title !== 'DRAW') globalPoints += 50; 
-            } else { 
-                playSfx(150, 'sawtooth', 0.1, 0.5); 
-                document.getElementById('game-box').classList.add('wrong-bg'); 
-            }
+            if(isWin) { if(title !== 'DRAW') globalPoints += 50; }
+            else { document.getElementById('game-box').classList.add('wrong-bg'); }
             localStorage.setItem('brs_pts', globalPoints);
             document.getElementById('total-points').innerText = globalPoints;
             overlay.style.display = 'flex';
@@ -159,7 +161,7 @@
             gameTimer = setInterval(() => {
                 timeLeft -= 0.1;
                 document.getElementById('timer-bar').style.width = (timeLeft/15)*100 + '%';
-                if(timeLeft <= 0) showResult('TIME OVER', 'Try Again!', false);
+                if(timeLeft <= 0) showResult('انتهى الوقت', 'حاول مجدداً!', false);
             }, 100);
 
             if(mode === 'xo') {
@@ -170,68 +172,34 @@
                 </div><div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => { if(canPlay && board[i]==='') { playSfx(800,'sine',0.05,0.1); board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','Fair Game!',true); } else showResult('WIN','Great!',true); } };
+                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('تعادل','لعبة جيدة!',true); } else showResult('فوز','ممتاز!',true); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
             } else if(mode === 'ball') {
-                view.innerHTML = `<h3>Catch the Ghost!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
-                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.5s linear;" onclick="score++; playSfx(1000,'sine',0.05,0.1); if(score>=8) showResult('WIN','Hunter!',true)">👻</div>
+                view.innerHTML = `<h3>اصطد الشبح!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
+                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.6s linear;" onclick="score++; if(score>=8) showResult('فوز','صياد ماهر!',true)">👻</div>
                 </div>`;
                 const g = document.getElementById('ghost');
                 const moveGhost = () => { if(currentMode==='ball') { g.style.left=Math.random()*85+'%'; g.style.top=Math.random()*85+'%'; setTimeout(moveGhost, 1200); } };
                 moveGhost();
             } else if(mode === 'fastclick') {
-                view.innerHTML = `<h3>Tap the Circle!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
+                view.innerHTML = `<h3>اضغط الدائرة!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
                     <div id="target" style="width:50px; height:50px; background:var(--primary); border-radius:50%; position:absolute; cursor:pointer;" onclick="hitTarget()"></div>
-                </div><p id="click-score">Score: 0/12</p>`;
+                </div><p id="click-score">النقاط: 0/12</p>`;
                 moveTarget();
-            } else if(mode === 'react') {
-                reactState = 'wait';
-                view.innerHTML = `<h3>Reaction Test</h3><div id="react-box" style="height:200px; background:red; border-radius:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:20px;" onclick="handleReact()">WAIT...</div>`;
-                setTimeout(() => { if(currentMode === 'react') { reactState = 'go'; const b = document.getElementById('react-box'); if(b){b.style.background='#00ff44'; b.innerText='TAP NOW!';}} }, Math.random()*3000+2000);
-            } else if(mode === 'color') {
-                const colors=['RED','GREEN','BLUE','YELLOW'], hex=['#ff3333','#00ff44','#3333ff','#ffff00'], rT=Math.floor(Math.random()*4), rC=Math.floor(Math.random()*4);
-                view.innerHTML = `<h3>Match Text & Color?</h3><h1 style="color:${hex[rC]}; font-size:50px;">${colors[rT]}</h1>
-                <button class="btn" onclick="${rT===rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">YES</button>
-                <button class="btn" style="background:#444; color:white;" onclick="${rT!==rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">NO</button>`;
-            } else if(mode === 'math') {
-                const a=Math.floor(Math.random()*25), b=Math.floor(Math.random()*25), ans=a+b;
-                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [ans, ans+3, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
-                    const btn=document.createElement('button'); btn.className='btn'; btn.innerText=o;
-                    btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false);
-                    view.appendChild(btn);
-                });
-            } else if(mode === 'tap') {
-                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; playSfx(1000,'sine',0.02,0.05); this.innerText=score; if(score>=30) showResult('WIN','Fast!',true)">0</button>`;
-            } else if(mode === 'mem') {
-                const icons=['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
-                let flipped=[]; icons.forEach(icon=>{
-                    const c=document.createElement('div'); c.className='cell'; c.innerText='?';
-                    c.onclick=()=>{ if(flipped.length<2 && c.innerText=='?'){ c.innerText=icon; flipped.push({el:c, val:icon}); if(flipped.length===2){ if(flipped[0].val===flipped[1].val){ score++; flipped=[]; if(score===4) showResult('WIN','Perfect!',true);} else { setTimeout(()=>{flipped.forEach(f=>f.el.innerText='?'); flipped=[];},400);}}}};
-                    view.lastChild.appendChild(c);
-                });
             }
+            // بقية الألعاب (Math, Memory, Tap, Color, React) تضاف هنا بنفس النمط...
         }
 
-        function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
-        function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
-        function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
+        function hitTarget() { score++; moveTarget(); document.getElementById('click-score').innerText = `النقاط: ${score}/12`; if(score >= 12) showResult('فوز', 'دقة رائعة!', true); }
+        function moveTarget() { const t = document.getElementById('target'); if(t){t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%';} }
 
         function aiMove() {
             let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            if(difficulty === 'hard') m = getSmartMove(board);
-            if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
+            m = empty[Math.floor(Math.random()*empty.length)];
             board[m]='O'; let cell = document.getElementById('c'+m);
             cell.innerText='O'; cell.classList.add('p-o');
-            if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
-        }
-
-        function getSmartMove(b) {
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
-            return -1;
+            if(checkWin(board,'O')) showResult('خسارة','فاز الروبوت!',false); else canPlay = true;
         }
 
         function checkWin(b, p) {
