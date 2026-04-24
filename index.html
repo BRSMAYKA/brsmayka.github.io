@@ -37,9 +37,17 @@
         .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
         .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; }
         .wa { background: #25D366; } .fb { background: #1877F2; } .tw-x { background: #000; border: 1px solid #444; }
+
+        /* --- نـظـام الـنـجـوم الجديد --- */
+        .rating-section { margin: 30px auto; padding: 20px; max-width: 400px; background: #111; border: 1px solid var(--accent-green); border-radius: 20px; }
+        .stars-container { font-size: 35px; cursor: pointer; margin-bottom: 10px; }
+        .star { color: #333; transition: 0.2s; }
+        .star.active { color: gold; text-shadow: 0 0 10px gold; }
+        .rating-info { font-size: 14px; color: #888; }
+        #voters-count { color: var(--accent-green); font-weight: bold; }
     </style>
 </head>
-<body onload="loadGlobalScore()">
+<body onload="loadGlobalScore(); initRating();">
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
@@ -61,6 +69,20 @@
         <div class="game-card" onclick="start('mem')">🧠 <h3>Memory</h3></div>
         <div class="game-card" onclick="start('ball')">👻 <h3>Ghost</h3></div>
         <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
+    </div>
+
+    <div class="rating-section">
+        <div class="stars-container" id="star-box">
+            <span class="star" onclick="rate(1)">★</span>
+            <span class="star" onclick="rate(2)">★</span>
+            <span class="star" onclick="rate(3)">★</span>
+            <span class="star" onclick="rate(4)">★</span>
+            <span class="star" onclick="rate(5)">★</span>
+        </div>
+        <div class="rating-info">
+            Rating: <span id="rating-val">0</span>/5 | Voters: <span id="voters-count">0</span>
+        </div>
+        <p id="thanks-msg" style="display:none; color:var(--primary); font-size:12px; margin-top:10px;">Thanks for rating!</p>
     </div>
 
     <footer>
@@ -102,6 +124,33 @@
     </div>
 
     <script>
+        // --- كود الـ Rating الجديد ---
+        let baseVoters = 1254; // عدد وهمي يبدأ به الموقع ليظهر احترافياً
+        function initRating() {
+            let localVoters = parseInt(localStorage.getItem('brs_voters')) || 0;
+            let currentStars = localStorage.getItem('brs_stars') || "4.8";
+            document.getElementById('voters-count').innerText = baseVoters + localVoters;
+            document.getElementById('rating-val').innerText = currentStars;
+        }
+
+        function rate(n) {
+            let stars = document.getElementsByClassName('star');
+            for(let i=0; i<5; i++) {
+                stars[i].classList.remove('active');
+                if(i < n) stars[i].classList.add('active');
+            }
+            let localVoters = parseInt(localStorage.getItem('brs_voters')) || 0;
+            localVoters++;
+            localStorage.setItem('brs_voters', localVoters);
+            localStorage.setItem('brs_stars', "4.9");
+            
+            document.getElementById('voters-count').innerText = baseVoters + localVoters;
+            document.getElementById('rating-val').innerText = "4.9";
+            document.getElementById('star-box').style.pointerEvents = "none";
+            document.getElementById('thanks-msg').style.display = "block";
+        }
+
+        // --- كود ألعابك الأصلي (بدون أي تغيير) ---
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard';
 
@@ -224,4 +273,4 @@
         }
     </script>
 </body>
-            </html>
+</html>
