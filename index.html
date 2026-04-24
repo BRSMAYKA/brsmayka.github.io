@@ -12,26 +12,19 @@
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
+        .section-title { color: var(--primary); margin-top: 30px; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.2rem; text-transform: uppercase; }
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 145px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
-        .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
-        #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
         .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
+        footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
         .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 75px; width: 75px; font-size: 38px; border: 1px solid #333; cursor: pointer; font-weight: 900; }
         .p-x { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
         .p-o { color: var(--error-red); text-shadow: 0 0 10px var(--error-red); }
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
-        footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
-        .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
-        .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; }
-        .wa { background: #25D366; } .fb { background: #1877F2; } .tw-x { background: #000; border: 1px solid #444; }
-        
-        /* قسم التقييم الجديد داخل الموقع */
-        .rating-frame { width: 100%; max-width: 400px; height: 350px; border: 2px solid var(--accent-green); border-radius: 20px; margin: 20px auto; overflow: hidden; background: #fff; }
     </style>
 </head>
 <body onload="loadGlobalScore()">
@@ -50,6 +43,7 @@
         <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
     </div>
 
+    <h2 class="section-title">Mini Games</h2>
     <div class="container">
         <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
         <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
@@ -58,27 +52,25 @@
         <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
     </div>
 
+    <h2 class="section-title">Top Web Games (No Download)</h2>
+    <div class="container">
+        <div class="game-card" onclick="window.open('https://poki.com', '_blank')">🎮 <h3>Poki</h3></div>
+        <div class="game-card" onclick="window.open('https://crazygames.com', '_blank')">🕹️ <h3>CrazyGames</h3></div>
+        <div class="game-card" onclick="window.open('https://game-distribution.com', '_blank')">🌐 <h3>Web Games</h3></div>
+    </div>
+
     <footer>
-        <h3 style="color:var(--accent-green);">⭐ Rate Our Games Inside Here:</h3>
-        <div class="rating-frame">
-            <iframe src="اضع_رابط_الـ_Embed_هنا" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        <div style="margin: 25px 0;">
+            <a href="ضـع_الـرابط_هـنا" target="_blank" style="color:var(--accent-green); text-decoration:none; font-weight:bold; border:2px solid var(--accent-green); padding:12px 30px; border-radius:30px; display:inline-block; font-size:18px;">⭐ RATE OUR GAMES</a>
         </div>
 
-        <div class="share-container">
-            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">SHARE SYSTEM</div>
-            <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io&text=Best Games!" target="_blank" class="share-btn tw-x">X (Twitter)</a>
+        <div style="margin-top:20px; color:#888;">
+            <p>Location: Morocco 🇲🇦</p>
+            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; text-decoration:underline;">Privacy Policy</a>
         </div>
-        
-        <div style="margin-bottom: 15px;">
-            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; font-weight:bold; border:1px solid var(--primary); padding:5px 15px; border-radius:20px; font-size:13px;">Privacy Policy</a>
-        </div>
-
-        <div style="color: #888; font-size: 14px;">Location: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
     </footer>
 
-    <div id="privacyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:50000; align-items:center; justify-content:center;">
+    <div id="privacyModal" class="modal" style="display:none; align-items:center; justify-content:center; z-index:50001;">
         <div style="background:#111; padding:30px; border-radius:20px; border:1px solid var(--primary); text-align:center; max-width:300px;">
             <p>Your game points are saved in your browser.</p>
             <button class="btn" onclick="document.getElementById('privacyModal').style.display='none'" style="width:100px">CLOSE</button>
