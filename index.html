@@ -6,74 +6,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRSMAYKA GAMING - Elite Edition</title>
     <style>
-        :root { --primary: #00ffcc; --bg: #0a0a0a; --accent-green: #00ff44; --error-red: #ff3333; }
+        :root { --primary: #00ffcc; --bg: #0a0a0a; --accent-green: #00ff44; --error-red: #ff3333; --card-bg: #111; }
         * { box-sizing: border-box; touch-action: manipulation; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; text-align: center; overflow-x: hidden; }
         
-        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
+        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.3rem; margin: 10px 0; font-weight: 900; letter-spacing: 2px; }
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
+        #persistent-score { position: fixed; top: 12px; left: 12px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 8px 15px; border-radius: 10px; z-index: 10001; font-weight: bold; font-size: 14px; }
 
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
-        .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
-        .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
+        .game-card { background: var(--card-bg); border: 1px solid #222; width: 46%; max-width: 160px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.2s; }
+        .game-card:active { transform: scale(0.95); border-color: var(--primary); }
+        .game-card h3 { font-size: 13px; margin: 8px 0 0 0; color: #eee; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
-        .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
+        /* Rating System Style */
+        .rating-box { background: linear-gradient(145deg, #111, #080808); padding: 20px; border-radius: 20px; max-width: 320px; margin: 25px auto; border: 1px solid #222; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .stars { font-size: 32px; cursor: pointer; display: flex; justify-content: center; gap: 8px; direction: ltr; margin-bottom: 5px; }
+        .star { color: #333; transition: 0.3s transform; }
+        .star.active { color: #ffcc00; text-shadow: 0 0 15px #ffcc00; transform: scale(1.1); }
+        .rating-text { font-size: 12px; color: #666; font-weight: bold; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(8px); }
+        .modal-content { background: #000; margin: 5vh auto; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; border: 1px solid var(--primary); position: relative; }
         
-        #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
-        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
+        #timer-bar { height: 6px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
         
-        .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 35px; border: 1px solid #333; cursor: pointer; font-weight: 900; }
-        .p-x { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
-        .p-o { color: var(--error-red); text-shadow: 0 0 10px var(--error-red); }
+        .cell { background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 65px; width: 65px; font-size: 30px; border: 1px solid #222; cursor: pointer; }
+        .p-x { color: var(--accent-green); } .p-o { color: var(--error-red); }
 
-        .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
-        .lvl-btn.active { background: var(--accent-green); color: black; }
-
-        /* Star Rating Style */
-        .rating-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; max-width: 300px; margin: 20px auto; border: 1px solid #333; }
-        .stars { font-size: 30px; cursor: pointer; display: flex; justify-content: center; gap: 5px; direction: ltr; }
-        .star { color: #444; transition: 0.2s; }
-        .star.active { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; }
-        .rating-text { font-size: 12px; margin-top: 8px; color: #aaa; }
-
-        footer { margin-top: 40px; padding-bottom: 40px; border-top: 1px solid #222; }
-        .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
-        .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; }
-        .wa { background: #25D366; } .fb { background: #1877F2; } .tw-x { background: #000; border: 1px solid #444; }
+        footer { margin-top: 30px; padding: 20px; border-top: 1px solid #1a1a1a; }
+        .share-btn { display: inline-block; margin: 4px; padding: 8px 15px; border-radius: 10px; text-decoration: none; color: white; font-weight: bold; font-size: 11px; background: #222; border: 1px solid #333; }
     </style>
 </head>
 <body onload="initApp()">
 
     <div id="splash-screen">
         <h1 class="brand-name">BRSMAYKA OS</h1>
-        <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
+        <button class="btn" style="width:180px" onclick="bootSystem()">ENTER SYSTEM</button>
     </div>
 
-    <div id="persistent-score">Points: <span id="total-points">0</span></div>
+    <div id="persistent-score">PTS: <span id="total-points">0</span></div>
     
-    <h1 class="brand-name">BRSMAYKA GAMING</h1>
-
-    <div style="margin: 15px 0;">
-        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-        <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
-    </div>
+    <h1 class="brand-name">BRSMAYKA</h1>
 
     <div class="container">
         <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
-        <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
-        <div class="game-card" onclick="start('mem')">🧠 <h3>Memory</h3></div>
-        <div class="game-card" onclick="start('ball')">👻 <h3>Ghost</h3></div>
-        <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
-        <div class="game-card" onclick="start('color')">🎨 <h3>Color</h3></div>
-        <div class="game-card" onclick="start('react')">⏱️ <h3>React</h3></div>
-        <div class="game-card" onclick="start('fastclick')">🎯 <h3>Fast Click</h3></div>
+        <div class="game-card" onclick="start('math')">➗ <h3>MATH</h3></div>
+        <div class="game-card" onclick="start('mem')">🧠 <h3>MEMORY</h3></div>
+        <div class="game-card" onclick="start('ball')">👻 <h3>GHOST</h3></div>
+        <div class="game-card" onclick="start('tap')">⚡ <h3>TAP</h3></div>
+        <div class="game-card" onclick="start('color')">🎨 <h3>COLOR</h3></div>
+        <div class="game-card" onclick="start('react')">⏱️ <h3>REACT</h3></div>
+        <div class="game-card" onclick="start('fastclick')">🎯 <h3>TARGET</h3></div>
     </div>
 
     <div class="rating-box">
-        <div style="font-size: 13px; margin-bottom: 10px; color: var(--accent-green);">RATE OUR SYSTEM</div>
         <div class="stars" id="star-container">
             <span class="star" onclick="rate(1)">★</span>
             <span class="star" onclick="rate(2)">★</span>
@@ -81,89 +69,78 @@
             <span class="star" onclick="rate(4)">★</span>
             <span class="star" onclick="rate(5)">★</span>
         </div>
-        <div class="rating-text" id="rating-info">Loading average rating...</div>
+        <div class="rating-text" id="rating-info">Loading...</div>
     </div>
 
     <footer>
-        <div class="share-container">
-            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">SHARE SYSTEM</div>
-            <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io&text=Best Games!" target="_blank" class="share-btn tw-x">X (Twitter)</a>
-        </div>
         <div style="margin-bottom: 15px;">
-            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; font-weight:bold; border:1px solid var(--primary); padding:5px 15px; border-radius:20px; font-size:13px;">Privacy Policy</a>
+            <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" class="share-btn">WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io" class="share-btn">X Share</a>
         </div>
-        <div style="color: #888; font-size: 14px;">Location: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
+        <div style="color: #444; font-size: 12px;">Location: Morocco 🇲🇦 | V3.5 Elite Edition</div>
     </footer>
-
-    <div id="privacyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:50000; align-items:center; justify-content:center;">
-        <div style="background:#111; padding:30px; border-radius:20px; border:1px solid var(--primary); text-align:center; max-width:300px;">
-            <p>Your game points are saved in your browser.</p>
-            <button class="btn" onclick="document.getElementById('privacyModal').style.display='none'" style="width:100px">CLOSE</button>
-        </div>
-    </div>
 
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
-            <div id="timer-bar-container" style="width:100%; height:8px; background:#222; border-radius:10px; margin-bottom:15px;">
+            <div style="width:100%; height:6px; background:#222; border-radius:10px; margin-bottom:20px;">
                 <div id="timer-bar"></div>
             </div>
             <div id="game-view"></div>
-            <div id="custom-result-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.95); z-index:100; flex-direction:column; align-items:center; justify-content:center; border-radius:23px;">
+            <div id="custom-result-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.98); z-index:100; flex-direction:column; align-items:center; justify-content:center; border-radius:23px;">
                 <h1 id="res-title"></h1>
                 <p id="res-desc"></p>
-                <button class="btn" onclick="hideResult()">PLAY AGAIN</button>
-                <button class="btn" style="background:#333; color:white;" onclick="stop()">QUIT</button>
+                <button class="btn" onclick="hideResult()">TRY AGAIN</button>
+                <button class="btn" style="background:#222; color:white;" onclick="stop()">CLOSE</button>
             </div>
         </div>
     </div>
 
     <script>
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
-        let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
+        let board = [], canPlay = true;
 
         function initApp() {
             loadGlobalScore();
             updateRatingUI();
         }
 
-        // --- Rating System Functions ---
+        // --- SMART RATING SYSTEM ---
         function rate(n) {
-            localStorage.setItem('user_rating', n);
-            // Simulate fake global stats for visitor engagement
-            let totalVotes = parseInt(localStorage.getItem('fake_votes')) || 124;
-            if(!localStorage.getItem('voted')) {
+            if (!localStorage.getItem('has_voted')) {
+                // First time voting
+                let totalVotes = parseInt(localStorage.getItem('voters_count')) || 0;
                 totalVotes++;
-                localStorage.setItem('fake_votes', totalVotes);
-                localStorage.setItem('voted', 'true');
+                localStorage.setItem('voters_count', totalVotes);
+                localStorage.setItem('has_voted', 'true');
             }
+            
+            localStorage.setItem('user_rating', n);
             updateRatingUI();
-            playSfx(800, 'sine', 0.05, 0.2);
+            if(audioCtx) playSfx(800, 'sine', 0.05, 0.2);
         }
 
         function updateRatingUI() {
             const userRating = localStorage.getItem('user_rating') || 0;
+            const totalVotes = localStorage.getItem('voters_count') || 0;
             const stars = document.querySelectorAll('.star');
-            const votes = localStorage.getItem('fake_votes') || 124;
             
             stars.forEach((s, i) => {
                 s.classList.toggle('active', i < userRating);
             });
 
-            if(userRating > 0) {
-                document.getElementById('rating-info').innerText = `Your rating: ${userRating}/5 (${votes} total)`;
+            const infoText = document.getElementById('rating-info');
+            if (totalVotes == 0) {
+                infoText.innerText = "BE THE FIRST TO RATE US!";
             } else {
-                document.getElementById('rating-info').innerText = `Avg: 4.8/5 (Based on ${votes} visitors)`;
+                infoText.innerText = "RATING COUNT: " + totalVotes + " VISITORS";
             }
         }
 
-        // --- Original Game Logic ---
+        // --- Core Game Functions ---
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
             o.type = type; o.frequency.setValueAtTime(f, audioCtx.currentTime);
             g.gain.setValueAtTime(vol, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
@@ -173,7 +150,7 @@
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            [400, 500, 600].forEach((f, i) => setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 120));
+            playSfx(400, 'sine', 0.1, 0.5);
             document.getElementById('splash-screen').style.display = 'none';
         }
 
@@ -187,28 +164,20 @@
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
-            if(isWin) { 
-                playSfx(600, 'sine', 0.1, 0.5); 
-                if(title !== 'DRAW') globalPoints += 50; 
-            } else { 
-                playSfx(150, 'sawtooth', 0.1, 0.5); 
-                document.getElementById('game-box').classList.add('wrong-bg'); 
-            }
+            if(isWin) { globalPoints += 50; playSfx(600, 'sine', 0.1, 0.5); }
             localStorage.setItem('brs_pts', globalPoints);
             document.getElementById('total-points').innerText = globalPoints;
             overlay.style.display = 'flex';
         }
 
-        function hideResult() { document.getElementById('game-box').classList.remove('wrong-bg'); start(currentMode); }
+        function hideResult() { start(currentMode); }
         function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
 
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
-            document.getElementById('game-box').classList.remove('wrong-bg');
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
             const view = document.getElementById('game-view'); view.innerHTML = '';
-            
             timeLeft = 15;
             clearInterval(gameTimer);
             gameTimer = setInterval(() => {
@@ -218,75 +187,50 @@
             }, 100);
 
             if(mode === 'xo') {
-                view.innerHTML = `<div style="margin-bottom:10px;">
-                    <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
-                    <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med';start('xo')">Med</button>
-                    <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard';start('xo')">Hard</button>
-                </div><div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
+                view.innerHTML = `<div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => { if(canPlay && board[i]==='') { playSfx(800,'sine',0.05,0.1); board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','Fair Game!',true); } else showResult('WIN','Great!',true); } };
+                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','!',true); } else showResult('WIN','!',true); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
-            } else if(mode === 'ball') {
-                view.innerHTML = `<h3>Catch the Ghost!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
-                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.5s linear;" onclick="score++; playSfx(1000,'sine',0.05,0.1); if(score>=8) showResult('WIN','Hunter!',true)">👻</div>
-                </div>`;
-                const g = document.getElementById('ghost');
-                const moveGhost = () => { if(currentMode==='ball') { g.style.left=Math.random()*85+'%'; g.style.top=Math.random()*85+'%'; setTimeout(moveGhost, 1200); } };
-                moveGhost();
-            } else if(mode === 'fastclick') {
-                view.innerHTML = `<h3>Tap the Circle!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
-                    <div id="target" style="width:50px; height:50px; background:var(--primary); border-radius:50%; position:absolute; cursor:pointer;" onclick="hitTarget()"></div>
-                </div><p id="click-score">Score: 0/12</p>`;
-                moveTarget();
-            } else if(mode === 'react') {
-                reactState = 'wait';
-                view.innerHTML = `<h3>Reaction Test</h3><div id="react-box" style="height:200px; background:red; border-radius:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:20px;" onclick="handleReact()">WAIT...</div>`;
-                setTimeout(() => { if(currentMode === 'react') { reactState = 'go'; const b = document.getElementById('react-box'); if(b){b.style.background='#00ff44'; b.innerText='TAP NOW!';}} }, Math.random()*3000+2000);
-            } else if(mode === 'color') {
-                const colors=['RED','GREEN','BLUE','YELLOW'], hex=['#ff3333','#00ff44','#3333ff','#ffff00'], rT=Math.floor(Math.random()*4), rC=Math.floor(Math.random()*4);
-                view.innerHTML = `<h3>Match Text & Color?</h3><h1 style="color:${hex[rC]}; font-size:50px;">${colors[rT]}</h1>
-                <button class="btn" onclick="${rT===rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">YES</button>
-                <button class="btn" style="background:#444; color:white;" onclick="${rT!==rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">NO</button>`;
             } else if(mode === 'math') {
-                const a=Math.floor(Math.random()*25), b=Math.floor(Math.random()*25), ans=a+b;
+                let a = Math.floor(Math.random()*25), b = Math.floor(Math.random()*25), ans = a+b;
                 view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [ans, ans+3, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
-                    const btn=document.createElement('button'); btn.className='btn'; btn.innerText=o;
-                    btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false);
+                [ans, ans+2, ans-1].sort(()=>Math.random()-0.5).forEach(n => {
+                    const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = n;
+                    btn.onclick = () => n===ans ? showResult('CORRECT','+50',true) : showResult('WRONG','!',false);
                     view.appendChild(btn);
                 });
             } else if(mode === 'tap') {
-                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; playSfx(1000,'sine',0.02,0.05); this.innerText=score; if(score>=30) showResult('WIN','Fast!',true)">0</button>`;
+                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; this.innerText=score; if(score>=30) showResult('WIN','!',true)">0</button>`;
+            } else if(mode === 'ball') {
+                view.innerHTML = `<div style="height:200px; position:relative; background:#111; overflow:hidden; border-radius:15px;"><div id="ghost" style="position:absolute; font-size:40px; cursor:pointer;" onclick="score++; if(score>=8) showResult('WIN','!',true)">👻</div></div>`;
+                const g = document.getElementById('ghost');
+                const mv = () => { if(currentMode==='ball') { g.style.left=Math.random()*80+'%'; g.style.top=Math.random()*80+'%'; setTimeout(mv, 1200); } }; mv();
             } else if(mode === 'mem') {
-                const icons=['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
+                let icons = ['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
-                let flipped=[]; icons.forEach(icon=>{
-                    const c=document.createElement('div'); c.className='cell'; c.innerText='?';
-                    c.onclick=()=>{ if(flipped.length<2 && c.innerText=='?'){ c.innerText=icon; flipped.push({el:c, val:icon}); if(flipped.length===2){ if(flipped[0].val===flipped[1].val){ score++; flipped=[]; if(score===4) showResult('WIN','Perfect!',true);} else { setTimeout(()=>{flipped.forEach(f=>f.el.innerText='?'); flipped=[];},400);}}}};
+                let f = []; icons.forEach(icon => {
+                    const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
+                    c.onclick = () => { if(f.length<2 && c.innerText=='?') { c.innerText=icon; f.push({e:c, v:icon}); if(f.length==2) { if(f[0].v==f[1].v) { score++; f=[]; if(score==4) showResult('WIN','!',true); } else { setTimeout(()=>{f.forEach(x=>x.e.innerText='?'); f=[]},400); } } } };
                     view.lastChild.appendChild(c);
                 });
+            } else if(mode === 'color') {
+                let clrs=['RED','GREEN','BLUE'], hex=['#f33','#0f4','#33f'], rT=Math.floor(Math.random()*3), rC=Math.floor(Math.random()*3);
+                view.innerHTML = `<h1 style="color:${hex[rC]}">${clrs[rT]}</h1><button class="btn" onclick="${rT==rC}?showResult('WIN','!',true):showResult('WRONG','!',false)">YES</button><button class="btn" style="background:#333;color:#fff" onclick="${rT!=rC}?showResult('WIN','!',true):showResult('WRONG','!',false)">NO</button>`;
+            } else if(mode === 'react') {
+                view.innerHTML = `<div id="rb" style="height:150px;background:red;display:flex;align-items:center;justify-content:center;font-weight:bold;border-radius:15px;cursor:pointer" onclick="if(this.style.background=='rgb(0, 255, 68)')showResult('WIN','!',true);else showResult('EARLY','!',false)">WAIT...</div>`;
+                setTimeout(()=>{if(currentMode=='react')document.getElementById('rb').style.background='#0f4';}, Math.random()*3000+2000);
+            } else if(mode === 'fastclick') {
+                view.innerHTML = `<div style="height:200px;position:relative;background:#111;border-radius:15px;"><div id="tg" style="width:40px;height:40px;background:var(--primary);border-radius:50%;position:absolute" onclick="score++;if(score>=10)showResult('WIN','!',true);else {this.style.left=Math.random()*80+'%';this.style.top=Math.random()*80+'%'}"></div></div>`;
             }
         }
 
-        function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
-        function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
-        function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
-
         function aiMove() {
-            let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            if(difficulty === 'hard') m = getSmartMove(board);
-            if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
-            board[m]='O'; let cell = document.getElementById('c'+m);
-            cell.innerText='O'; cell.classList.add('p-o');
+            let empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
+            let m = empty[Math.floor(Math.random()*empty.length)];
+            board[m]='O'; let cell = document.getElementById('c'+m); cell.innerText='O'; cell.classList.add('p-o');
             if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
-        }
-
-        function getSmartMove(b) {
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
-            return -1;
         }
 
         function checkWin(b, p) {
