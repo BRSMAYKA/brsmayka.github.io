@@ -10,33 +10,30 @@
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; text-align: center; overflow-x: hidden; }
         
-        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.3rem; margin: 10px 0; font-weight: 900; letter-spacing: 2px; }
+        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.3rem; margin: 10px 0; font-weight: 900; }
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #persistent-score { position: fixed; top: 12px; left: 12px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 8px 15px; border-radius: 10px; z-index: 10001; font-weight: bold; font-size: 14px; }
+        #persistent-score { position: fixed; top: 12px; left: 12px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 8px 15px; border-radius: 10px; z-index: 10001; font-weight: bold; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
         .game-card { background: var(--card-bg); border: 1px solid #222; width: 46%; max-width: 160px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.2s; }
-        .game-card:active { transform: scale(0.95); border-color: var(--primary); }
-        .game-card h3 { font-size: 13px; margin: 8px 0 0 0; color: #eee; }
+        .game-card:active { transform: scale(0.95); }
 
-        /* Rating System Style */
-        .rating-box { background: linear-gradient(145deg, #111, #080808); padding: 20px; border-radius: 20px; max-width: 320px; margin: 25px auto; border: 1px solid #222; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .stars { font-size: 32px; cursor: pointer; display: flex; justify-content: center; gap: 8px; direction: ltr; margin-bottom: 5px; }
-        .star { color: #333; transition: 0.3s transform; }
-        .star.active { color: #ffcc00; text-shadow: 0 0 15px #ffcc00; transform: scale(1.1); }
-        .rating-text { font-size: 12px; color: #666; font-weight: bold; }
+        /* Rating System Pro */
+        .rating-box { background: #111; padding: 20px; border-radius: 20px; max-width: 320px; margin: 25px auto; border: 1px solid #333; }
+        .stars { font-size: 32px; cursor: pointer; display: flex; justify-content: center; gap: 8px; direction: ltr; }
+        .star { color: #333; transition: 0.3s; }
+        .rating-text { font-size: 14px; color: var(--accent-green); margin-top: 10px; font-weight: bold; }
+        
+        #location-section { display: none; margin-top: 15px; border-top: 1px solid #222; padding-top: 10px; }
+        .location-input { background: #000; color: #fff; border: 1px solid var(--primary); padding: 8px; border-radius: 8px; width: 70%; outline: none; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; backdrop-filter: blur(8px); }
         .modal-content { background: #000; margin: 5vh auto; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; border: 1px solid var(--primary); position: relative; }
-        
         #timer-bar { height: 6px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
         .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 20px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
         
-        .cell { background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 65px; width: 65px; font-size: 30px; border: 1px solid #222; cursor: pointer; }
-        .p-x { color: var(--accent-green); } .p-o { color: var(--error-red); }
-
+        .cell { background: #111; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 65px; width: 65px; font-size: 30px; border: 1px solid #222; }
         footer { margin-top: 30px; padding: 20px; border-top: 1px solid #1a1a1a; }
-        .share-btn { display: inline-block; margin: 4px; padding: 8px 15px; border-radius: 10px; text-decoration: none; color: white; font-weight: bold; font-size: 11px; background: #222; border: 1px solid #333; }
     </style>
 </head>
 <body onload="initApp()">
@@ -47,7 +44,6 @@
     </div>
 
     <div id="persistent-score">PTS: <span id="total-points">0</span></div>
-    
     <h1 class="brand-name">BRSMAYKA</h1>
 
     <div class="container">
@@ -62,35 +58,34 @@
     </div>
 
     <div class="rating-box">
-        <div class="stars" id="star-container">
-            <span class="star" onclick="rate(1)">★</span>
-            <span class="star" onclick="rate(2)">★</span>
-            <span class="star" onclick="rate(3)">★</span>
-            <span class="star" onclick="rate(4)">★</span>
-            <span class="star" onclick="rate(5)">★</span>
+        <div class="stars">
+            <span class="star" onclick="handleRating(1)">★</span>
+            <span class="star" onclick="handleRating(2)">★</span>
+            <span class="star" onclick="handleRating(3)">★</span>
+            <span class="star" onclick="handleRating(4)">★</span>
+            <span class="star" onclick="handleRating(5)">★</span>
         </div>
-        <div class="rating-text" id="rating-info">Loading...</div>
+        <div class="rating-text">Ratings: <span id="rating-count">0</span></div>
+
+        <div id="location-section">
+            <p style="font-size: 12px; color: #888;">Where are you from?</p>
+            <input type="text" id="user-city" class="location-input" placeholder="Country / City">
+            <button class="btn" style="width: 25%; padding: 8px;" onclick="saveLocation()">OK</button>
+        </div>
     </div>
 
     <footer>
-        <div style="margin-bottom: 15px;">
-            <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" class="share-btn">WhatsApp</a>
-            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io" class="share-btn">X Share</a>
-        </div>
-        <div style="color: #444; font-size: 12px;">Location: Morocco 🇲🇦 | V3.5 Elite Edition</div>
+        <div style="color: #444; font-size: 12px;">Location: Morocco 🇲🇦 | Elite Edition</div>
     </footer>
 
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
             <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
-            <div style="width:100%; height:6px; background:#222; border-radius:10px; margin-bottom:20px;">
-                <div id="timer-bar"></div>
-            </div>
+            <div style="width:100%; height:6px; background:#222; border-radius:10px; margin-bottom:20px;"><div id="timer-bar"></div></div>
             <div id="game-view"></div>
             <div id="custom-result-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.98); z-index:100; flex-direction:column; align-items:center; justify-content:center; border-radius:23px;">
-                <h1 id="res-title"></h1>
-                <p id="res-desc"></p>
-                <button class="btn" onclick="hideResult()">TRY AGAIN</button>
+                <h1 id="res-title"></h1><p id="res-desc"></p>
+                <button class="btn" onclick="start(currentMode)">TRY AGAIN</button>
                 <button class="btn" style="background:#222; color:white;" onclick="stop()">CLOSE</button>
             </div>
         </div>
@@ -101,43 +96,54 @@
         let board = [], canPlay = true;
 
         function initApp() {
-            loadGlobalScore();
-            updateRatingUI();
+            globalPoints = parseInt(localStorage.getItem('brs_pts')) || 0;
+            document.getElementById('total-points').innerText = globalPoints;
+            updateUI();
         }
 
-        // --- SMART RATING SYSTEM ---
-        function rate(n) {
-            if (!localStorage.getItem('has_voted')) {
-                // First time voting
-                let totalVotes = parseInt(localStorage.getItem('voters_count')) || 0;
-                totalVotes++;
-                localStorage.setItem('voters_count', totalVotes);
-                localStorage.setItem('has_voted', 'true');
+        // --- Rating & Location Logic ---
+        function handleRating(n) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((s, i) => {
+                s.style.color = i < n ? "#ffcc00" : "#333";
+                if(i < n) s.style.textShadow = "0 0 10px #ffcc00";
+            });
+
+            if (!localStorage.getItem('voted')) {
+                let count = parseInt(localStorage.getItem('rating_val')) || 0;
+                count++;
+                localStorage.setItem('rating_val', count);
+                localStorage.setItem('voted', 'true');
             }
             
-            localStorage.setItem('user_rating', n);
-            updateRatingUI();
+            localStorage.setItem('user_stars', n);
+            document.getElementById('location-section').style.display = 'block';
+            updateUI();
             if(audioCtx) playSfx(800, 'sine', 0.05, 0.2);
         }
 
-        function updateRatingUI() {
-            const userRating = localStorage.getItem('user_rating') || 0;
-            const totalVotes = localStorage.getItem('voters_count') || 0;
-            const stars = document.querySelectorAll('.star');
-            
-            stars.forEach((s, i) => {
-                s.classList.toggle('active', i < userRating);
-            });
-
-            const infoText = document.getElementById('rating-info');
-            if (totalVotes == 0) {
-                infoText.innerText = "BE THE FIRST TO RATE US!";
-            } else {
-                infoText.innerText = "RATING COUNT: " + totalVotes + " VISITORS";
+        function saveLocation() {
+            const loc = document.getElementById('user-city').value;
+            if(loc) {
+                localStorage.setItem('user_from', loc);
+                document.getElementById('location-section').innerHTML = `<p style="color:var(--primary)">Greetings to ${loc}! 🔥</p>`;
             }
         }
 
-        // --- Core Game Functions ---
+        function updateUI() {
+            const count = localStorage.getItem('rating_val') || 0;
+            document.getElementById('rating-count').innerText = count;
+            
+            const savedStars = localStorage.getItem('user_stars');
+            if(savedStars) {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach((s, i) => {
+                    s.style.color = i < savedStars ? "#ffcc00" : "#333";
+                });
+            }
+        }
+
+        // --- Core Functions ---
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
             const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
@@ -150,27 +156,9 @@
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            playSfx(400, 'sine', 0.1, 0.5);
             document.getElementById('splash-screen').style.display = 'none';
         }
 
-        function loadGlobalScore() {
-            globalPoints = parseInt(localStorage.getItem('brs_pts')) || 0;
-            document.getElementById('total-points').innerText = globalPoints;
-        }
-
-        function showResult(title, desc, isWin) {
-            clearInterval(gameTimer);
-            const overlay = document.getElementById('custom-result-overlay');
-            document.getElementById('res-title').innerText = title;
-            document.getElementById('res-desc').innerText = desc;
-            if(isWin) { globalPoints += 50; playSfx(600, 'sine', 0.1, 0.5); }
-            localStorage.setItem('brs_pts', globalPoints);
-            document.getElementById('total-points').innerText = globalPoints;
-            overlay.style.display = 'flex';
-        }
-
-        function hideResult() { start(currentMode); }
         function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
 
         function start(mode) {
@@ -186,56 +174,34 @@
                 if(timeLeft <= 0) showResult('TIME OVER', 'Try Again!', false);
             }, 100);
 
+            // Small Game Logic for XO
             if(mode === 'xo') {
                 view.innerHTML = `<div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
                 for(let i=0; i<9; i++) {
                     const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','!',true); } else showResult('WIN','!',true); } };
+                    c.onclick = () => { if(canPlay && board[i]==='') { board[i]='X'; c.innerText='X'; c.style.color="var(--accent-green)"; canPlay=false; setTimeout(aiMove, 500); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
-            } else if(mode === 'math') {
-                let a = Math.floor(Math.random()*25), b = Math.floor(Math.random()*25), ans = a+b;
-                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [ans, ans+2, ans-1].sort(()=>Math.random()-0.5).forEach(n => {
-                    const btn = document.createElement('button'); btn.className = 'btn'; btn.innerText = n;
-                    btn.onclick = () => n===ans ? showResult('CORRECT','+50',true) : showResult('WRONG','!',false);
-                    view.appendChild(btn);
-                });
-            } else if(mode === 'tap') {
-                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; this.innerText=score; if(score>=30) showResult('WIN','!',true)">0</button>`;
-            } else if(mode === 'ball') {
-                view.innerHTML = `<div style="height:200px; position:relative; background:#111; overflow:hidden; border-radius:15px;"><div id="ghost" style="position:absolute; font-size:40px; cursor:pointer;" onclick="score++; if(score>=8) showResult('WIN','!',true)">👻</div></div>`;
-                const g = document.getElementById('ghost');
-                const mv = () => { if(currentMode==='ball') { g.style.left=Math.random()*80+'%'; g.style.top=Math.random()*80+'%'; setTimeout(mv, 1200); } }; mv();
-            } else if(mode === 'mem') {
-                let icons = ['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
-                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
-                let f = []; icons.forEach(icon => {
-                    const c = document.createElement('div'); c.className = 'cell'; c.innerText = '?';
-                    c.onclick = () => { if(f.length<2 && c.innerText=='?') { c.innerText=icon; f.push({e:c, v:icon}); if(f.length==2) { if(f[0].v==f[1].v) { score++; f=[]; if(score==4) showResult('WIN','!',true); } else { setTimeout(()=>{f.forEach(x=>x.e.innerText='?'); f=[]},400); } } } };
-                    view.lastChild.appendChild(c);
-                });
-            } else if(mode === 'color') {
-                let clrs=['RED','GREEN','BLUE'], hex=['#f33','#0f4','#33f'], rT=Math.floor(Math.random()*3), rC=Math.floor(Math.random()*3);
-                view.innerHTML = `<h1 style="color:${hex[rC]}">${clrs[rT]}</h1><button class="btn" onclick="${rT==rC}?showResult('WIN','!',true):showResult('WRONG','!',false)">YES</button><button class="btn" style="background:#333;color:#fff" onclick="${rT!=rC}?showResult('WIN','!',true):showResult('WRONG','!',false)">NO</button>`;
-            } else if(mode === 'react') {
-                view.innerHTML = `<div id="rb" style="height:150px;background:red;display:flex;align-items:center;justify-content:center;font-weight:bold;border-radius:15px;cursor:pointer" onclick="if(this.style.background=='rgb(0, 255, 68)')showResult('WIN','!',true);else showResult('EARLY','!',false)">WAIT...</div>`;
-                setTimeout(()=>{if(currentMode=='react')document.getElementById('rb').style.background='#0f4';}, Math.random()*3000+2000);
-            } else if(mode === 'fastclick') {
-                view.innerHTML = `<div style="height:200px;position:relative;background:#111;border-radius:15px;"><div id="tg" style="width:40px;height:40px;background:var(--primary);border-radius:50%;position:absolute" onclick="score++;if(score>=10)showResult('WIN','!',true);else {this.style.left=Math.random()*80+'%';this.style.top=Math.random()*80+'%'}"></div></div>`;
+            } else {
+                view.innerHTML = `<h3>${mode.toUpperCase()} GAME</h3><p>Coming Soon...</p>`;
             }
         }
 
         function aiMove() {
             let empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            let m = empty[Math.floor(Math.random()*empty.length)];
-            board[m]='O'; let cell = document.getElementById('c'+m); cell.innerText='O'; cell.classList.add('p-o');
-            if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
+            if(empty.length > 0) {
+                let m = empty[Math.floor(Math.random()*empty.length)];
+                board[m]='O'; document.getElementById('c'+m).innerText='O';
+                document.getElementById('c'+m).style.color="var(--error-red)";
+            }
+            canPlay = true;
         }
 
-        function checkWin(b, p) {
-            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return w.some(s => s.every(i => b[i] === p));
+        function showResult(t, d, w) {
+            clearInterval(gameTimer);
+            document.getElementById('res-title').innerText = t;
+            document.getElementById('res-desc').innerText = d;
+            document.getElementById('custom-result-overlay').style.display = 'flex';
         }
     </script>
 </body>
