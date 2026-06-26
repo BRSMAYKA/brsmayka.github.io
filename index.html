@@ -33,6 +33,23 @@
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
+        /* Dynamic Rating Section Styles */
+        .rating-section { background: linear-gradient(145deg, #121212, #080808); margin: 35px auto; padding: 25px; border-radius: 25px; max-width: 400px; border: 1px solid #222; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
+        .stars { font-size: 42px; cursor: pointer; margin-bottom: 12px; display: flex; justify-content: center; gap: 10px; direction: ltr; }
+        .star { color: #252525; transition: all 0.2s ease-in-out; display: inline-block; }
+        .star:hover { transform: scale(1.25) rotate(7deg); color: #ffdd44 !important; text-shadow: 0 0 15px #ffcc00; }
+        .star:active { transform: scale(0.9); }
+        .counter-text { color: var(--accent-green); font-weight: bold; font-size: 1.2rem; margin-top: 10px; }
+        .voter-badge { color: #fff; background: #222; padding: 2px 12px; border-radius: 20px; font-size: 1rem; margin-left: 5px; border: 1px solid #333; }
+        
+        #location-ask { display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #222; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .input-box { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 12px; width: 65%; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); }
+        .btn-submit { background: var(--primary); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-submit:hover { background: white; box-shadow: 0 0 15px var(--primary); transform: scale(1.05); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
         footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
         .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
         .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; }
@@ -64,6 +81,23 @@
         <div class="game-card" onclick="start('color')">🎨 <h3>Color</h3></div>
         <div class="game-card" onclick="start('react')">⏱️ <h3>React</h3></div>
         <div class="game-card" onclick="start('fastclick')">🎯 <h3>Fast Click</h3></div>
+    </div>
+
+    <div class="rating-section">
+        <div class="stars" id="star-box">
+            <span class="star" onclick="rate(1)">★</span>
+            <span class="star" onclick="rate(2)">★</span>
+            <span class="star" onclick="rate(3)">★</span>
+            <span class="star" onclick="rate(4)">★</span>
+            <span class="star" onclick="rate(5)">★</span>
+        </div>
+        <div class="counter-text">Total Rated: <span id="voter-count" class="voter-badge">0</span></div>
+
+        <div id="location-ask">
+            <p style="font-size: 14px; color: #aaa; margin-bottom: 10px;">Awesome! Where are you visiting from?</p>
+            <input type="text" id="city-input" class="input-box" placeholder="Your Country or City">
+            <button class="btn-submit" onclick="submitLocation()">Confirm</button>
+        </div>
     </div>
 
     <footer>
@@ -126,6 +160,51 @@
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brs_pts')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
+            
+            // Setup Rating system data on load
+            const totalVoters = localStorage.getItem('global_voters') || 0;
+            document.getElementById('voter-count').innerText = totalVoters;
+            const userRating = localStorage.getItem('my_stars');
+            if(userRating) applyStarColor(userRating);
+        }
+
+        // Live Star System Logic
+        function rate(n) {
+            if(!localStorage.getItem('already_voted')) {
+                let currentCount = parseInt(localStorage.getItem('global_voters')) || 0;
+                currentCount++;
+                localStorage.setItem('global_voters', currentCount);
+                localStorage.setItem('already_voted', 'true');
+                document.getElementById('voter-count').innerText = currentCount;
+            }
+            localStorage.setItem('my_stars', n);
+            applyStarColor(n);
+            document.getElementById('location-ask').style.display = 'block';
+            playSfx(800, 'sine', 0.05, 0.1);
+        }
+
+        function applyStarColor(n) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((s, i) => {
+                if(i < n) {
+                    s.style.color = "#ffcc00";
+                    s.style.textShadow = "0 0 20px #ffcc00, 0 0 30px #ffdd44";
+                    s.style.transform = "scale(1.1)";
+                } else {
+                    s.style.color = "#252525";
+                    s.style.textShadow = "none";
+                    s.style.transform = "scale(1)";
+                }
+            });
+        }
+
+        function submitLocation() {
+            const val = document.getElementById('city-input').value;
+            if(val) {
+                localStorage.setItem('visitor_city', val);
+                document.getElementById('location-ask').innerHTML = 
+                    `<h3 style="color: var(--primary); animation: popIn 0.4s ease; margin-top: 10px;">Big Love to ${val}! ❤️🔥</h3>`;
+            }
         }
 
         function showResult(title, desc, isWin) {
