@@ -5,7 +5,7 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Elite Edition</title>
+    <title>BRSMAYKA GAMING - Supreme Edition</title>
     <style>
         :root { 
             --primary: #00ffcc; 
@@ -14,6 +14,7 @@
             --error-red: #ff3333; 
             --ff-orange: #ff6a00;
             --ff-yellow: #ffb700;
+            --mc-blue: #55aaff;
         }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
@@ -26,7 +27,8 @@
         .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
         .ff-card { border-color: var(--ff-orange) !important; box-shadow: 0 0 10px rgba(255, 106, 0, 0.3); }
-        .ff-card:hover { border-color: var(--ff-yellow) !important; box-shadow: 0 0 20px var(--ff-yellow); }
+        .mc-card { border-color: var(--mc-blue) !important; box-shadow: 0 0 10px rgba(85, 170, 255, 0.3); }
+        .mc-card:hover { border-color: #00ff44 !important; box-shadow: 0 0 20px #00ff44; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
@@ -42,15 +44,20 @@
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        /* واجهة HUD لطور فري فاير */
-        #ff-hud { display: none; background: rgba(20, 20, 25, 0.95); padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; text-align: left; direction: rtl; }
+        /* واجهات فري فاير وماين كرافت */
+        #ff-hud, #mc-hud { display: none; background: rgba(20, 20, 25, 0.95); padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; text-align: left; direction: rtl; }
+        #mc-hud { border-color: var(--mc-blue); }
         .ff-progress-container { width: 100%; background: #333; height: 10px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
         .ff-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0055, #ff3333); transition: width 0.1s ease; }
         .ff-ep-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--ff-orange), var(--ff-yellow)); transition: width 0.1s ease; }
-        #ff-canvas { background: #12161f; border-radius: 15px; border: 2px solid #232b38; cursor: crosshair; display: none; max-width: 100%; }
+        
+        #game-canvas { background: #12161f; border-radius: 15px; border: 2px solid #232b38; cursor: pointer; display: none; max-width: 100%; }
+        
         .ff-controls { display: none; justify-content: center; gap: 10px; margin-top: 10px; }
         .ff-btn { background: var(--ff-orange); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .ff-btn:hover { background: var(--ff-yellow); color: black; }
+        
+        .mc-tile-btn { width: 45px; height: 45px; border-radius: 8px; border: 2px solid #444; font-size: 20px; cursor: pointer; background: #222; color: white; }
+        .mc-tile-btn.selected { border-color: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
 
         footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
         .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
@@ -69,11 +76,6 @@
     
     <h1 class="brand-name">BRSMAYKA GAMING</h1>
 
-    <div style="margin: 15px 0;">
-        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-        <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
-    </div>
-
     <div class="container">
         <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
         <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
@@ -85,6 +87,8 @@
         <div class="game-card" onclick="start('fastclick')">🎯 <h3>Fast Click</h3></div>
         
         <div class="game-card ff-card" onclick="start('freefire')">🔥 <h3>Free Fire</h3></div>
+
+        <div class="game-card mc-card" onclick="start('minecraft')">⛏️ <h3>Minecraft</h3></div>
     </div>
 
     <footer>
@@ -127,11 +131,27 @@
                 </div>
             </div>
 
-            <canvas id="ff-canvas" width="400" height="300"></canvas>
+            <div id="mc-hud">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>🌍 بيئة اللعبة: <b id="mc-time-txt" style="color:var(--mc-blue);">نهار (سماء واقعية)</b></span>
+                    <span>⛏️ النمط: <b style="color:var(--accent-green);">إبداعي متطور</b></span>
+                </div>
+            </div>
+
+            <canvas id="game-canvas" width="400" height="300"></canvas>
 
             <div class="ff-controls" id="ff-ctrl">
                 <button class="ff-btn" style="background:#00aeff;" onclick="useGlooWall()">🧱 جدار جلو</button>
                 <button class="ff-btn" style="background:#00ff44; color: black;" onclick="useMedkit()">🍄 فطر/علاج</button>
+            </div>
+
+            <div class="ff-controls" id="mc-ctrl">
+                <button class="mc-tile-btn selected" id="tile-grass" onclick="selectMcBlock('grass')">🌿</button>
+                <button class="mc-tile-btn" id="tile-wood" onclick="selectMcBlock('wood')">🪵</button>
+                <button class="mc-tile-btn" id="tile-stone" onclick="selectMcBlock('stone')">🪨</button>
+                <button class="mc-tile-btn" id="tile-diamond" onclick="selectMcBlock('diamond')">💎</button>
+                <button class="mc-tile-btn" id="tile-delete" onclick="selectMcBlock('air')">❌</button>
+                <button class="ff-btn" style="padding:5px 10px; font-size:12px;" onclick="mcPlayerJump()">Jump 🆙</button>
             </div>
 
             <div id="game-view"></div>
@@ -148,9 +168,12 @@
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
-        // متغيرات محرك المعركة لفري فاير
-        let ffCanvas, ffCtx, ffLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
+        // محرك الألعاب الرسومية
+        let canvas, ctx, animationLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
         let screenShake = 0;
+
+        // متغيرات عالم ماين كرافت الواقعي
+        let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 50, y: 150, vy: 0, size: 20 }, mcTime = 0;
 
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
@@ -176,7 +199,7 @@
 
         function showResult(title, desc, isWin) {
             clearInterval(gameTimer);
-            cancelAnimationFrame(ffLoop); 
+            cancelAnimationFrame(animationLoop); 
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
@@ -196,11 +219,13 @@
         
         function stop() { 
             clearInterval(gameTimer); 
-            cancelAnimationFrame(ffLoop);
+            cancelAnimationFrame(animationLoop);
             document.getElementById('gameModal').style.display = 'none'; 
             document.getElementById('ff-hud').style.display = 'none';
-            document.getElementById('ff-canvas').style.display = 'none';
+            document.getElementById('mc-hud').style.display = 'none';
+            document.getElementById('game-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
+            document.getElementById('mc-ctrl').style.display = 'none';
             document.getElementById('game-box').style.maxWidth = '400px';
         }
 
@@ -211,8 +236,10 @@
             document.getElementById('custom-result-overlay').style.display = 'none';
             
             document.getElementById('ff-hud').style.display = 'none';
-            document.getElementById('ff-canvas').style.display = 'none';
+            document.getElementById('mc-hud').style.display = 'none';
+            document.getElementById('game-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
+            document.getElementById('mc-ctrl').style.display = 'none';
             document.getElementById('game-box').style.maxWidth = '400px';
 
             const view = document.getElementById('game-view'); view.innerHTML = '';
@@ -220,7 +247,7 @@
             timeLeft = 15;
             clearInterval(gameTimer);
             
-            if (mode !== 'freefire') {
+            if (mode !== 'freefire' && mode !== 'minecraft') {
                 gameTimer = setInterval(() => {
                     timeLeft -= 0.1;
                     document.getElementById('timer-bar').style.width = (timeLeft/15)*100 + '%';
@@ -228,7 +255,9 @@
                 }, 100);
             }
 
-            // ميكانيكا الألعاب الـ 8 الأساسية
+            canvas = document.getElementById('game-canvas');
+            ctx = canvas.getContext('2d');
+
             if(mode === 'xo') {
                 view.innerHTML = `<div style="margin-bottom:10px;">
                     <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
@@ -281,23 +310,15 @@
                 });
             } 
             
-            // ========================================================
-            // تشغيل محرك لعبة فري فاير مع شخصية BRSMAYK الأسطورية
-            // ========================================================
+            // طور فري فاير
             else if(mode === 'freefire') {
                 document.getElementById('game-box').style.maxWidth = '500px';
                 document.getElementById('ff-hud').style.display = 'block';
-                document.getElementById('ff-canvas').style.display = 'block';
+                document.getElementById('game-canvas').style.display = 'block';
                 document.getElementById('ff-ctrl').style.display = 'flex';
-                
-                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0;
-                ffParticles = [];
+                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0; ffParticles = [];
                 updateFreeFireHud();
 
-                ffCanvas = document.getElementById('ff-canvas');
-                ffCtx = ffCanvas.getContext('2d');
-
-                // بناء مصفوفة الشخصيات وإدراج شخصيتك الأسطورية BRSMAYK بقوة أكبر
                 ffPlayers = [
                     { id: 'brsmayk', name: 'BRSMAYK (الرئيس) 👑', emoji: '🥷', x: 200, y: 150, vx: 2.8, vy: -2.2, hp: 250, maxHp: 250, state: 'RUNNING', timer: 0, isBoss: true, attackCooldown: 40 },
                     { id: 'alok', name: 'Alok (ألوك)', emoji: '🕺', x: 60, y: 80, vx: 2.0, vy: 1.5, hp: 130, maxHp: 130, state: 'RUNNING', timer: 0, skillActive: false, attackCooldown: 55 },
@@ -306,249 +327,191 @@
                     { id: 'wukong', name: 'Wukong (ووكونغ)', emoji: '🐒', x: 100, y: 240, vx: 1.6, vy: -1.6, hp: 120, maxHp: 120, state: 'RUNNING', timer: 0, isBush: false, attackCooldown: 60 }
                 ];
 
-                ffCanvas.onclick = (e) => {
-                    const rect = ffCanvas.getBoundingClientRect();
-                    const mx = e.clientX - rect.left;
-                    const my = e.clientY - rect.top;
-                    playerShoot(mx, my);
+                canvas.onclick = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    playerShoot(e.clientX - rect.left, e.clientY - rect.top);
                 };
 
                 timeLeft = 50;
                 gameTimer = setInterval(() => {
-                    timeLeft -= 1;
+                    timeLeft--;
                     document.getElementById('timer-bar').style.width = (timeLeft/50)*100 + '%';
                     if(timeLeft <= 0) {
                         if(ffKills >= 5) showResult('BOOYAH!', 'Victory Royale! 🔥👑', true);
-                        else showResult('MATCH OVER', 'انتهى الوقت ولم تقضِ على تشكيلة القائد BRSMAYK!', false);
+                        else showResult('MATCH OVER', 'انتهى الوقت!', false);
                     }
                 }, 1000);
 
                 renderFreeFire();
             }
+
+            // ========================================================
+            // طور ماين كرافت الواقعي الجديد (Minecraft 2D Engine Loop)
+            // ========================================================
+            else if(mode === 'minecraft') {
+                document.getElementById('game-box').style.maxWidth = '500px';
+                document.getElementById('mc-hud').style.display = 'block';
+                document.getElementById('game-canvas').style.display = 'block';
+                document.getElementById('mc-ctrl').style.display = 'flex';
+                
+                mcGrid = {}; mcTime = 0;
+                mcPlayer = { x: 180, y: 100, vy: 0, size: 22 };
+
+                // توليد تضاريس العالم الافتراضي الأرضية تلقائياً
+                for(let x = 0; x < 400; x += 25) {
+                    mcGrid[`${x},250`] = 'grass';
+                    mcGrid[`${x},275`] = 'stone';
+                }
+
+                canvas.onclick = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const mx = Math.floor((e.clientX - rect.left) / 25) * 25;
+                    const my = Math.floor((e.clientY - rect.top) / 25) * 25;
+                    
+                    if(mcSelectedBlock === 'air') {
+                        delete mcGrid[`${mx},${my}`];
+                        playSfx(400, 'triangle', 0.1, 0.1);
+                    } else {
+                        mcGrid[`${mx},${my}`] = mcSelectedBlock;
+                        playSfx(180, 'sine', 0.15, 0.08);
+                    }
+                };
+
+                timeLeft = 60;
+                gameTimer = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer-bar').style.width = (timeLeft/60)*100 + '%';
+                    if(timeLeft <= 0) showResult('MINING OVER', 'تم حفظ عالمك الإبداعي بنجاح! 🧱💎', true);
+                }, 1000);
+
+                renderMinecraft();
+            }
         }
 
+        // تحكم واختيارات بلوكات ماين كرافت
+        function selectMcBlock(type) {
+            mcSelectedBlock = type;
+            document.querySelectorAll('.mc-tile-btn').forEach(b => b.classList.remove('selected'));
+            if(type === 'grass') document.getElementById('tile-grass').classList.add('selected');
+            if(type === 'wood') document.getElementById('tile-wood').classList.add('selected');
+            if(type === 'stone') document.getElementById('tile-stone').classList.add('selected');
+            if(type === 'diamond') document.getElementById('tile-diamond').classList.add('selected');
+            if(type === 'air') document.getElementById('tile-delete').classList.add('selected');
+        }
+
+        function mcPlayerJump() {
+            if(mcPlayer.y >= 228) { // قفز واقعي عند ملامسة الأرضية
+                mcPlayer.vy = -7.5;
+                playSfx(300, 'sine', 0.1, 0.15);
+            }
+        }
+
+        function renderMinecraft() {
+            if (currentMode !== 'minecraft') return;
+            mcTime += 0.5;
+
+            // تغيير واقعي لإضاءة السماء (دورة الليل والنهار)
+            let isNight = (Math.sin(mcTime * 0.01) < -0.2);
+            ctx.fillStyle = isNight ? '#0b0f19' : '#55aeff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('mc-time-txt').innerText = isNight ? 'ليل (واقعي مدمج)' : 'نهار (سماء واقعية)';
+            document.getElementById('mc-time-txt').style.color = isNight ? '#ffb700' : 'var(--mc-blue)';
+
+            // رسم الشمس أو القمر بشكل واقعي
+            ctx.fillStyle = isNight ? '#eceff1' : '#ffff00';
+            ctx.beginPath();
+            ctx.arc(isNight ? 80 : 320, 50, 16, 0, Math.PI*2);
+            ctx.fill();
+
+            // تطبيق الجاذبية والفيزياء على لاعب ستيف
+            mcPlayer.vy += 0.35; // قوة الجاذبية الساقطة
+            mcPlayer.y += mcPlayer.vy;
+            if(mcPlayer.y >= 228) { mcPlayer.y = 228; mcPlayer.vy = 0; }
+
+            // رسم لاعب ستيف (Steve) داخل الميدان
+            ctx.fillStyle = '#ffb700'; // الرأس
+            ctx.fillRect(mcPlayer.x + 4, mcPlayer.y - 8, 14, 10);
+            ctx.fillStyle = '#0055ff'; // قميص ستيف الأزرق التقليدي
+            ctx.fillRect(mcPlayer.x, mcPlayer.y, mcPlayer.size, mcPlayer.size);
+
+            // رندر وعرض جميع الكتل والبلوكات الموضوعة في العالم
+            for (let coord in mcGrid) {
+                let [bx, by] = coord.split(',').map(Number);
+                let type = mcGrid[coord];
+
+                if(type === 'grass') ctx.fillStyle = '#4caf50';
+                else if(type === 'wood') ctx.fillStyle = '#8d6e63';
+                else if(type === 'stone') ctx.fillStyle = '#78909c';
+                else if(type === 'diamond') ctx.fillStyle = '#00ffcc';
+
+                ctx.fillRect(bx, by, 24, 24);
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.strokeRect(bx, by, 24, 24);
+            }
+
+            animationLoop = requestAnimationFrame(renderMinecraft);
+        }
+
+        // الدوال المساعدة لفري فاير
         function updateFreeFireHud() {
             document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
             document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
             document.getElementById('ff-kills').innerText = ffKills;
             document.getElementById('ff-hp-bar').style.width = (ffPlayerHp/200)*100 + '%';
             document.getElementById('ff-ep-bar').style.width = (ffPlayerEp/100)*100 + '%';
-            document.getElementById('ff-kills').innerText = ffKills;
         }
 
         function playerShoot(mx, my) {
             if(ffPlayerHp <= 0) return;
             screenShake = 7; 
             playSfx(1100, 'sawtooth', 0.12, 0.15); 
-
             createExplosion(mx, my, '#ffb700', 5);
 
             ffPlayers.forEach(p => {
                 if(p.hp <= 0) return;
-                
                 let dist = Math.hypot(p.x - mx, p.y - my);
                 if(dist < 28) {
-                    // حماية درع كرونو
-                    if(p.id === 'chrono' && p.shieldActive) {
-                        playSfx(300, 'sine', 0.15, 0.2);
-                        createExplosion(p.x, p.y, '#00aeff', 10);
-                        return;
-                    }
-
+                    if(p.id === 'chrono' && p.shieldActive) { createExplosion(p.x, p.y, '#00aeff', 10); return; }
                     let isHeadshot = my < p.y - 4;
-                    let dmg = isHeadshot ? 95 : 36;
-
-                    if(p.id === 'wukong' && p.isBush) {
-                        p.isBush = false;
-                        p.emoji = '🐒';
-                    }
-
-                    p.hp -= dmg;
-                    p.state = 'EVADING'; 
-                    p.timer = 45; // الهروب والمراوغة
-
-                    // مهارة التمويه لووكونغ
-                    if(p.id === 'wukong' && p.hp > 0 && Math.random() > 0.3) {
-                        p.isBush = true;
-                        p.emoji = '🌳';
-                    }
-
-                    // تأثير تفجير الدماء والشرر
+                    p.hp -= isHeadshot ? 95 : 36;
+                    p.state = 'EVADING'; p.timer = 45;
+                    if(p.id === 'wukong' && Math.random() > 0.3) { p.isBush = true; p.emoji = '🌳'; }
                     createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff5500', 15);
-
-                    // تشغيل مهارة ألوك الشفائية
-                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) {
-                        p.skillActive = true;
-                        p.timer = 130;
-                        playSfx(700, 'sine', 0.3, 0.3);
-                    }
-
-                    if(p.hp <= 0) {
-                        p.hp = 0;
-                        ffKills++;
-                        updateFreeFireHud();
-                        playSfx(850, 'triangle', 0.3, 0.3);
-                        if(ffKills >= 5) {
-                            setTimeout(() => showResult('BOOYAH!', '🏆 أسطورة! تمت تصفية فرقة BRSMAYK بالكامل!', true), 400);
-                        }
-                    }
+                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) { p.skillActive = true; p.timer = 130; }
+                    if(p.hp <= 0) { p.hp = 0; ffKills++; updateFreeFireHud(); if(ffKills >= 5) setTimeout(() => showResult('BOOYAH!', '🏆 انتصرت!', true), 400); }
                 }
             });
         }
 
-        function useGlooWall() {
-            if(ffPlayerHp < 200) {
-                playSfx(250, 'sawtooth', 0.2, 0.3);
-                ffPlayerHp = Math.min(200, ffPlayerHp + 40); 
-                updateFreeFireHud();
-                createExplosion(200, 150, '#00b7ff', 20);
-            }
-        }
-
-        function useMedkit() {
-            if(ffPlayerEp >= 25) {
-                ffPlayerEp -= 25;
-                ffPlayerHp = Math.min(200, ffPlayerHp + 50);
-                updateFreeFireHud();
-                playSfx(550, 'sine', 0.25, 0.3);
-                createExplosion(100, 200, '#00ff55', 15);
-            }
-        }
-
-        function createExplosion(x, y, color, count) {
-            for(let i=0; i<count; i++) {
-                ffParticles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 7,
-                    vy: (Math.random() - 0.5) * 7,
-                    radius: Math.random() * 3 + 1,
-                    color: color,
-                    alpha: 1
-                });
-            }
-        }
+        function useGlooWall() { if(ffPlayerHp < 200) { ffPlayerHp = Math.min(200, ffPlayerHp + 40); updateFreeFireHud(); createExplosion(200, 150, '#00b7ff', 20); }}
+        function useMedkit() { if(ffPlayerEp >= 25) { ffPlayerEp -= 25; ffPlayerHp = Math.min(200, ffPlayerHp + 50); updateFreeFireHud(); createExplosion(100, 200, '#00ff55', 15); }}
+        function createExplosion(x, y, color, count) { for(let i=0; i<count; i++) ffParticles.push({ x: x, y: y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, radius: Math.random() * 3 + 1, color: color, alpha: 1 }); }
 
         function renderFreeFire() {
             if (currentMode !== 'freefire' || ffPlayerHp <= 0) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#161b26'; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
-            ffCtx.save();
-            
-            if (screenShake > 0) {
-                ffCtx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
-                screenShake *= 0.88;
-                if(screenShake < 0.4) screenShake = 0;
-            }
+            ffParticles.forEach((p, idx) => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; if(p.alpha <= 0) { ffParticles.splice(idx, 1); return; } ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fill(); });
+            ctx.globalAlpha = 1;
 
-            // لون ساحة المعركة
-            ffCtx.fillStyle = '#161b26';
-            ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
-            
-            // شبكة الرادار
-            ffCtx.strokeStyle = 'rgba(255, 106, 0, 0.05)';
-            ffCtx.lineWidth = 1;
-            for(let i=0; i<ffCanvas.width; i+=40) { ffCtx.beginPath(); ffCtx.moveTo(i, 0); ffCtx.lineTo(i, ffCanvas.height); ffCtx.stroke(); }
-
-            // رندر جزيئات الشرر والضربات
-            ffParticles.forEach((p, idx) => {
-                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
-                if(p.alpha <= 0) { ffParticles.splice(idx, 1); return; }
-                ffCtx.globalAlpha = p.alpha;
-                ffCtx.fillStyle = p.color;
-                ffCtx.beginPath(); ffCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ffCtx.fill();
-            });
-            ffCtx.globalAlpha = 1;
-
-            // تحديث حركة وذكاء الشخصيات
             ffPlayers.forEach(p => {
-                if(p.hp <= 0) {
-                    ffCtx.font = '20px Arial';
-                    ffCtx.fillText('⚰️', p.x - 10, p.y + 10);
-                    return;
-                }
+                if(p.hp <= 0) { ctx.font = '20px Arial'; ctx.fillText('⚰️', p.x - 10, p.y + 10); return; }
+                let currentSpeed = p.state === 'EVADING' ? 2.5 : 1;
+                p.x += p.vx * currentSpeed; p.y += p.vy * currentSpeed;
+                if(p.x < 25 || p.x > canvas.width - 25) p.vx *= -1; if(p.y < 45 || p.y > canvas.height - 45) p.vy *= -1;
 
-                let currentSpeed = 1;
-                if(p.state === 'EVADING') {
-                    // زيادة سرعة الهروب لكيلي ولشخصية BRSMAYK الرئيس
-                    currentSpeed = p.id === 'kelly' ? 3.3 : (p.id === 'brsmayk' ? 2.8 : 2.2);
-                    p.timer--;
-                    if(p.timer <= 0) p.state = 'RUNNING';
-                }
-
-                p.x += p.vx * currentSpeed;
-                p.y += p.vy * currentSpeed;
-                if(p.x < 25 || p.x > ffCanvas.width - 25) p.vx *= -1;
-                if(p.y < 45 || p.y > ffCanvas.height - 45) p.vy *= -1;
-
-                // هالة الشفاء الخاصة بألوك
-                if(p.id === 'alok' && p.skillActive) {
-                    p.hp = Math.min(p.maxHp, p.hp + 0.2); 
-                    ffCtx.strokeStyle = '#00ffcc';
-                    ffCtx.lineWidth = 2;
-                    ffCtx.beginPath(); ffCtx.arc(p.x, p.y, 32, 0, Math.PI*2); ffCtx.stroke();
-                    p.timer--;
-                    if(p.timer <= 0) p.skillActive = false;
-                }
-
-                // درع كرونو
-                if(p.id === 'chrono') {
-                    p.timer++;
-                    if(p.timer > 140) { p.shieldActive = !p.shieldActive; p.timer = 0; }
-                    if(p.shieldActive) {
-                        ffCtx.fillStyle = 'rgba(0, 174, 255, 0.2)';
-                        ffCtx.strokeStyle = '#00aeff';
-                        ffCtx.lineWidth = 2;
-                        ffCtx.beginPath(); ffCtx.arc(p.x, p.y, 30, 0, Math.PI*2); ffCtx.fill(); ffCtx.stroke();
-                    }
-                }
-
-                // هجوم الأعداء على اللاعب
                 p.attackCooldown--;
                 if(p.attackCooldown <= 0) {
                     p.attackCooldown = Math.random() * 60 + 35;
-                    
-                    ffCtx.strokeStyle = p.id === 'brsmayk' ? '#ffff00' : '#ff3333';
-                    ffCtx.lineWidth = p.id === 'brsmayk' ? 3 : 1.5;
-                    ffCtx.beginPath(); ffCtx.moveTo(p.x, p.y); ffCtx.lineTo(ffCanvas.width/2, ffCanvas.height); ffCtx.stroke();
-
-                    playSfx(150, 'sawtooth', 0.08, 0.1);
-                    // هجوم البوس BRSMAYK يسبب ضرراً أقوى (24 HP)
-                    let dmg = p.id === 'brsmayk' ? 24 : (p.id === 'kelly' ? 16 : 11); 
-                    if(ffPlayerEp > 0) {
-                        let absorb = Math.min(ffPlayerEp, dmg * 0.5);
-                        ffPlayerEp -= absorb;
-                        dmg -= absorb;
-                    }
-                    ffPlayerHp -= dmg;
-                    updateFreeFireHud();
-
-                    if(ffPlayerHp <= 0) {
-                        ffPlayerHp = 0;
-                        updateFreeFireHud();
-                        setTimeout(() => showResult('ELIMINATED', 'تمت تصفيتك من قبل تشكيلة BRSMAYK! ☠️❌', false), 200);
-                        return;
-                    }
+                    ffPlayerHp -= p.id === 'brsmayk' ? 24 : 11; updateFreeFireHud();
+                    if(ffPlayerHp <= 0) { showResult('ELIMINATED', '☠️❌ جيم أوفر!', false); return; }
                 }
 
-                // رسم الإيموجي والاسم بوضوح تام فوق الرأس
-                ffCtx.fillStyle = 'white';
-                ffCtx.font = '22px Arial';
-                ffCtx.fillText(p.emoji, p.x - 11, p.y + 8);
-
-                // اسم الشخصية فوق الرأس مباشرة
-                ffCtx.fillStyle = p.id === 'brsmayk' ? '#00ffcc' : '#ffb700';
-                ffCtx.font = 'bold 10px Segoe UI, Tahoma';
-                ffCtx.fillText(p.name, p.x - 26, p.y - 25);
-
-                // شريط حياة العدو المصغر
-                ffCtx.fillStyle = '#444';
-                ffCtx.fillRect(p.x - 20, p.y - 18, 40, 4);
-                ffCtx.fillStyle = p.id === 'brsmayk' ? '#00ff44' : '#ff3333';
-                ffCtx.fillRect(p.x - 20, p.y - 18, (p.hp / p.maxHp) * 40, 4);
+                ctx.fillStyle = 'white'; ctx.font = '22px Arial'; ctx.fillText(p.emoji, p.x - 11, p.y + 8);
+                ctx.fillStyle = p.id === 'brsmayk' ? '#00ffcc' : '#ffb700'; ctx.font = 'bold 10px Segoe UI'; ctx.fillText(p.name, p.x - 26, p.y - 25);
             });
-
-            ffCtx.restore();
-            ffLoop = requestAnimationFrame(renderFreeFire);
+            animationLoop = requestAnimationFrame(renderFreeFire);
         }
 
         function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
@@ -557,23 +520,12 @@
 
         function aiMove() {
             let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            if(difficulty === 'hard') m = getSmartMove(board);
-            if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
-            board[m]='O'; let cell = document.getElementById('c'+m);
-            cell.innerText='O'; cell.classList.add('p-o');
+            if(difficulty === 'hard') m = getSmartMove(board); if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
+            board[m]='O'; let cell = document.getElementById('c'+m); cell.innerText='O'; cell.classList.add('p-o');
             if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
         }
-
-        function getSmartMove(b) {
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
-            return -1;
-        }
-
-        function checkWin(b, p) {
-            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return w.some(s => s.every(i => b[i] === p));
-        }
+        function getSmartMove(b) { for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } } for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } } return -1; }
+        function checkWin(b, p) { const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; return w.some(s => s.every(i => b[i] === p)); }
     </script>
 </body>
 </html>
