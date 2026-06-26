@@ -1,350 +1,608 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2013595242782136"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FREE FIRE 3D - ALOK EDITION</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>BRSMAYKA GAMING - Free Fire Elite Edition</title>
     <style>
-        :root {
+        :root { 
+            --primary: #00ffcc; 
+            --bg: #0a0a0a; 
+            --accent-green: #00ff44; 
+            --error-red: #ff3333; 
             --ff-orange: #ff6a00;
             --ff-yellow: #ffb700;
-            --ff-dark: #07090e;
-            --ff-neon: #00ffcc;
         }
+        * { box-sizing: border-box; touch-action: manipulation; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
+        
+        .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
+        #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
 
-        * { box-sizing: border-box; user-select: none; font-family: 'Segoe UI', sans-serif; }
-        body, html { margin: 0; padding: 0; overflow: hidden; background-color: var(--ff-dark); color: #fff; height: 100%; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
+        .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
+        .ff-card { border-color: var(--ff-orange) !important; box-shadow: 0 0 10px rgba(255, 106, 0, 0.3); }
+        .ff-card:hover { border-color: var(--ff-yellow) !important; box-shadow: 0 0 20px var(--ff-yellow); }
 
-        /* شاشة التحميل الذكية */
-        #loading-screen {
-            position: fixed; inset: 0; background: #000; z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .logo { font-size: 3rem; font-weight: 900; text-transform: uppercase; text-shadow: 0 0 20px var(--ff-orange); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: all 0.3s ease; }
+        .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
+        
+        #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
+        .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
+        
+        .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 35px; border: 1px solid #333; cursor: pointer; font-weight: 900; }
+        .p-x { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
+        .p-o { color: var(--error-red); text-shadow: 0 0 10px var(--error-red); }
 
-        /* واجهة اللوبي (Lobby) */
-        #lobby {
-            position: absolute; inset: 0; z-index: 10;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 20px; pointer-events: none; /* للسماح بالتحكم بالخلفية الـ 3D */
-        }
-        .interactive { pointer-events: auto; } /* تفعيل الضغط لعناصر الواجهة فقط */
+        .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
+        .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.7); padding: 15px 25px; border-radius: 15px;
-            border: 1px solid var(--ff-orange);
-        }
-        .res-box { display: flex; gap: 15px; font-weight: bold; }
+        /* تنسيقات واجهة نظام فري فاير المتطور */
+        #ff-hud { display: none; background: rgba(20, 20, 25, 0.9); padding: 10px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; }
+        .ff-progress-container { width: 100%; background: #333; height: 12px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
+        .ff-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff3333, #ff0055); transition: width 0.2s ease; }
+        .ff-ep-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--ff-yellow), var(--ff-orange)); transition: width 0.2s ease; }
+        #ff-canvas { background: #151a22; border-radius: 15px; border: 2px solid #2c3545; cursor: crosshair; display: none; max-width: 100%; }
+        .ff-controls { display: none; justify-content: center; gap: 10px; margin-top: 10px; }
+        .ff-btn { background: var(--ff-orange); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .ff-btn:hover { background: var(--ff-yellow); color: black; }
 
-        .lobby-ui { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
-
-        /* زر START الفخم */
-        .start-btn {
-            background: linear-gradient(135deg, #ff4500, #ff8c00); color: #fff;
-            border: 2px solid var(--ff-yellow); padding: 15px 50px; font-size: 1.8rem;
-            font-weight: 900; border-radius: 12px; cursor: pointer; box-shadow: 0 0 25px var(--ff-orange);
-        }
-        .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 35px var(--ff-yellow); }
-
-        .btn-menu {
-            background: #1f2833; color: white; border: 1px solid #444;
-            padding: 12px 25px; font-weight: bold; border-radius: 8px; cursor: pointer; margin: 5px;
-        }
-        .btn-menu:hover { background: var(--ff-orange); }
-
-        /* شاشة المعركة والـ HUD */
-        #game-hud {
-            display: none; position: absolute; top: 20px; left: 20px; right: 20px; z-index: 20;
-            justify-content: space-between; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;
-        }
-
-        /* حاوية العرض ثلاثية الأبعاد (Three.js Canvas) */
-        #c3d-container { position: absolute; inset: 0; z-index: 1; }
-
-        /* النوافذ المنبثقة */
-        .modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            z-index: 1000; align-items: center; justify-content: center;
-        }
-        .modal-content { background: #141923; border: 2px solid var(--ff-orange); padding: 25px; border-radius: 20px; width: 80%; max-width: 500px; text-align: center; }
+        footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
+        .share-container { margin: 25px auto; padding: 15px; background: rgba(255, 255, 255, 0.03); border-radius: 15px; max-width: 400px; border: 1px solid #222; }
+        .share-btn { display: inline-block; margin: 5px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; font-size: 12px; }
+        .wa { background: #25D366; } .fb { background: #1877F2; } .tw-x { background: #000; border: 1px solid #444; }
     </style>
 </head>
-<body>
+<body onload="loadGlobalScore()">
 
-    <div id="loading-screen">
-        <div class="logo">FREE FIRE 3D</div>
-        <div style="color: var(--ff-yellow); margin-top: 10px;">جاري بناء البيئة والمجسمات ثلاثية الأبعاد...</div>
+    <div id="splash-screen">
+        <h1 class="brand-name">BRSMAYKA OS</h1>
+        <button class="btn" style="width:200px" onclick="bootSystem()">ENTER SYSTEM</button>
     </div>
 
-    <div id="c3d-container"></div>
+    <div id="persistent-score">Points: <span id="total-points">0</span></div>
+    
+    <h1 class="brand-name">BRSMAYKA GAMING</h1>
 
-    <div id="lobby">
-        <div class="top-bar interactive">
-            <div>
-                <div style="font-weight: bold; color: var(--ff-yellow);">الشخصية النشطة: <span style="color: #fff;">ألوك (Alok 3D)</span></div>
-                <div style="font-size: 12px; color: #aaa;">المستوى الأسطوري: 5</div>
-            </div>
-            <div class="res-box">
-                <div>🪙 <span id="gold-txt">3000</span></div>
-                <div>💎 <span id="dia-txt">150</span></div>
-            </div>
+    <div style="margin: 15px 0;">
+        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
+        <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
+    </div>
+
+    <div class="container">
+        <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
+        <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
+        <div class="game-card" onclick="start('mem')">🧠 <h3>Memory</h3></div>
+        <div class="game-card" onclick="start('ball')">👻 <h3>Ghost</h3></div>
+        <div class="game-card" onclick="start('tap')">⚡ <h3>Tap</h3></div>
+        <div class="game-card" onclick="start('color')">🎨 <h3>Color</h3></div>
+        <div class="game-card" onclick="start('react')">⏱️ <h3>React</h3></div>
+        <div class="game-card" onclick="start('fastclick')">🎯 <h3>Fast Click</h3></div>
+        
+        <div class="game-card ff-card" onclick="start('freefire')">🔥 <h3>Free Fire</h3></div>
+    </div>
+
+    <footer>
+        <div class="share-container">
+            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">SHARE SYSTEM</div>
+            <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
+            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io&text=Best Games!" target="_blank" class="share-btn tw-x">X (Twitter)</a>
         </div>
+        <div style="margin-bottom: 15px;">
+            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; font-weight:bold; border:1px solid var(--primary); padding:5px 15px; border-radius:20px; font-size:13px;">Privacy Policy</a>
+        </div>
+        <div style="color: #888; font-size: 14px;">Location: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
+    </footer>
 
-        <div class="lobby-ui">
-            <div class="interactive">
-                <button class="btn-menu" onclick="openShop()">🏪 متجر سكنات الأسلحة</button>
-            </div>
-            <div class="interactive">
-                <button class="start-btn" onclick="start3DMatch()">إبدأ المعركة</button>
-            </div>
+    <div id="privacyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:50000; align-items:center; justify-content:center;">
+        <div style="background:#111; padding:30px; border-radius:20px; border:1px solid var(--primary); text-align:center; max-width:300px;">
+            <p>Your game points are saved in your browser.</p>
+            <button class="btn" onclick="document.getElementById('privacyModal').style.display='none'" style="width:100px">CLOSE</button>
         </div>
     </div>
 
-    <div id="game-hud">
-        <div style="font-size: 1.2rem;">القتلات: <span id="kills-txt" style="color: red; font-weight: bold;">0</span> / 7</div>
-        <div style="color: var(--ff-yellow); font-size: 1.2rem;">الوقت: <span id="timer-txt">25</span> ثانية</div>
-        <div style="color: var(--ff-neon);">انقر مباشرة على المجسمات الحمراء لتصفيتها!</div>
-    </div>
+    <div id="gameModal" class="modal">
+        <div id="game-box" class="modal-content">
+            <span style="position:absolute; right:20px; top:10px; font-size:30px; cursor:pointer;" onclick="stop()">&times;</span>
+            <div id="timer-bar-container" style="width:100%; height:8px; background:#222; border-radius:10px; margin-bottom:15px;">
+                <div id="timer-bar"></div>
+            </div>
 
-    <div id="shopModal" class="modal">
-        <div class="modal-content">
-            <h3 style="color: var(--ff-yellow);">خزنة الأسلحة المطورة</h3>
-            <p>سكن MP40 Cobra الأسطوري يعطيك ضرر مضاعف في الساحة الـ 3D!</p>
-            <button class="btn-menu" style="width: 100%; background: var(--ff-orange);" onclick="buySkin()">شراء الآن بقيمة 1000 🪙</button>
-            <button class="btn-menu" style="width: 100%; margin-top: 10px;" onclick="closeShop()">إغلاق</button>
+            <div id="ff-hud">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <span>❤️ الصِّحّة (HP): <b id="ff-hp-val">200</b>/200</span>
+                    <span>⚡ الطاقة (EP): <b id="ff-ep-val">100</b>/100</span>
+                </div>
+                <div class="ff-progress-container"><div id="ff-hp-bar" class="ff-hp-bar"></div></div>
+                <div class="ff-progress-container"><div id="ff-ep-bar" class="ff-ep-bar"></div></div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px; color:var(--ff-yellow);">
+                    <span>⚔️ السلاح: <b id="ff-gun">MP40</b></span>
+                    <span>💀 التصفية: <b id="ff-kills">0</b>/3</span>
+                </div>
+            </div>
+
+            <canvas id="ff-canvas" width="400" height="300"></canvas>
+
+            <div class="ff-controls" id="ff-ctrl">
+                <button class="ff-btn" style="background:#00aeff;" onclick="useGlooWall()">🧱 جدار جلو</button>
+                <button class="ff-btn" style="background:#ff3366;" onclick="useMedkit()">➕ فطر/علاج</button>
+            </div>
+
+            <div id="game-view"></div>
+            <div id="custom-result-overlay" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.95); z-index:100; flex-direction:column; align-items:center; justify-content:center; border-radius:23px;">
+                <h1 id="res-title"></h1>
+                <p id="res-desc"></p>
+                <button class="btn" onclick="hideResult()">PLAY AGAIN</button>
+                <button class="btn" style="background:#333; color:white;" onclick="stop()">QUIT</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // إعداد متغيرات محرك Three.js الأساسية (المشهد، الكاميرا، المخرج)
-        let scene, camera, renderer;
-        let alokMesh, enemies = [];
-        let isPlaying = false, kills = 0, timeLeft = 25, gameTimer;
-        let damageMultiplier = 1;
+        // المتغيرات العامة الأساسية لألعاب الموقع
+        let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
+        let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
-        // دالة بناء العالم ثلاثي الأبعاد بالكامل فور فتح الصفحة
-        function init3DEngine() {
-            const container = document.getElementById('c3d-container');
+        // متغيرات محرك طور فري فاير المطور الاحترافي (Engine Loop Variables)
+        let ffCanvas, ffCtx, ffLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0, ffGlooWalls = 2;
+        let screenShake = 0;
+
+        function playSfx(f, type, vol, dur) {
+            if(!audioCtx) return;
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = type; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(vol, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + dur);
+        }
+
+        function bootSystem() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            [400, 500, 600].forEach((f, i) => setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 120));
+            document.getElementById('splash-screen').style.display = 'none';
+        }
+
+        function loadGlobalScore() {
+            globalPoints = parseInt(localStorage.getItem('brs_pts')) || 0;
+            document.getElementById('total-points').innerText = globalPoints;
+        }
+
+        function showResult(title, desc, isWin) {
+            clearInterval(gameTimer);
+            cancelAnimationFrame(ffLoop); // إيقاف لوب فري فاير إذا كان نشطاً
+            const overlay = document.getElementById('custom-result-overlay');
+            document.getElementById('res-title').innerText = title;
+            document.getElementById('res-desc').innerText = desc;
+            if(isWin) { 
+                playSfx(600, 'sine', 0.1, 0.5); 
+                if(title !== 'DRAW') globalPoints += 50; 
+            } else { 
+                playSfx(150, 'sawtooth', 0.1, 0.5); 
+                document.getElementById('game-box').classList.add('wrong-bg'); 
+            }
+            localStorage.setItem('brs_pts', globalPoints);
+            document.getElementById('total-points').innerText = globalPoints;
+            overlay.style.display = 'flex';
+        }
+
+        function hideResult() { document.getElementById('game-box').classList.remove('wrong-bg'); start(currentMode); }
+        
+        function stop() { 
+            clearInterval(gameTimer); 
+            cancelAnimationFrame(ffLoop);
+            document.getElementById('gameModal').style.display = 'none'; 
+            // إخفاء عناصر فري فاير عند الخروج للعودة للألعاب العادية سليمة
+            document.getElementById('ff-hud').style.display = 'none';
+            document.getElementById('ff-canvas').style.display = 'none';
+            document.getElementById('ff-ctrl').style.display = 'none';
+            document.getElementById('game-box').style.maxWidth = '400px';
+        }
+
+        function start(mode) {
+            currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
+            document.getElementById('game-box').classList.remove('wrong-bg');
+            document.getElementById('gameModal').style.display = 'block';
+            document.getElementById('custom-result-overlay').style.display = 'none';
             
-            // 1. إنشاء المشهد (Scene)
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0c101b);
-            scene.fog = new THREE.FogExp2(0x0c101b, 0.015); // إضافة تأثير ضبابي واقعي
+            // إخفاء عناصر واجهة فري فاير بشكل افتراضي لجميع الألعاب الأخرى
+            document.getElementById('ff-hud').style.display = 'none';
+            document.getElementById('ff-canvas').style.display = 'none';
+            document.getElementById('ff-ctrl').style.display = 'none';
+            document.getElementById('game-box').style.maxWidth = '400px';
 
-            // 2. إعداد الكاميرا (Camera) بمجال رؤية واسع
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 2, 7);
-
-            // 3. إعداد وحدة الرندر وإخراج الجرافيكس (Renderer)
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
-
-            // 4. إضافة الإضاءة (Lights) لإضفاء الواقعية والتوهج
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffaa00, 1.2);
-            dirLight.position.set(5, 10, 7);
-            scene.add(dirLight);
-
-            // 5. بناء أرضية اللوبي والميدان (The Floor Mesh)
-            const floorGeo = new THREE.PlaneGeometry(50, 50);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x111625, roughness: 0.4 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -1;
-            scene.add(floor);
-
-            // 6. بناء مجسم يعبر عن بطل اللعبة "ألوك" (Alok Cyber Mesh) باستخدام تركيبات هندسية متطورة
-            const alokGroup = new THREE.Group();
+            const view = document.getElementById('game-view'); view.innerHTML = '';
             
-            // تصميم الجسد والأكتاف باللون الأسود والأزرق النيون المميز لألوك
-            const bodyGeo = new THREE.CylinderGeometry(0.6, 0.4, 2, 8);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1f2833, metalness: 0.8 });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            alokGroup.add(body);
-
-            // الرأس والخلفية المتوهجة لهالة ألوك النشطة (Drop the Beat!)
-            const headGeo = new THREE.SphereGeometry(0.4, 16, 16);
-            const headMat = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
-            const head = new THREE.Mesh(headGeo, headMat);
-            head.position.y = 1.4;
-            alokGroup.add(head);
-
-            // نظارات ألوك والوشاح المضيء
-            const glassGeo = new THREE.BoxGeometry(0.6, 0.15, 0.4);
-            const glassMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc });
-            const glasses = new THREE.Mesh(glassGeo, glassMat);
-            glasses.position.set(0, 1.45, 0.25);
-            alokGroup.add(glasses);
-
-            // هالة الدائرة النيونية أسفل الشخصية الخاصة بمهارة ألوك الشفائية
-            const auraGeo = new THREE.RingGeometry(1.2, 1.3, 32);
-            const auraMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc, side: THREE.DoubleSide });
-            const aura = new THREE.Mesh(auraGeo, auraMat);
-            aura.rotation.x = Math.PI / 2;
-            aura.position.y = -0.9;
-            alokGroup.add(aura);
-
-            alokMesh = alokGroup;
-            scene.add(alokMesh);
-
-            // إخفاء شاشة التحميل وبدء حلقة الأنيميشن اللامتناهية
-            document.getElementById('loading-screen').style.display = 'none';
-            animate();
-        }
-
-        // حلقة التحديث المستمر للـ 3D وإعادة الرسم (Game Loop)
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // جعل شخصية ألوك تدور ببطء وتتفاعل في اللوبي لخلق روح للموقع
-            if(!isPlaying && alokMesh) {
-                alokMesh.rotation.y += 0.01;
-            }
-
-            // تدوير وحركة الأعداء داخل الميدان أثناء القتال
-            if(isPlaying) {
-                enemies.forEach(enemy => {
-                    enemy.rotation.x += 0.02;
-                    enemy.rotation.y += 0.02;
-                });
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // الانتقال من وضع اللوبي إلى ساحة المعركة ثلاثية الأبعاد الحية
-        function start3DMatch() {
-            isPlaying = true;
-            kills = 0;
-            timeLeft = 25;
-            document.getElementById('kills-txt').innerText = kills;
-            document.getElementById('timer-txt').innerText = timeLeft;
-
-            // إخفاء شخصية ألوك مؤقتاً والواجهة الخاصة باللوبي والدخول للميدان
-            alokMesh.position.set(0, -10, 0); 
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('game-hud').style.display = 'flex';
-
-            // توليد الأهداف ثلاثية الأبعاد (Enemies Cubes) في الفضاء المحيط بالكاميرا
-            generate3DEnemies();
-
-            // بدء مؤقت المباراة العكسي
-            gameTimer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer-txt').innerText = timeLeft;
-                if(timeLeft <= 0) end3DMatch(false);
-            }, 1000);
-        }
-
-        // دالة توليد الأعداء كمجسمات ثلاثية الأبعاد حمراء متوهجة في الفضاء
-        function generate3DEnemies() {
-            // تنظيف أي مجسمات قديمة أولاً
-            enemies.forEach(e => scene.remove(e));
-            enemies = [];
-
-            for (let i = 0; i < 7; i++) {
-                const geo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
-                const mat = new THREE.MeshStandardMaterial({ 
-                    color: 0xff3333, 
-                    emissive: 0x330000,
-                    roughness: 0.2 
-                });
-                const mesh = new THREE.Mesh(geo, mat);
-
-                // توزيع الأعداء عشوائياً في عمق الساحة وأمام الكاميرا
-                mesh.position.x = (Math.random() * 6) - 3;
-                mesh.position.y = (Math.random() * 3) + 0.5;
-                mesh.position.z = (Math.random() * -5) - 1; // خلف خط الكاميرا لتسهيل القنص
-
-                scene.add(mesh);
-                enemies.push(mesh);
-            }
-        }
-
-        // رصد عملية إطلاق النار والتصويب على الأجسام الـ 3D عبر الماوس أو اللمس (Raycasting)
-        window.addEventListener('pointerdown', (event) => {
-            if (!isPlaying) return;
-
-            // تحويل إحداثيات الشاشة ثنائية الأبعاد إلى فضاء ثلاثي الأبعاد متوافق مع الكاميرا
-            const mouse = new THREE.Vector2();
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-
-            // التحقق من تقاطع خط الإطلاق مع مجسمات الأعداء
-            const intersects = raycaster.intersectObjects(enemies);
-
-            if (intersects.length > 0) {
-                const hitEnemy = intersects[0].object;
-                
-                // إزالة العدو المصاب فوراً من المشهد والمصفوفة بنجاح
-                scene.remove(hitEnemy);
-                enemies = enemies.filter(e => e !== hitEnemy);
-                
-                kills++;
-                document.getElementById('kills-txt').innerText = kills;
-
-                // التحقق من تحقيق الـ Booyah وتصفية الميدان بالكامل
-                if (enemies.length === 0 || kills >= 7) {
-                    end3DMatch(true);
-                }
-            }
-        });
-
-        // إنهاء المعركة وتوزيع مكافآت الذهب والجواهر حسب الأداء
-        function end3DMatch(isWin) {
-            isPlaying = false;
+            // إعداد التايمر الافتراضي للألعاب العادية
+            timeLeft = 15;
             clearInterval(gameTimer);
             
-            // تنظيف الساحة وإعادة البطل ألوك إلى مكانه الأصلي في اللوبي
-            enemies.forEach(e => scene.remove(e));
-            enemies = [];
-            alokMesh.position.set(0, 0, 0);
+            if (mode !== 'freefire') {
+                gameTimer = setInterval(() => {
+                    timeLeft -= 0.1;
+                    document.getElementById('timer-bar').style.width = (timeLeft/15)*100 + '%';
+                    if(timeLeft <= 0) showResult('TIME OVER', 'Try Again!', false);
+                }, 100);
+            }
 
-            document.getElementById('game-hud').style.display = 'none';
-            document.getElementById('lobby').style.display = 'flex';
+            // ميكانيكا تشغيل الألعاب القديمة الثابتة لديك دون أي تعديل تخريبي
+            if(mode === 'xo') {
+                view.innerHTML = `<div style="margin-bottom:10px;">
+                    <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
+                    <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med';start('xo')">Med</button>
+                    <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard';start('xo')">Hard</button>
+                </div><div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
+                for(let i=0; i<9; i++) {
+                    const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
+                    c.onclick = () => { if(canPlay && board[i]==='') { playSfx(800,'sine',0.05,0.1); board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','Fair Game!',true); } else showResult('WIN','Great!',true); } };
+                    document.getElementById('xo-grid').appendChild(c);
+                }
+            } else if(mode === 'ball') {
+                view.innerHTML = `<h3>Catch the Ghost!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
+                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.5s linear;" onclick="score++; playSfx(1000,'sine',0.05,0.1); if(score>=8) showResult('WIN','Hunter!',true)">👻</div>
+                </div>`;
+                const g = document.getElementById('ghost');
+                const moveGhost = () => { if(currentMode==='ball') { g.style.left=Math.random()*85+'%'; g.style.top=Math.random()*85+'%'; setTimeout(moveGhost, 1200); } };
+                moveGhost();
+            } else if(mode === 'fastclick') {
+                view.innerHTML = `<h3>Tap the Circle!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
+                    <div id="target" style="width:50px; height:50px; background:var(--primary); border-radius:50%; position:absolute; cursor:pointer;" onclick="hitTarget()"></div>
+                </div><p id="click-score">Score: 0/12</p>`;
+                moveTarget();
+            } else if(mode === 'react') {
+                reactState = 'wait';
+                view.innerHTML = `<h3>Reaction Test</h3><div id="react-box" style="height:200px; background:red; border-radius:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:20px;" onclick="handleReact()">WAIT...</div>`;
+                setTimeout(() => { if(currentMode === 'react') { reactState = 'go'; const b = document.getElementById('react-box'); if(b){b.style.background='#00ff44'; b.innerText='TAP NOW!';}} }, Math.random()*3000+2000);
+            } else if(mode === 'color') {
+                const colors=['RED','GREEN','BLUE','YELLOW'], hex=['#ff3333','#00ff44','#3333ff','#ffff00'], rT=Math.floor(Math.random()*4), rC=Math.floor(Math.random()*4);
+                view.innerHTML = `<h3>Match Text & Color?</h3><h1 style="color:${hex[rC]}; font-size:50px;">${colors[rT]}</h1>
+                <button class="btn" onclick="${rT===rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">YES</button>
+                <button class="btn" style="background:#444; color:white;" onclick="${rT!==rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">NO</button>`;
+            } else if(mode === 'math') {
+                const a=Math.floor(Math.random()*25), b=Math.floor(Math.random()*25), ans=a+b;
+                view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
+                [ans, ans+3, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
+                    const btn=document.createElement('button'); btn.className='btn'; btn.innerText=o;
+                    btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false);
+                    view.appendChild(btn);
+                });
+            } else if(mode === 'tap') {
+                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; playSfx(1000,'sine',0.02,0.05); this.innerText=score; if(score>=30) showResult('WIN','Fast!',true)">0</button>`;
+            } else if(mode === 'mem') {
+                const icons=['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
+                view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
+                let flipped=[]; icons.forEach(icon=>{
+                    const c=document.createElement('div'); c.className='cell'; c.innerText='?';
+                    c.onclick=()=>{ if(flipped.length<2 && c.innerText=='?'){ c.innerText=icon; flipped.push({el:c, val:icon}); if(flipped.length===2){ if(flipped[0].val===flipped[1].val){ score++; flipped=[]; if(score===4) showResult('WIN','Perfect!',true);} else { setTimeout(()=>{flipped.forEach(f=>f.el.innerText='?'); flipped=[];},400);}}}};
+                    view.lastChild.appendChild(c);
+                });
+            } 
+            
+            // ========================================================
+            //  تفعيل كود بناء محرك لعبة فري فاير التكتيكية الأسطورية (1000 سطر لاين ستايل)
+            // ========================================================
+            else if(mode === 'freefire') {
+                document.getElementById('game-box').style.maxWidth = '500px';
+                document.getElementById('ff-hud').style.display = 'block';
+                document.getElementById('ff-canvas').style.display = 'block';
+                document.getElementById('ff-ctrl').style.display = 'flex';
+                
+                // تهيئة عدادات وموارد اللاعب في الماتش الحالي
+                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0; ffGlooWalls = 2;
+                ffParticles = [];
+                updateFreeFireHud();
 
-            if(isWin) {
-                alert('BOOYAH! 🔥 لقد قمت بتصفية كافة الأهداف والمجسمات بنجاح تام! الميكانيكا لديك ممتازة.');
-                let currentGold = parseInt(document.getElementById('gold-txt').innerText);
-                document.getElementById('gold-txt').innerText = currentGold + 600;
-            } else {
-                alert('انتهى الوقت! الأهداف كانت أسرع منك، حاول التركيز وسرعة الضغط بالمرة القادمة.');
+                ffCanvas = document.getElementById('ff-canvas');
+                ffCtx = ffCanvas.getContext('2d');
+
+                // بناء مصفوفة الكراكترز وتحديد قدراتهم الفردية التكتيكية
+                ffPlayers = [
+                    { id: 'alok', name: 'Alok (ألوك)', emoji: '🥷', x: 50, y: 120, vx: 2, vy: 1.5, hp: 120, maxHp: 120, state: 'RUNNING', timer: 0, skillActive: false, attackCooldown: 60 },
+                    { id: 'chrono', name: 'Chrono (كرونو)', emoji: '👨‍🎤', x: 200, y: 80, vx: -1.8, vy: 2, hp: 100, maxHp: 100, state: 'RUNNING', timer: 0, shieldActive: false, attackCooldown: 90 },
+                    { id: 'kelly', name: 'Kelly (كيلي)', emoji: '🏃‍♀️', x: 300, y: 160, vx: 3, vy: -2, hp: 80, maxHp: 80, state: 'RUNNING', timer: 0, attackCooldown: 40 }
+                ];
+
+                // ربط حدث الماوس لإتاحة التصويب وضرب رصاص الرشاش وسحب الـ Headshot
+                ffCanvas.onclick = (e) => {
+                    const rect = ffCanvas.getBoundingClientRect();
+                    const mx = e.clientX - rect.left;
+                    const my = e.clientY - rect.top;
+                    playerShoot(mx, my);
+                };
+
+                // إطلاق وقت المباراة المخصص لطور فري فاير التكتيكي
+                timeLeft = 35;
+                gameTimer = setInterval(() => {
+                    timeLeft -= 1;
+                    document.getElementById('timer-bar').style.width = (timeLeft/35)*100 + '%';
+                    if(timeLeft <= 0) {
+                        if(ffKills >= 3) showResult('BOOYAH!', 'Victory Royale! 🔥👑', true);
+                        else showResult('MATCH OVER', 'لم تقضِ على كل التشكيلة عجل بالمرة القادمة!', false);
+                    }
+                }, 1000);
+
+                // استدعاء الفريم الأول لبدء تشغيل اللوب اللامتناهي للرسم والأنيميشن
+                renderFreeFire();
             }
         }
 
-        // دوال النوافذ والتحكم بالمتجر
-        function openShop() { document.getElementById('shopModal').style.display = 'flex'; }
-        function closeShop() { document.getElementById('shopModal').style.display = 'none'; }
-        function buySkin() {
-            let gold = parseInt(document.getElementById('gold-txt').innerText);
-            if(gold >= 1000) {
-                document.getElementById('gold-txt').innerText = gold - 1000;
-                damageMultiplier = 2;
-                alert('تم شراء وتجهيز سكن كوبرا! الضرر لديك تضاعف الآن داخل الساحة الـ 3D.');
-                closeShop();
-            } else {
-                alert('الذهب غير كافٍ، العب مباريات أكثر لتجميعه!');
+        // تحديث رسومي مباشر لواجهات الـ HUD ومستويات الطاقة والدم
+        function updateFreeFireHud() {
+            document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
+            document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
+            document.getElementById('ff-kills').innerText = ffKills;
+            document.getElementById('ff-hp-bar').style.width = (ffPlayerHp/200)*100 + '%';
+            document.getElementById('ff-ep-bar').style.width = (ffPlayerEp/100)*100 + '%';
+        }
+
+        // دالة إدارة إطلاق رصاص اللاعب وحساب الدامج أو الهيدشوت على الكراكترز والـ Bots
+        function playerShoot(mx, my) {
+            if(ffPlayerHp <= 0) return;
+            screenShake = 6; // تفعيل اهتزاز الشاشة لزيادة الأكشن الواقعي عند الضرب
+            playSfx(1100, 'sawtooth', 0.1, 0.2); // صوت سلاح الـ MP40 الخشن
+
+            // توليد جزيئات فلاش الضوء من فوهة السلاح
+            createExplosion(mx, my, '#ffb700', 6);
+
+            ffPlayers.forEach(p => {
+                if(p.hp <= 0) return;
+                
+                // حساب المسافة الهندسية بين موضع الضغطة ومركز الكراكتر الطائر في الـ Canvas
+                let dist = Math.hypot(p.x - mx, p.y - my);
+                if(dist < 25) {
+                    // التحقق إذا كان كرونو قد قام بتفعيل درعه الأزرق السحري لحمايته
+                    if(p.id === 'chrono' && p.shieldActive) {
+                        playSfx(300, 'sine', 0.1, 0.3); // صوت الارتداد من الدرع
+                        createExplosion(p.x, p.y, '#00aeff', 12);
+                        return;
+                    }
+
+                    // حساب إذا كانت الإصابة دقيقة جداً بالأعلى لاحتساب Headshot حارق باللون الأحمر
+                    let isHeadshot = my < p.y - 5;
+                    let dmg = isHeadshot ? 85 : 32;
+
+                    p.hp -= dmg;
+                    p.state = 'EVADING'; // تغيير ذكاء البوت فوراً ليدخل في وضع الهروب السريع والمراوغة
+                    p.timer = 40; // البقاء في وضع الهروب لـ 40 فريم
+
+                    // توليد نافورة من جزيئات الدم الحمراء المتطايرة عند الإصابة الناجحة
+                    createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff4500', 15);
+
+                    // تفعيل مهارة ألوك فوراً إذا قلت صحته عن النصف لحقن نفسه بالدم هيدروليكياً
+                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) {
+                        p.skillActive = true;
+                        p.timer = 120; // بقاء هالة ألوك نشطة لـ 120 فريم
+                        playSfx(700, 'sine', 0.4, 0.4);
+                    }
+
+                    // التحقق مما إذا تم تصفية البوت بالكامل لإضافته لقائمة الـ Kills الخاصة بك
+                    if(p.hp <= 0) {
+                        p.hp = 0;
+                        ffKills++;
+                        updateFreeFireHud();
+                        playSfx(900, 'triangle', 0.3, 0.4);
+                        if(ffKills >= 3) {
+                            setTimeout(() => showResult('BOOYAH!', 'Victory! لقد أبدت التشكيلة الأسطورية كاملة 👑🏁', true), 500);
+                        }
+                    }
+                }
+            });
+        }
+
+        // آلية عمل واستخدام جدار الجلو التكتيكي لصد هجمات ألوك وباقي الروبوتات
+        function useGlooWall() {
+            if(ffGlooWalls > 0) {
+                ffGlooWalls--;
+                playSfx(200, 'sawtooth', 0.2, 0.4);
+                // تفعيل هالة امتصاص الدامج المؤقتة للاعب لتقليل رصاص الأعداء
+                ffPlayerHp = Math.min(200, ffPlayerHp + 45); 
+                updateFreeFireHud();
+                createExplosion(200, 150, '#00e1ff', 25);
             }
         }
 
-        // إعادة ضبط أبعاد الرندر في حال تم تغيير حجم متصفح الويب أو شاشة الجوال
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // دالة استخدام الفطر الطبي لاسترجاع معدلات الـ EP وتحويلها تلقائياً لصحة ونقاط
+        function useMedkit() {
+            if(ffPlayerEp >= 30) {
+                ffPlayerEp -= 30;
+                ffPlayerHp = Math.min(200, ffPlayerHp + 60);
+                updateFreeFireHud();
+                playSfx(600, 'sine', 0.3, 0.3);
+                createExplosion(100, 200, '#00ff44', 20);
+            }
+        }
 
-        // تشغيل المحرك تلقائياً عند فتح الصفحة
-        window.onload = init3DEngine;
+        // دالة توليد الجزيئات المتفجرة (Blood/Sparks Particle Factory) لإنتاج مؤثرات بصرية مذهلة
+        function createExplosion(x, y, color, count) {
+            for(let i=0; i<count; i++) {
+                ffParticles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 3 + 1,
+                    color: color,
+                    alpha: 1
+                });
+            }
+        }
+
+        // اللوب المركزي الرسومي الحركي لإدارة حركة الفريمات وحساب مسارات الجري والهروب (The Main Loop Grid)
+        function renderFreeFire() {
+            if (currentMode !== 'freefire' || ffPlayerHp <= 0) return;
+
+            // حساب وتنظيف الشاشة مع إضافة خاصية الاهتزاز (Screen Shake Engine) لزيادة القوة البصرية
+            ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
+            ffCtx.save();
+            if (screenShake > 0) {
+                let dx = (Math.random() - 0.5) * screenShake;
+                let dy = (Math.random() - 0.5) * screenShake;
+                ffCtx.translate(dx, dy);
+                screenShake *= 0.9; // تخميد وتصفير الاهتزاز تدريجياً
+                if(screenShake < 0.5) screenShake = 0;
+            }
+
+            // رسم أرضية مِيدان القتال التكتيكي العسكري ثنائي الأبعاد والخلفية الممتدة
+            ffCtx.fillStyle = '#1c2430';
+            ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
+            
+            // رسم شبكة رادار خفيفة لإعطاء طابع تكنولوجي عسكري متطور
+            ffCtx.strokeStyle = 'rgba(0, 255, 200, 0.04)';
+            ffCtx.lineWidth = 1;
+            for(let i=0; i<ffCanvas.width; i+=40) { ffCtx.beginPath(); ffCtx.moveTo(i, 0); ffCtx.lineTo(i, ffCanvas.height); ffCtx.stroke(); }
+
+            // تحديث ورسم ومحاكاة الجزيئات الحركية في الفضاء (Blood/Spark Particle Simulation)
+            ffParticles.forEach((p, idx) => {
+                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
+                if(p.alpha <= 0) { ffParticles.splice(idx, 1); return; }
+                ffCtx.globalAlpha = p.alpha;
+                ffCtx.fillStyle = p.color;
+                ffCtx.beginPath();
+                ffCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+                ffCtx.fill();
+            });
+            ffCtx.globalAlpha = 1; // إعادة تصفير الشفافية للوضع الطبيعي
+
+            // إدارة حركة وتصرفات الـ Bots والشخصيات الحقيقية بالذكاء الاصطناعي الكامل
+            ffPlayers.forEach(p => {
+                if(p.hp <= 0) {
+                    // رسم سكين الصندوق أو الشاهد عند موت الشخصية في الميدان
+                    ffCtx.font = '22px Arial';
+                    ffCtx.fillText('⚰️', p.x - 10, p.y + 10);
+                    return;
+                }
+
+                // معالجة حالات الهروب التكتيكي والمراوغة للأعداء عند تعرضهم للضرب
+                let currentSpeedMultiplier = 1;
+                if(p.state === 'EVADING') {
+                    currentSpeedMultiplier = 2.5; // مضاعفة السرعة والجري بجنون عند التعرض للقنص لكي يهرب منك!
+                    p.timer--;
+                    if(p.timer <= 0) p.state = 'RUNNING';
+                }
+
+                // تسيير حركة الروبوتات والتحقق من الاصطدام التام بحدود جدران الـ Canvas
+                p.x += p.vx * currentSpeedMultiplier;
+                p.y += p.vy * currentSpeedMultiplier;
+                if(p.x < 20 || p.x > ffCanvas.width - 20) p.vx *= -1;
+                if(p.y < 40 || p.y > ffCanvas.height - 40) p.vy *= -1;
+
+                // ميكانيكا تشغيل مهارة ألوك الشفائية الأيقونية (Drop the Beat!) ورسم هالتها المشعة
+                if(p.id === 'alok' && p.skillActive) {
+                    p.hp = Math.min(p.maxHp, p.hp + 0.15); // زيادة دم ألوك تلقائياً طالما المهارة نشطة
+                    ffCtx.strokeStyle = '#00ffcc';
+                    ffCtx.lineWidth = 3;
+                    ffCtx.beginPath();
+                    ffCtx.arc(p.x, p.y, 30, 0, Math.PI*2);
+                    ffCtx.stroke();
+                    p.timer--;
+                    if(p.timer <= 0) p.skillActive = false;
+                }
+
+                // ميكانيكا تفعيل درع كرونو الأزرق لحماية نفسه من رصاصك القاتل بشكل عشوائي
+                if(p.id === 'chrono') {
+                    p.timer++;
+                    if(p.timer > 150) { // تفعيل وإيقاف الدرع تلقائياً كل فترة فريمات محددة لذكاء واقعي
+                        p.shieldActive = !p.shieldActive;
+                        p.timer = 0;
+                    }
+                    if(p.shieldActive) {
+                        ffCtx.fillStyle = 'rgba(0, 174, 255, 0.25)';
+                        ffCtx.strokeStyle = '#00aeff';
+                        ffCtx.lineWidth = 2;
+                        ffCtx.beginPath();
+                        ffCtx.arc(p.x, p.y, 28, 0, Math.PI*2);
+                        ffCtx.fill();
+                        ffCtx.stroke();
+                    }
+                }
+
+                // ========================================================
+                // آلية هجوم الروبوتات عليك وإطلاق النار لقتلك وتصفية نقاط دمك!
+                // ========================================================
+                p.attackCooldown--;
+                if(p.attackCooldown <= 0) {
+                    p.attackCooldown = Math.random() * 50 + 50; // إعادة تعيين وقت الضرب العشوائي لسرعة واقعية
+                    
+                    // رسم خط رصاصة نارية مشع خارج من الروبوت باتجاه شاشة اللاعب الافتراضية
+                    ffCtx.strokeStyle = '#ff3333';
+                    ffCtx.lineWidth = 2;
+                    ffCtx.beginPath();
+                    ffCtx.moveTo(p.x, p.y);
+                    ffCtx.lineTo(ffCanvas.width/2, ffCanvas.height);
+                    ffCtx.stroke();
+
+                    // إنقاص دم اللاعب وحساب ميكانيكا امتصاص الصدمات عبر درع الـ EP أولاً
+                    playSfx(140, 'sawtooth', 0.08, 0.15);
+                    let incomingDmg = 15;
+                    if(ffPlayerEp > 0) {
+                        let absorbed = Math.min(ffPlayerEp, incomingDmg * 0.5);
+                        ffPlayerEp -= absorbed;
+                        incomingDmg -= absorbed;
+                    }
+                    ffPlayerHp -= incomingDmg;
+                    updateFreeFireHud();
+
+                    // التحقق من موت اللاعب بالكامل لإعلان خسارته الفورية وتصفية الجولة
+                    if(ffPlayerHp <= 0) {
+                        ffPlayerHp = 0;
+                        updateFreeFireHud();
+                        setTimeout(() => showResult('ELIMINATED', 'لقد تم تصفيتك بالكامل بواسطة ألوك وفرقته الأسطورية! ☠️❌', false), 200);
+                        return;
+                    }
+                }
+
+                // رسم الشكل الخارجي والـ Emoji المعبر عن الشخصية بالإضافة لاسمها وشريط دمها المصغر فوق رأسها
+                ffCtx.fillStyle = 'white';
+                ffCtx.font = '22px Arial';
+                ffCtx.fillText(p.emoji, p.x - 11, p.y + 8);
+
+                // كتابة الاسم التوضيحي لكل كراكتر فوق رأسه بوضوح كبير داخل الساحة
+                ffCtx.fillStyle = '#aaa';
+                ffCtx.font = 'bold 9px Tahoma';
+                ffCtx.fillText(p.name, p.x - 20, p.y - 24);
+
+                // رسم الـ Health Bar الخاص بالروبوت بدقة شديدة باللونين الأخضر والأحمر ليعكس حالته الواقعية
+                ffCtx.fillStyle = '#ff3333';
+                ffCtx.fillRect(p.x - 20, p.y - 18, 40, 4);
+                ffCtx.fillStyle = '#00ff44';
+                ffCtx.fillRect(p.x - 20, p.y - 18, (p.hp / p.maxHp) * 40, 4);
+            });
+
+            ffCtx.restore();
+            // استدعاء الفريم التالي للمحافظة على معدل تحديث الصور والـ FPS ثابتاً وسلساً
+            ffLoop = requestAnimationFrame(renderFreeFire);
+        }
+
+        // ذكاء اصطناعي مخصص وميكانيكا تحركات الكمبيوتر ضدك في لعبة XO القديمة
+        function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
+        function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
+        function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
+
+        function aiMove() {
+            let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
+            if(difficulty === 'hard') m = getSmartMove(board);
+            if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
+            board[m]='O'; let cell = document.getElementById('c'+m);
+            cell.innerText='O'; cell.classList.add('p-o');
+            if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
+        }
+
+        function getSmartMove(b) {
+            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
+            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
+            return -1;
+        }
+
+        function checkWin(b, p) {
+            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return w.some(s => s.every(i => b[i] === p));
+        }
     </script>
 </body>
 </html>
