@@ -133,8 +133,8 @@
 
             <div id="mc-hud">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🌍 بيئة اللعبة: <b id="mc-time-txt" style="color:var(--mc-blue);">نهار (سماء واقعية)</b></span>
-                    <span>⛏️ النمط: <b style="color:var(--accent-green);">إبداعي متطور</b></span>
+                    <span>🌍 الوضع: <b style="color:var(--accent-green);">طيران وحفظ تلقائي 💾</b></span>
+                    <span>🎮 الحركة: <b style="color:var(--mc-blue);">بالأسهم 🔼🔽</b></span>
                 </div>
             </div>
 
@@ -151,7 +151,7 @@
                 <button class="mc-tile-btn" id="tile-stone" onclick="selectMcBlock('stone')">🪨</button>
                 <button class="mc-tile-btn" id="tile-diamond" onclick="selectMcBlock('diamond')">💎</button>
                 <button class="mc-tile-btn" id="tile-delete" onclick="selectMcBlock('air')">❌</button>
-                <button class="ff-btn" style="padding:5px 10px; font-size:12px;" onclick="mcPlayerJump()">Jump 🆙</button>
+                <button class="ff-btn" style="padding:5px 10px; font-size:12px; background:#ff3333;" onclick="resetMinecraftWorld()">🧹 تصفير العالم</button>
             </div>
 
             <div id="game-view"></div>
@@ -172,8 +172,8 @@
         let canvas, ctx, animationLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
         let screenShake = 0;
 
-        // متغيرات عالم ماين كرافت الواقعي
-        let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 50, y: 150, vy: 0, size: 20 }, mcTime = 0;
+        // متغيرات عالم ماين كرافت الواقعي الطائر والمحفوظ
+        let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 180, y: 100, size: 22, speed: 4 }, mcKeys = {};
 
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
@@ -228,6 +228,19 @@
             document.getElementById('mc-ctrl').style.display = 'none';
             document.getElementById('game-box').style.maxWidth = '400px';
         }
+
+        // الاستماع لحركة الأسهم لمنع الصفحة من النزول والتحكم باللاعب
+        window.addEventListener('keydown', (e) => {
+            if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                mcKeys[e.key] = true;
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                mcKeys[e.key] = false;
+            }
+        });
 
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
@@ -345,24 +358,30 @@
                 renderFreeFire();
             }
 
-            // ========================================================
-            // طور ماين كرافت الواقعي الجديد (Minecraft 2D Engine Loop)
-            // ========================================================
+            // طور ماين كرافت المحفوظ والمطور بالطيران
             else if(mode === 'minecraft') {
                 document.getElementById('game-box').style.maxWidth = '500px';
                 document.getElementById('mc-hud').style.display = 'block';
                 document.getElementById('game-canvas').style.display = 'block';
                 document.getElementById('mc-ctrl').style.display = 'flex';
                 
-                mcGrid = {}; mcTime = 0;
-                mcPlayer = { x: 180, y: 100, vy: 0, size: 22 };
+                mcGrid = {};
+                mcPlayer = { x: 185, y: 120, size: 22, speed: 4 };
 
-                // توليد تضاريس العالم الافتراضي الأرضية تلقائياً
-                for(let x = 0; x < 400; x += 25) {
-                    mcGrid[`${x},250`] = 'grass';
-                    mcGrid[`${x},275`] = 'stone';
+                // محاولة تحميل العالم المحفوظ مسبقاً
+                const savedWorld = localStorage.getItem('brsmayk_mc_world');
+                if (savedWorld) {
+                    mcGrid = JSON.parse(savedWorld);
+                } else {
+                    // إذا لم يوجد عالم محفوظ، توليد أرضية افتراضية أولية
+                    for(let x = 0; x < 400; x += 25) {
+                        mcGrid[`${x},250`] = 'grass';
+                        mcGrid[`${x},275`] = 'stone';
+                    }
+                    saveMinecraftWorld();
                 }
 
+                // البناء والهدم بضغطة زر الفأرة أو اللمس
                 canvas.onclick = (e) => {
                     const rect = canvas.getBoundingClientRect();
                     const mx = Math.floor((e.clientX - rect.left) / 25) * 25;
@@ -375,20 +394,33 @@
                         mcGrid[`${mx},${my}`] = mcSelectedBlock;
                         playSfx(180, 'sine', 0.15, 0.08);
                     }
+                    saveMinecraftWorld(); // حفظ تلقائي لحظي عند أي تعديل
                 };
 
-                timeLeft = 60;
-                gameTimer = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timer-bar').style.width = (timeLeft/60)*100 + '%';
-                    if(timeLeft <= 0) showResult('MINING OVER', 'تم حفظ عالمك الإبداعي بنجاح! 🧱💎', true);
-                }, 1000);
-
+                // إخفاء العداد الزمني العادي للاستمتاع بلا نهاية
+                document.getElementById('timer-bar').style.width = '100%';
                 renderMinecraft();
             }
         }
 
-        // تحكم واختيارات بلوكات ماين كرافت
+        // حفظ العالم في ذاكرة المتصفح المحلية
+        function saveMinecraftWorld() {
+            localStorage.setItem('brsmayk_mc_world', JSON.stringify(mcGrid));
+        }
+
+        // تصفير وتنظيف الخريطة لإعطاء إمكانية البدء من جديد
+        function resetMinecraftWorld() {
+            if(confirm("هل تريد مسح العالم الحالي وبدء بناء عالم جديد؟")) {
+                mcGrid = {};
+                for(let x = 0; x < 400; x += 25) {
+                    mcGrid[`${x},250`] = 'grass';
+                    mcGrid[`${x},275`] = 'stone';
+                }
+                saveMinecraftWorld();
+                playSfx(200, 'sawtooth', 0.2, 0.4);
+            }
+        }
+
         function selectMcBlock(type) {
             mcSelectedBlock = type;
             document.querySelectorAll('.mc-tile-btn').forEach(b => b.classList.remove('selected'));
@@ -399,42 +431,28 @@
             if(type === 'air') document.getElementById('tile-delete').classList.add('selected');
         }
 
-        function mcPlayerJump() {
-            if(mcPlayer.y >= 228) { // قفز واقعي عند ملامسة الأرضية
-                mcPlayer.vy = -7.5;
-                playSfx(300, 'sine', 0.1, 0.15);
-            }
-        }
-
         function renderMinecraft() {
             if (currentMode !== 'minecraft') return;
-            mcTime += 0.5;
 
-            // تغيير واقعي لإضاءة السماء (دورة الليل والنهار)
-            let isNight = (Math.sin(mcTime * 0.01) < -0.2);
-            ctx.fillStyle = isNight ? '#0b0f19' : '#55aeff';
+            // تحديث حركة طيران ستيف باستخدام الأسهم بسلاسة وهدوء
+            if (mcKeys['ArrowUp']) mcPlayer.y -= mcPlayer.speed;
+            if (mcKeys['ArrowDown']) mcPlayer.y += mcPlayer.speed;
+            if (mcKeys['ArrowLeft']) mcPlayer.x -= mcPlayer.speed;
+            if (mcKeys['ArrowRight']) mcPlayer.x += mcPlayer.speed;
+
+            // الحفاظ على اللاعب داخل حدود الشاشة لمنعه من الضياع
+            mcPlayer.x = Math.max(0, Math.min(canvas.width - mcPlayer.size, mcPlayer.x));
+            mcPlayer.y = Math.max(0, Math.min(canvas.height - mcPlayer.size, mcPlayer.y));
+
+            // رسم سماء اللعبة الواقعية الزرقاء المريحة
+            ctx.fillStyle = '#55aeff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            document.getElementById('mc-time-txt').innerText = isNight ? 'ليل (واقعي مدمج)' : 'نهار (سماء واقعية)';
-            document.getElementById('mc-time-txt').style.color = isNight ? '#ffb700' : 'var(--mc-blue)';
 
-            // رسم الشمس أو القمر بشكل واقعي
-            ctx.fillStyle = isNight ? '#eceff1' : '#ffff00';
-            ctx.beginPath();
-            ctx.arc(isNight ? 80 : 320, 50, 16, 0, Math.PI*2);
-            ctx.fill();
+            // رسم شمس ماين كرافت المربعة الكلاسيكية
+            ctx.fillStyle = '#ffff22';
+            ctx.fillRect(310, 30, 35, 35);
 
-            // تطبيق الجاذبية والفيزياء على لاعب ستيف
-            mcPlayer.vy += 0.35; // قوة الجاذبية الساقطة
-            mcPlayer.y += mcPlayer.vy;
-            if(mcPlayer.y >= 228) { mcPlayer.y = 228; mcPlayer.vy = 0; }
-
-            // رسم لاعب ستيف (Steve) داخل الميدان
-            ctx.fillStyle = '#ffb700'; // الرأس
-            ctx.fillRect(mcPlayer.x + 4, mcPlayer.y - 8, 14, 10);
-            ctx.fillStyle = '#0055ff'; // قميص ستيف الأزرق التقليدي
-            ctx.fillRect(mcPlayer.x, mcPlayer.y, mcPlayer.size, mcPlayer.size);
-
-            // رندر وعرض جميع الكتل والبلوكات الموضوعة في العالم
+            // رندر وعرض جميع الكتل والبلوكات الموضوعة والمحفوظة
             for (let coord in mcGrid) {
                 let [bx, by] = coord.split(',').map(Number);
                 let type = mcGrid[coord];
@@ -445,14 +463,20 @@
                 else if(type === 'diamond') ctx.fillStyle = '#00ffcc';
 
                 ctx.fillRect(bx, by, 24, 24);
-                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.strokeStyle = 'rgba(0,0,0,0.18)';
                 ctx.strokeRect(bx, by, 24, 24);
             }
+
+            // رسم شخصية ستيف الطائرة (Steve) بشكل طائر وثابت بدون سقوط
+            ctx.fillStyle = '#ffb700'; // الرأس
+            ctx.fillRect(mcPlayer.x + 4, mcPlayer.y - 8, 14, 10);
+            ctx.fillStyle = '#0055ff'; // قميص ستيف الأزرق المميز
+            ctx.fillRect(mcPlayer.x, mcPlayer.y, mcPlayer.size, mcPlayer.size);
 
             animationLoop = requestAnimationFrame(renderMinecraft);
         }
 
-        // الدوال المساعدة لفري فاير
+        // الدوال المساعدة لفري فاير وباقي الألعاب
         function updateFreeFireHud() {
             document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
             document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
@@ -475,9 +499,7 @@
                     let isHeadshot = my < p.y - 4;
                     p.hp -= isHeadshot ? 95 : 36;
                     p.state = 'EVADING'; p.timer = 45;
-                    if(p.id === 'wukong' && Math.random() > 0.3) { p.isBush = true; p.emoji = '🌳'; }
                     createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff5500', 15);
-                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) { p.skillActive = true; p.timer = 130; }
                     if(p.hp <= 0) { p.hp = 0; ffKills++; updateFreeFireHud(); if(ffKills >= 5) setTimeout(() => showResult('BOOYAH!', '🏆 انتصرت!', true), 400); }
                 }
             });
