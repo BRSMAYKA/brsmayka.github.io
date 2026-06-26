@@ -5,7 +5,7 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Free Fire Elite Edition</title>
+    <title>BRSMAYKA GAMING - Elite Edition</title>
     <style>
         :root { 
             --primary: #00ffcc; 
@@ -29,7 +29,7 @@
         .ff-card:hover { border-color: var(--ff-yellow) !important; box-shadow: 0 0 20px var(--ff-yellow); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
-        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; transition: all 0.3s ease; }
+        .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 450px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
         
         #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
@@ -42,14 +42,14 @@
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        /* تنسيقات واجهة نظام فري فاير المتطور */
-        #ff-hud { display: none; background: rgba(20, 20, 25, 0.9); padding: 10px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; }
-        .ff-progress-container { width: 100%; background: #333; height: 12px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
-        .ff-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff3333, #ff0055); transition: width 0.2s ease; }
-        .ff-ep-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--ff-yellow), var(--ff-orange)); transition: width 0.2s ease; }
-        #ff-canvas { background: #151a22; border-radius: 15px; border: 2px solid #2c3545; cursor: crosshair; display: none; max-width: 100%; }
+        /* واجهة HUD لطور فري فاير */
+        #ff-hud { display: none; background: rgba(20, 20, 25, 0.95); padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; text-align: left; direction: rtl; }
+        .ff-progress-container { width: 100%; background: #333; height: 10px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
+        .ff-hp-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff0055, #ff3333); transition: width 0.1s ease; }
+        .ff-ep-bar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--ff-orange), var(--ff-yellow)); transition: width 0.1s ease; }
+        #ff-canvas { background: #12161f; border-radius: 15px; border: 2px solid #232b38; cursor: crosshair; display: none; max-width: 100%; }
         .ff-controls { display: none; justify-content: center; gap: 10px; margin-top: 10px; }
-        .ff-btn { background: var(--ff-orange); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .ff-btn { background: var(--ff-orange); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .ff-btn:hover { background: var(--ff-yellow); color: black; }
 
         footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
@@ -123,7 +123,7 @@
                 <div class="ff-progress-container"><div id="ff-ep-bar" class="ff-ep-bar"></div></div>
                 <div style="display:flex; justify-content:space-between; margin-top:5px; color:var(--ff-yellow);">
                     <span>⚔️ السلاح: <b id="ff-gun">MP40</b></span>
-                    <span>💀 التصفية: <b id="ff-kills">0</b>/3</span>
+                    <span>💀 التصفية: <b id="ff-kills">0</b>/5</span>
                 </div>
             </div>
 
@@ -131,7 +131,7 @@
 
             <div class="ff-controls" id="ff-ctrl">
                 <button class="ff-btn" style="background:#00aeff;" onclick="useGlooWall()">🧱 جدار جلو</button>
-                <button class="ff-btn" style="background:#ff3366;" onclick="useMedkit()">➕ فطر/علاج</button>
+                <button class="ff-btn" style="background:#00ff44; color: black;" onclick="useMedkit()">🍄 فطر/علاج</button>
             </div>
 
             <div id="game-view"></div>
@@ -145,12 +145,11 @@
     </div>
 
     <script>
-        // المتغيرات العامة الأساسية لألعاب الموقع
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
-        // متغيرات محرك طور فري فاير المطور الاحترافي (Engine Loop Variables)
-        let ffCanvas, ffCtx, ffLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0, ffGlooWalls = 2;
+        // متغيرات محرك المعركة لفري فاير
+        let ffCanvas, ffCtx, ffLoop, ffPlayers = [], ffParticles = [], ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
         let screenShake = 0;
 
         function playSfx(f, type, vol, dur) {
@@ -177,7 +176,7 @@
 
         function showResult(title, desc, isWin) {
             clearInterval(gameTimer);
-            cancelAnimationFrame(ffLoop); // إيقاف لوب فري فاير إذا كان نشطاً
+            cancelAnimationFrame(ffLoop); 
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
@@ -199,7 +198,6 @@
             clearInterval(gameTimer); 
             cancelAnimationFrame(ffLoop);
             document.getElementById('gameModal').style.display = 'none'; 
-            // إخفاء عناصر فري فاير عند الخروج للعودة للألعاب العادية سليمة
             document.getElementById('ff-hud').style.display = 'none';
             document.getElementById('ff-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
@@ -212,7 +210,6 @@
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
             
-            // إخفاء عناصر واجهة فري فاير بشكل افتراضي لجميع الألعاب الأخرى
             document.getElementById('ff-hud').style.display = 'none';
             document.getElementById('ff-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
@@ -220,7 +217,6 @@
 
             const view = document.getElementById('game-view'); view.innerHTML = '';
             
-            // إعداد التايمر الافتراضي للألعاب العادية
             timeLeft = 15;
             clearInterval(gameTimer);
             
@@ -232,7 +228,7 @@
                 }, 100);
             }
 
-            // ميكانيكا تشغيل الألعاب القديمة الثابتة لديك دون أي تعديل تخريبي
+            // ميكانيكا الألعاب الـ 8 الأساسية
             if(mode === 'xo') {
                 view.innerHTML = `<div style="margin-bottom:10px;">
                     <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
@@ -286,7 +282,7 @@
             } 
             
             // ========================================================
-            //  تفعيل كود بناء محرك لعبة فري فاير التكتيكية الأسطورية (1000 سطر لاين ستايل)
+            // تشغيل محرك لعبة فري فاير مع شخصية BRSMAYK الأسطورية
             // ========================================================
             else if(mode === 'freefire') {
                 document.getElementById('game-box').style.maxWidth = '500px';
@@ -294,22 +290,22 @@
                 document.getElementById('ff-canvas').style.display = 'block';
                 document.getElementById('ff-ctrl').style.display = 'flex';
                 
-                // تهيئة عدادات وموارد اللاعب في الماتش الحالي
-                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0; ffGlooWalls = 2;
+                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0;
                 ffParticles = [];
                 updateFreeFireHud();
 
                 ffCanvas = document.getElementById('ff-canvas');
                 ffCtx = ffCanvas.getContext('2d');
 
-                // بناء مصفوفة الكراكترز وتحديد قدراتهم الفردية التكتيكية
+                // بناء مصفوفة الشخصيات وإدراج شخصيتك الأسطورية BRSMAYK بقوة أكبر
                 ffPlayers = [
-                    { id: 'alok', name: 'Alok (ألوك)', emoji: '🥷', x: 50, y: 120, vx: 2, vy: 1.5, hp: 120, maxHp: 120, state: 'RUNNING', timer: 0, skillActive: false, attackCooldown: 60 },
-                    { id: 'chrono', name: 'Chrono (كرونو)', emoji: '👨‍🎤', x: 200, y: 80, vx: -1.8, vy: 2, hp: 100, maxHp: 100, state: 'RUNNING', timer: 0, shieldActive: false, attackCooldown: 90 },
-                    { id: 'kelly', name: 'Kelly (كيلي)', emoji: '🏃‍♀️', x: 300, y: 160, vx: 3, vy: -2, hp: 80, maxHp: 80, state: 'RUNNING', timer: 0, attackCooldown: 40 }
+                    { id: 'brsmayk', name: 'BRSMAYK (الرئيس) 👑', emoji: '🥷', x: 200, y: 150, vx: 2.8, vy: -2.2, hp: 250, maxHp: 250, state: 'RUNNING', timer: 0, isBoss: true, attackCooldown: 40 },
+                    { id: 'alok', name: 'Alok (ألوك)', emoji: '🕺', x: 60, y: 80, vx: 2.0, vy: 1.5, hp: 130, maxHp: 130, state: 'RUNNING', timer: 0, skillActive: false, attackCooldown: 55 },
+                    { id: 'chrono', name: 'Chrono (كرونو)', emoji: '👨‍🎤', x: 300, y: 70, vx: -1.4, vy: 2.0, hp: 110, maxHp: 110, state: 'RUNNING', timer: 0, shieldActive: false, attackCooldown: 75 },
+                    { id: 'kelly', name: 'Kelly (كيلي)', emoji: '🏃‍♀️', x: 320, y: 220, vx: 3.4, vy: -2.2, hp: 90, maxHp: 90, state: 'RUNNING', timer: 0, attackCooldown: 35 },
+                    { id: 'wukong', name: 'Wukong (ووكونغ)', emoji: '🐒', x: 100, y: 240, vx: 1.6, vy: -1.6, hp: 120, maxHp: 120, state: 'RUNNING', timer: 0, isBush: false, attackCooldown: 60 }
                 ];
 
-                // ربط حدث الماوس لإتاحة التصويب وضرب رصاص الرشاش وسحب الـ Headshot
                 ffCanvas.onclick = (e) => {
                     const rect = ffCanvas.getBoundingClientRect();
                     const mx = e.clientX - rect.left;
@@ -317,115 +313,114 @@
                     playerShoot(mx, my);
                 };
 
-                // إطلاق وقت المباراة المخصص لطور فري فاير التكتيكي
-                timeLeft = 35;
+                timeLeft = 50;
                 gameTimer = setInterval(() => {
                     timeLeft -= 1;
-                    document.getElementById('timer-bar').style.width = (timeLeft/35)*100 + '%';
+                    document.getElementById('timer-bar').style.width = (timeLeft/50)*100 + '%';
                     if(timeLeft <= 0) {
-                        if(ffKills >= 3) showResult('BOOYAH!', 'Victory Royale! 🔥👑', true);
-                        else showResult('MATCH OVER', 'لم تقضِ على كل التشكيلة عجل بالمرة القادمة!', false);
+                        if(ffKills >= 5) showResult('BOOYAH!', 'Victory Royale! 🔥👑', true);
+                        else showResult('MATCH OVER', 'انتهى الوقت ولم تقضِ على تشكيلة القائد BRSMAYK!', false);
                     }
                 }, 1000);
 
-                // استدعاء الفريم الأول لبدء تشغيل اللوب اللامتناهي للرسم والأنيميشن
                 renderFreeFire();
             }
         }
 
-        // تحديث رسومي مباشر لواجهات الـ HUD ومستويات الطاقة والدم
         function updateFreeFireHud() {
             document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
             document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
             document.getElementById('ff-kills').innerText = ffKills;
             document.getElementById('ff-hp-bar').style.width = (ffPlayerHp/200)*100 + '%';
             document.getElementById('ff-ep-bar').style.width = (ffPlayerEp/100)*100 + '%';
+            document.getElementById('ff-kills').innerText = ffKills;
         }
 
-        // دالة إدارة إطلاق رصاص اللاعب وحساب الدامج أو الهيدشوت على الكراكترز والـ Bots
         function playerShoot(mx, my) {
             if(ffPlayerHp <= 0) return;
-            screenShake = 6; // تفعيل اهتزاز الشاشة لزيادة الأكشن الواقعي عند الضرب
-            playSfx(1100, 'sawtooth', 0.1, 0.2); // صوت سلاح الـ MP40 الخشن
+            screenShake = 7; 
+            playSfx(1100, 'sawtooth', 0.12, 0.15); 
 
-            // توليد جزيئات فلاش الضوء من فوهة السلاح
-            createExplosion(mx, my, '#ffb700', 6);
+            createExplosion(mx, my, '#ffb700', 5);
 
             ffPlayers.forEach(p => {
                 if(p.hp <= 0) return;
                 
-                // حساب المسافة الهندسية بين موضع الضغطة ومركز الكراكتر الطائر في الـ Canvas
                 let dist = Math.hypot(p.x - mx, p.y - my);
-                if(dist < 25) {
-                    // التحقق إذا كان كرونو قد قام بتفعيل درعه الأزرق السحري لحمايته
+                if(dist < 28) {
+                    // حماية درع كرونو
                     if(p.id === 'chrono' && p.shieldActive) {
-                        playSfx(300, 'sine', 0.1, 0.3); // صوت الارتداد من الدرع
-                        createExplosion(p.x, p.y, '#00aeff', 12);
+                        playSfx(300, 'sine', 0.15, 0.2);
+                        createExplosion(p.x, p.y, '#00aeff', 10);
                         return;
                     }
 
-                    // حساب إذا كانت الإصابة دقيقة جداً بالأعلى لاحتساب Headshot حارق باللون الأحمر
-                    let isHeadshot = my < p.y - 5;
-                    let dmg = isHeadshot ? 85 : 32;
+                    let isHeadshot = my < p.y - 4;
+                    let dmg = isHeadshot ? 95 : 36;
 
-                    p.hp -= dmg;
-                    p.state = 'EVADING'; // تغيير ذكاء البوت فوراً ليدخل في وضع الهروب السريع والمراوغة
-                    p.timer = 40; // البقاء في وضع الهروب لـ 40 فريم
-
-                    // توليد نافورة من جزيئات الدم الحمراء المتطايرة عند الإصابة الناجحة
-                    createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff4500', 15);
-
-                    // تفعيل مهارة ألوك فوراً إذا قلت صحته عن النصف لحقن نفسه بالدم هيدروليكياً
-                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) {
-                        p.skillActive = true;
-                        p.timer = 120; // بقاء هالة ألوك نشطة لـ 120 فريم
-                        playSfx(700, 'sine', 0.4, 0.4);
+                    if(p.id === 'wukong' && p.isBush) {
+                        p.isBush = false;
+                        p.emoji = '🐒';
                     }
 
-                    // التحقق مما إذا تم تصفية البوت بالكامل لإضافته لقائمة الـ Kills الخاصة بك
+                    p.hp -= dmg;
+                    p.state = 'EVADING'; 
+                    p.timer = 45; // الهروب والمراوغة
+
+                    // مهارة التمويه لووكونغ
+                    if(p.id === 'wukong' && p.hp > 0 && Math.random() > 0.3) {
+                        p.isBush = true;
+                        p.emoji = '🌳';
+                    }
+
+                    // تأثير تفجير الدماء والشرر
+                    createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff5500', 15);
+
+                    // تشغيل مهارة ألوك الشفائية
+                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) {
+                        p.skillActive = true;
+                        p.timer = 130;
+                        playSfx(700, 'sine', 0.3, 0.3);
+                    }
+
                     if(p.hp <= 0) {
                         p.hp = 0;
                         ffKills++;
                         updateFreeFireHud();
-                        playSfx(900, 'triangle', 0.3, 0.4);
-                        if(ffKills >= 3) {
-                            setTimeout(() => showResult('BOOYAH!', 'Victory! لقد أبدت التشكيلة الأسطورية كاملة 👑🏁', true), 500);
+                        playSfx(850, 'triangle', 0.3, 0.3);
+                        if(ffKills >= 5) {
+                            setTimeout(() => showResult('BOOYAH!', '🏆 أسطورة! تمت تصفية فرقة BRSMAYK بالكامل!', true), 400);
                         }
                     }
                 }
             });
         }
 
-        // آلية عمل واستخدام جدار الجلو التكتيكي لصد هجمات ألوك وباقي الروبوتات
         function useGlooWall() {
-            if(ffGlooWalls > 0) {
-                ffGlooWalls--;
-                playSfx(200, 'sawtooth', 0.2, 0.4);
-                // تفعيل هالة امتصاص الدامج المؤقتة للاعب لتقليل رصاص الأعداء
-                ffPlayerHp = Math.min(200, ffPlayerHp + 45); 
+            if(ffPlayerHp < 200) {
+                playSfx(250, 'sawtooth', 0.2, 0.3);
+                ffPlayerHp = Math.min(200, ffPlayerHp + 40); 
                 updateFreeFireHud();
-                createExplosion(200, 150, '#00e1ff', 25);
+                createExplosion(200, 150, '#00b7ff', 20);
             }
         }
 
-        // دالة استخدام الفطر الطبي لاسترجاع معدلات الـ EP وتحويلها تلقائياً لصحة ونقاط
         function useMedkit() {
-            if(ffPlayerEp >= 30) {
-                ffPlayerEp -= 30;
-                ffPlayerHp = Math.min(200, ffPlayerHp + 60);
+            if(ffPlayerEp >= 25) {
+                ffPlayerEp -= 25;
+                ffPlayerHp = Math.min(200, ffPlayerHp + 50);
                 updateFreeFireHud();
-                playSfx(600, 'sine', 0.3, 0.3);
-                createExplosion(100, 200, '#00ff44', 20);
+                playSfx(550, 'sine', 0.25, 0.3);
+                createExplosion(100, 200, '#00ff55', 15);
             }
         }
 
-        // دالة توليد الجزيئات المتفجرة (Blood/Sparks Particle Factory) لإنتاج مؤثرات بصرية مذهلة
         function createExplosion(x, y, color, count) {
             for(let i=0; i<count; i++) {
                 ffParticles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
+                    vx: (Math.random() - 0.5) * 7,
+                    vy: (Math.random() - 0.5) * 7,
                     radius: Math.random() * 3 + 1,
                     color: color,
                     alpha: 1
@@ -433,153 +428,129 @@
             }
         }
 
-        // اللوب المركزي الرسومي الحركي لإدارة حركة الفريمات وحساب مسارات الجري والهروب (The Main Loop Grid)
         function renderFreeFire() {
             if (currentMode !== 'freefire' || ffPlayerHp <= 0) return;
 
-            // حساب وتنظيف الشاشة مع إضافة خاصية الاهتزاز (Screen Shake Engine) لزيادة القوة البصرية
             ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
             ffCtx.save();
+            
             if (screenShake > 0) {
-                let dx = (Math.random() - 0.5) * screenShake;
-                let dy = (Math.random() - 0.5) * screenShake;
-                ffCtx.translate(dx, dy);
-                screenShake *= 0.9; // تخميد وتصفير الاهتزاز تدريجياً
-                if(screenShake < 0.5) screenShake = 0;
+                ffCtx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+                screenShake *= 0.88;
+                if(screenShake < 0.4) screenShake = 0;
             }
 
-            // رسم أرضية مِيدان القتال التكتيكي العسكري ثنائي الأبعاد والخلفية الممتدة
-            ffCtx.fillStyle = '#1c2430';
+            // لون ساحة المعركة
+            ffCtx.fillStyle = '#161b26';
             ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
             
-            // رسم شبكة رادار خفيفة لإعطاء طابع تكنولوجي عسكري متطور
-            ffCtx.strokeStyle = 'rgba(0, 255, 200, 0.04)';
+            // شبكة الرادار
+            ffCtx.strokeStyle = 'rgba(255, 106, 0, 0.05)';
             ffCtx.lineWidth = 1;
             for(let i=0; i<ffCanvas.width; i+=40) { ffCtx.beginPath(); ffCtx.moveTo(i, 0); ffCtx.lineTo(i, ffCanvas.height); ffCtx.stroke(); }
 
-            // تحديث ورسم ومحاكاة الجزيئات الحركية في الفضاء (Blood/Spark Particle Simulation)
+            // رندر جزيئات الشرر والضربات
             ffParticles.forEach((p, idx) => {
                 p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
                 if(p.alpha <= 0) { ffParticles.splice(idx, 1); return; }
                 ffCtx.globalAlpha = p.alpha;
                 ffCtx.fillStyle = p.color;
-                ffCtx.beginPath();
-                ffCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
-                ffCtx.fill();
+                ffCtx.beginPath(); ffCtx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ffCtx.fill();
             });
-            ffCtx.globalAlpha = 1; // إعادة تصفير الشفافية للوضع الطبيعي
+            ffCtx.globalAlpha = 1;
 
-            // إدارة حركة وتصرفات الـ Bots والشخصيات الحقيقية بالذكاء الاصطناعي الكامل
+            // تحديث حركة وذكاء الشخصيات
             ffPlayers.forEach(p => {
                 if(p.hp <= 0) {
-                    // رسم سكين الصندوق أو الشاهد عند موت الشخصية في الميدان
-                    ffCtx.font = '22px Arial';
+                    ffCtx.font = '20px Arial';
                     ffCtx.fillText('⚰️', p.x - 10, p.y + 10);
                     return;
                 }
 
-                // معالجة حالات الهروب التكتيكي والمراوغة للأعداء عند تعرضهم للضرب
-                let currentSpeedMultiplier = 1;
+                let currentSpeed = 1;
                 if(p.state === 'EVADING') {
-                    currentSpeedMultiplier = 2.5; // مضاعفة السرعة والجري بجنون عند التعرض للقنص لكي يهرب منك!
+                    // زيادة سرعة الهروب لكيلي ولشخصية BRSMAYK الرئيس
+                    currentSpeed = p.id === 'kelly' ? 3.3 : (p.id === 'brsmayk' ? 2.8 : 2.2);
                     p.timer--;
                     if(p.timer <= 0) p.state = 'RUNNING';
                 }
 
-                // تسيير حركة الروبوتات والتحقق من الاصطدام التام بحدود جدران الـ Canvas
-                p.x += p.vx * currentSpeedMultiplier;
-                p.y += p.vy * currentSpeedMultiplier;
-                if(p.x < 20 || p.x > ffCanvas.width - 20) p.vx *= -1;
-                if(p.y < 40 || p.y > ffCanvas.height - 40) p.vy *= -1;
+                p.x += p.vx * currentSpeed;
+                p.y += p.vy * currentSpeed;
+                if(p.x < 25 || p.x > ffCanvas.width - 25) p.vx *= -1;
+                if(p.y < 45 || p.y > ffCanvas.height - 45) p.vy *= -1;
 
-                // ميكانيكا تشغيل مهارة ألوك الشفائية الأيقونية (Drop the Beat!) ورسم هالتها المشعة
+                // هالة الشفاء الخاصة بألوك
                 if(p.id === 'alok' && p.skillActive) {
-                    p.hp = Math.min(p.maxHp, p.hp + 0.15); // زيادة دم ألوك تلقائياً طالما المهارة نشطة
+                    p.hp = Math.min(p.maxHp, p.hp + 0.2); 
                     ffCtx.strokeStyle = '#00ffcc';
-                    ffCtx.lineWidth = 3;
-                    ffCtx.beginPath();
-                    ffCtx.arc(p.x, p.y, 30, 0, Math.PI*2);
-                    ffCtx.stroke();
+                    ffCtx.lineWidth = 2;
+                    ffCtx.beginPath(); ffCtx.arc(p.x, p.y, 32, 0, Math.PI*2); ffCtx.stroke();
                     p.timer--;
                     if(p.timer <= 0) p.skillActive = false;
                 }
 
-                // ميكانيكا تفعيل درع كرونو الأزرق لحماية نفسه من رصاصك القاتل بشكل عشوائي
+                // درع كرونو
                 if(p.id === 'chrono') {
                     p.timer++;
-                    if(p.timer > 150) { // تفعيل وإيقاف الدرع تلقائياً كل فترة فريمات محددة لذكاء واقعي
-                        p.shieldActive = !p.shieldActive;
-                        p.timer = 0;
-                    }
+                    if(p.timer > 140) { p.shieldActive = !p.shieldActive; p.timer = 0; }
                     if(p.shieldActive) {
-                        ffCtx.fillStyle = 'rgba(0, 174, 255, 0.25)';
+                        ffCtx.fillStyle = 'rgba(0, 174, 255, 0.2)';
                         ffCtx.strokeStyle = '#00aeff';
                         ffCtx.lineWidth = 2;
-                        ffCtx.beginPath();
-                        ffCtx.arc(p.x, p.y, 28, 0, Math.PI*2);
-                        ffCtx.fill();
-                        ffCtx.stroke();
+                        ffCtx.beginPath(); ffCtx.arc(p.x, p.y, 30, 0, Math.PI*2); ffCtx.fill(); ffCtx.stroke();
                     }
                 }
 
-                // ========================================================
-                // آلية هجوم الروبوتات عليك وإطلاق النار لقتلك وتصفية نقاط دمك!
-                // ========================================================
+                // هجوم الأعداء على اللاعب
                 p.attackCooldown--;
                 if(p.attackCooldown <= 0) {
-                    p.attackCooldown = Math.random() * 50 + 50; // إعادة تعيين وقت الضرب العشوائي لسرعة واقعية
+                    p.attackCooldown = Math.random() * 60 + 35;
                     
-                    // رسم خط رصاصة نارية مشع خارج من الروبوت باتجاه شاشة اللاعب الافتراضية
-                    ffCtx.strokeStyle = '#ff3333';
-                    ffCtx.lineWidth = 2;
-                    ffCtx.beginPath();
-                    ffCtx.moveTo(p.x, p.y);
-                    ffCtx.lineTo(ffCanvas.width/2, ffCanvas.height);
-                    ffCtx.stroke();
+                    ffCtx.strokeStyle = p.id === 'brsmayk' ? '#ffff00' : '#ff3333';
+                    ffCtx.lineWidth = p.id === 'brsmayk' ? 3 : 1.5;
+                    ffCtx.beginPath(); ffCtx.moveTo(p.x, p.y); ffCtx.lineTo(ffCanvas.width/2, ffCanvas.height); ffCtx.stroke();
 
-                    // إنقاص دم اللاعب وحساب ميكانيكا امتصاص الصدمات عبر درع الـ EP أولاً
-                    playSfx(140, 'sawtooth', 0.08, 0.15);
-                    let incomingDmg = 15;
+                    playSfx(150, 'sawtooth', 0.08, 0.1);
+                    // هجوم البوس BRSMAYK يسبب ضرراً أقوى (24 HP)
+                    let dmg = p.id === 'brsmayk' ? 24 : (p.id === 'kelly' ? 16 : 11); 
                     if(ffPlayerEp > 0) {
-                        let absorbed = Math.min(ffPlayerEp, incomingDmg * 0.5);
-                        ffPlayerEp -= absorbed;
-                        incomingDmg -= absorbed;
+                        let absorb = Math.min(ffPlayerEp, dmg * 0.5);
+                        ffPlayerEp -= absorb;
+                        dmg -= absorb;
                     }
-                    ffPlayerHp -= incomingDmg;
+                    ffPlayerHp -= dmg;
                     updateFreeFireHud();
 
-                    // التحقق من موت اللاعب بالكامل لإعلان خسارته الفورية وتصفية الجولة
                     if(ffPlayerHp <= 0) {
                         ffPlayerHp = 0;
                         updateFreeFireHud();
-                        setTimeout(() => showResult('ELIMINATED', 'لقد تم تصفيتك بالكامل بواسطة ألوك وفرقته الأسطورية! ☠️❌', false), 200);
+                        setTimeout(() => showResult('ELIMINATED', 'تمت تصفيتك من قبل تشكيلة BRSMAYK! ☠️❌', false), 200);
                         return;
                     }
                 }
 
-                // رسم الشكل الخارجي والـ Emoji المعبر عن الشخصية بالإضافة لاسمها وشريط دمها المصغر فوق رأسها
+                // رسم الإيموجي والاسم بوضوح تام فوق الرأس
                 ffCtx.fillStyle = 'white';
                 ffCtx.font = '22px Arial';
                 ffCtx.fillText(p.emoji, p.x - 11, p.y + 8);
 
-                // كتابة الاسم التوضيحي لكل كراكتر فوق رأسه بوضوح كبير داخل الساحة
-                ffCtx.fillStyle = '#aaa';
-                ffCtx.font = 'bold 9px Tahoma';
-                ffCtx.fillText(p.name, p.x - 20, p.y - 24);
+                // اسم الشخصية فوق الرأس مباشرة
+                ffCtx.fillStyle = p.id === 'brsmayk' ? '#00ffcc' : '#ffb700';
+                ffCtx.font = 'bold 10px Segoe UI, Tahoma';
+                ffCtx.fillText(p.name, p.x - 26, p.y - 25);
 
-                // رسم الـ Health Bar الخاص بالروبوت بدقة شديدة باللونين الأخضر والأحمر ليعكس حالته الواقعية
-                ffCtx.fillStyle = '#ff3333';
+                // شريط حياة العدو المصغر
+                ffCtx.fillStyle = '#444';
                 ffCtx.fillRect(p.x - 20, p.y - 18, 40, 4);
-                ffCtx.fillStyle = '#00ff44';
+                ffCtx.fillStyle = p.id === 'brsmayk' ? '#00ff44' : '#ff3333';
                 ffCtx.fillRect(p.x - 20, p.y - 18, (p.hp / p.maxHp) * 40, 4);
             });
 
             ffCtx.restore();
-            // استدعاء الفريم التالي للمحافظة على معدل تحديث الصور والـ FPS ثابتاً وسلساً
             ffLoop = requestAnimationFrame(renderFreeFire);
         }
 
-        // ذكاء اصطناعي مخصص وميكانيكا تحركات الكمبيوتر ضدك في لعبة XO القديمة
         function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
         function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
         function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
