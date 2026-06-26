@@ -6,48 +6,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BRSMAYKA GAMING - Elite Edition</title>
+    
     <style>
+        /* تعريف الألوان الأساسية للموقع (الأخضر النيون والأسود والفيروزي) */
         :root { --primary: #00ffcc; --bg: #0a0a0a; --accent-green: #00ff44; --error-red: #ff3333; }
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         
+        /* تصميم اسم الموقع المتوهج BRSMAYKA GAMING */
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
+        
+        /* شاشة الترحيب السوداء التي تظهر عند فتح الموقع لأول مرة */
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* صندوق النقاط الثابت في أعلى يسار الشاشة */
         #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
 
+        /* حاوية الألعاب (الأزرار والمربعات) */
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px; }
         .game-card { background: #111; border: 1px solid #333; width: 140px; border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s; }
+        
+        /* تأثير حركي خفيف يرفع بطاقة اللعبة عند مرور الماوس عليها */
         .game-card:hover { border-color: var(--accent-green); transform: translateY(-5px); }
 
+        /* نافذة الألعاب المنبثقة (المودال) */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; margin: 5vh auto; width: 92%; max-width: 400px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); position: relative; }
         .wrong-bg { background: #660000 !important; border-color: #ff0000 !important; }
         
+        /* شريط الوقت التنازلي للألعاب */
         #timer-bar { height: 8px; background: var(--accent-green); width: 100%; transition: 0.1s linear; border-radius: 10px; }
         .btn { background: var(--accent-green); color: #000; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 85%; margin: 5px; }
         
+        /* مربعات لعب الـ XO والذاكرة */
         .cell { background: #161616; border-radius: 12px; display: flex; align-items: center; justify-content: center; height: 70px; width: 70px; font-size: 35px; border: 1px solid #333; cursor: pointer; font-weight: 900; }
         .p-x { color: var(--accent-green); text-shadow: 0 0 10px var(--accent-green); }
         .p-o { color: var(--error-red); text-shadow: 0 0 10px var(--error-red); }
 
+        /* أزرار اختيار مستوى الصعوبة في لعبة XO */
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        /* Dynamic Rating Section Styles */
+        /* تصميم قسم التقييم بالنجوم المطور والتفاعلي */
         .rating-section { background: linear-gradient(145deg, #121212, #080808); margin: 35px auto; padding: 25px; border-radius: 25px; max-width: 400px; border: 1px solid #222; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
         .stars { font-size: 42px; cursor: pointer; margin-bottom: 12px; display: flex; justify-content: center; gap: 10px; direction: ltr; }
         .star { color: #252525; transition: all 0.2s ease-in-out; display: inline-block; }
+        
+        /* تأثير تكبير النجمة وتوهجها الذهبي عند وضع الماوس عليها */
         .star:hover { transform: scale(1.25) rotate(7deg); color: #ffdd44 !important; text-shadow: 0 0 15px #ffcc00; }
         .star:active { transform: scale(0.9); }
         .counter-text { color: var(--accent-green); font-weight: bold; font-size: 1.2rem; margin-top: 10px; }
         .voter-badge { color: #fff; background: #222; padding: 2px 12px; border-radius: 20px; font-size: 1rem; margin-left: 5px; border: 1px solid #333; }
         
+        /* تأثير ظهور سؤال الموقع بسلاسة من الأسفل للأعلى */
         #location-ask { display: none; margin-top: 20px; padding-top: 15px; border-top: 1px solid #222; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .input-box { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 12px; width: 65%; outline: none; transition: 0.3s; }
         .input-box:focus { border-color: var(--primary); }
         .btn-submit { background: var(--primary); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-submit:hover { background: white; box-shadow: 0 0 15px var(--primary); transform: scale(1.05); }
 
+        /* حركة الأنيميشن المخصصة لظهور صندوق الموقع */
         @keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
         footer { margin-top: 60px; padding-bottom: 40px; border-top: 1px solid #222; }
@@ -137,9 +155,11 @@
     </div>
 
     <script>
+        // إعداد المتغيرات البرمجية الأساسية لتشغيل وحفظ النقاط والوقت
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
+        // دالة توليد المؤثرات الصوتية للألعاب بدون ملفات صوت خارجية
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
             const o = audioCtx.createOscillator();
@@ -151,24 +171,26 @@
             o.start(); o.stop(audioCtx.currentTime + dur);
         }
 
+        // دالة تشغيل النظام وإخفاء شاشة الـ Splash عند الضغط على Enter
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             [400, 500, 600].forEach((f, i) => setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 120));
             document.getElementById('splash-screen').style.display = 'none';
         }
 
+        // دالة تحميل النقاط المخزنة والتقييمات فور فتح الموقع
         function loadGlobalScore() {
             globalPoints = parseInt(localStorage.getItem('brs_pts')) || 0;
             document.getElementById('total-points').innerText = globalPoints;
             
-            // Setup Rating system data on load
+            // جلب وعرض عدد المقيمين والنجوم التي حددها المستخدم سابقاً
             const totalVoters = localStorage.getItem('global_voters') || 0;
             document.getElementById('voter-count').innerText = totalVoters;
             const userRating = localStorage.getItem('my_stars');
             if(userRating) applyStarColor(userRating);
         }
 
-        // Live Star System Logic
+        // دالة الضغط على النجوم للتقييم، تزيد العداد من 0 لـ 1 لأول مرة وتظهر صندوق سؤال الموقع
         function rate(n) {
             if(!localStorage.getItem('already_voted')) {
                 let currentCount = parseInt(localStorage.getItem('global_voters')) || 0;
@@ -183,6 +205,7 @@
             playSfx(800, 'sine', 0.05, 0.1);
         }
 
+        // دالة تلوين النجوم وإضافة تأثير التوهج المطور حسب التقييم المحدد
         function applyStarColor(n) {
             const stars = document.querySelectorAll('.star');
             stars.forEach((s, i) => {
@@ -198,6 +221,7 @@
             });
         }
 
+        // دالة حفظ الموقع في المتصفح وعرض رسالة حب وترحيب بالزائر
         function submitLocation() {
             const val = document.getElementById('city-input').value;
             if(val) {
@@ -207,6 +231,7 @@
             }
         }
 
+        // دالة إظهار النتيجة وإضافة النقاط (+50) في حال الفوز أو تلوين الشاشة بالأحمر في الخسارة
         function showResult(title, desc, isWin) {
             clearInterval(gameTimer);
             const overlay = document.getElementById('custom-result-overlay');
@@ -227,6 +252,7 @@
         function hideResult() { document.getElementById('game-box').classList.remove('wrong-bg'); start(currentMode); }
         function stop() { clearInterval(gameTimer); document.getElementById('gameModal').style.display = 'none'; }
 
+        // الدالة الأم لبدء تشغيل وضخ أكواد أي لعبة تختارها من القائمة وتصفير العداد لـ 15 ثانية
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
             document.getElementById('game-box').classList.remove('wrong-bg');
@@ -242,6 +268,7 @@
                 if(timeLeft <= 0) showResult('TIME OVER', 'Try Again!', false);
             }, 100);
 
+            // كود بناء شبكة لعبة XO AI وآلية الضغط واللعب
             if(mode === 'xo') {
                 view.innerHTML = `<div style="margin-bottom:10px;">
                     <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
@@ -253,6 +280,7 @@
                     c.onclick = () => { if(canPlay && board[i]==='') { playSfx(800,'sine',0.05,0.1); board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false; if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','Fair Game!',true); } else showResult('WIN','Great!',true); } };
                     document.getElementById('xo-grid').appendChild(c);
                 }
+            // كود لعبة الإمساك بالشبح الطائر Ghost Game
             } else if(mode === 'ball') {
                 view.innerHTML = `<h3>Catch the Ghost!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
                     <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.5s linear;" onclick="score++; playSfx(1000,'sine',0.05,0.1); if(score>=8) showResult('WIN','Hunter!',true)">👻</div>
@@ -260,20 +288,24 @@
                 const g = document.getElementById('ghost');
                 const moveGhost = () => { if(currentMode==='ball') { g.style.left=Math.random()*85+'%'; g.style.top=Math.random()*85+'%'; setTimeout(moveGhost, 1200); } };
                 moveGhost();
+            // كود لعبة الضغط على الدائرة السريعة Fast Click
             } else if(mode === 'fastclick') {
                 view.innerHTML = `<h3>Tap the Circle!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
                     <div id="target" style="width:50px; height:50px; background:var(--primary); border-radius:50%; position:absolute; cursor:pointer;" onclick="hitTarget()"></div>
                 </div><p id="click-score">Score: 0/12</p>`;
                 moveTarget();
+            // كود اختبار سرعة الاستجابة اللحظي React Test
             } else if(mode === 'react') {
                 reactState = 'wait';
                 view.innerHTML = `<h3>Reaction Test</h3><div id="react-box" style="height:200px; background:red; border-radius:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:20px;" onclick="handleReact()">WAIT...</div>`;
                 setTimeout(() => { if(currentMode === 'react') { reactState = 'go'; const b = document.getElementById('react-box'); if(b){b.style.background='#00ff44'; b.innerText='TAP NOW!';}} }, Math.random()*3000+2000);
+            // كود لعبة تطابق الألوان والكلمات الخداعية Color Game
             } else if(mode === 'color') {
                 const colors=['RED','GREEN','BLUE','YELLOW'], hex=['#ff3333','#00ff44','#3333ff','#ffff00'], rT=Math.floor(Math.random()*4), rC=Math.floor(Math.random()*4);
                 view.innerHTML = `<h3>Match Text & Color?</h3><h1 style="color:${hex[rC]}; font-size:50px;">${colors[rT]}</h1>
                 <button class="btn" onclick="${rT===rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">YES</button>
                 <button class="btn" style="background:#444; color:white;" onclick="${rT!==rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">NO</button>`;
+            // كود لعبة الحسابات والرياضيات السريعة Math Game
             } else if(mode === 'math') {
                 const a=Math.floor(Math.random()*25), b=Math.floor(Math.random()*25), ans=a+b;
                 view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
@@ -282,8 +314,10 @@
                     btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false);
                     view.appendChild(btn);
                 });
+            // كود لعبة ضغط الزر 30 مرة بأسرع وقت Tap Game
             } else if(mode === 'tap') {
                 view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; playSfx(1000,'sine',0.02,0.05); this.innerText=score; if(score>=30) showResult('WIN','Fast!',true)">0</button>`;
+            // كود لعبة قوة الذاكرة وتطابق الأشكال المخفية Memory Game
             } else if(mode === 'mem') {
                 const icons=['🔥','🔥','💎','💎','⚡','⚡','⭐','⭐'].sort(()=>Math.random()-0.5);
                 view.innerHTML = `<div style="display:grid; grid-template-columns:repeat(4,70px); gap:8px; justify-content:center;"></div>`;
@@ -295,10 +329,12 @@
             }
         }
 
+        // دوال فرعية مساعدة لحساب إصابات الهدف واختبار الاستجابة
         function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
         function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
         function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
 
+        // ذكاء اصطناعي مخصص لتحركات الكمبيوتر ضدك في لعبة XO
         function aiMove() {
             let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
             if(difficulty === 'hard') m = getSmartMove(board);
@@ -308,12 +344,14 @@
             if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
         }
 
+        // دالة الذكاء الاصطناعي للتنبؤ وحظر حركات الفوز الخاصة بك أو إنهاء اللعبة لصالحه
         function getSmartMove(b) {
             for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
             for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
             return -1;
         }
 
+        // دالة فحص مصفوفة الفوز الأفقية والعمودية والقطرية لـ XO
         function checkWin(b, p) {
             const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             return w.some(s => s.every(i => b[i] === p));
