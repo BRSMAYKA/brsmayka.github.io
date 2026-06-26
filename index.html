@@ -190,7 +190,7 @@
             if(userRating) applyStarColor(userRating);
         }
 
-        // دالة الضغط على النجوم للتقييم، تزيد العداد من 0 لـ 1 لأول مرة وتظهر صندوق سؤال الموقع
+        // دالة الضغط على النجوم للتقييم، تزيد العداد وتظهر صندوق سؤال الموقع
         function rate(n) {
             if(!localStorage.getItem('already_voted')) {
                 let currentCount = parseInt(localStorage.getItem('global_voters')) || 0;
@@ -202,7 +202,7 @@
             localStorage.setItem('my_stars', n);
             applyStarColor(n);
             document.getElementById('location-ask').style.display = 'block';
-            playSfx(800, 'sine', 0.05, 0.1);
+            if(audioCtx) playSfx(800, 'sine', 0.05, 0.1);
         }
 
         // دالة تلوين النجوم وإضافة تأثير التوهج المطور حسب التقييم المحدد
@@ -314,7 +314,7 @@
                     btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false);
                     view.appendChild(btn);
                 });
-            // كود لعبة ضغط الزر 30 مرة بأسرع وقت Tap Game
+            // كود لعبة ضغط الزر 30 مرة بأرسع وقت Tap Game
             } else if(mode === 'tap') {
                 view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:100px; font-size:30px;" onclick="score++; playSfx(1000,'sine',0.02,0.05); this.innerText=score; if(score>=30) showResult('WIN','Fast!',true)">0</button>`;
             // كود لعبة قوة الذاكرة وتطابق الأشكال المخفية Memory Game
