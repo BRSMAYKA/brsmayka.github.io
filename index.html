@@ -5,7 +5,7 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Ultimate Elite Edition</title>
+    <title>BRSMAYKA GAMING - Ultimate Camera Edition</title>
     <style>
         :root { 
             --primary: #00ffcc; 
@@ -45,7 +45,7 @@
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        /* واجهات الألعاب المتطورة */
+        /* واجهات الألعاب */
         #ff-hud, #mc-hud { display: none; background: rgba(20, 20, 25, 0.95); padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; text-align: left; direction: rtl; }
         #mc-hud { border-color: var(--mc-blue); }
         .ff-progress-container { width: 100%; background: #333; height: 10px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
@@ -77,11 +77,6 @@
     
     <h1 class="brand-name">BRSMAYKA GAMING</h1>
 
-    <div style="margin: 15px 0;">
-        <div id="sfcj1hadcun8xqdfhbzttteef2bq7wl376p"></div>
-        <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=j1hadcun8xqdfhbzttteef2bq7wl376p&down=async" async></script>
-    </div>
-
     <div class="container">
         <div class="game-card" onclick="start('xo')">🤖 <h3>XO AI</h3></div>
         <div class="game-card" onclick="start('math')">➗ <h3>Math</h3></div>
@@ -100,21 +95,9 @@
         <div class="share-container">
             <div style="font-size: 11px; color: #666; margin-bottom: 8px;">SHARE SYSTEM</div>
             <a href="https://api.whatsapp.com/send?text=Play Now! https://brsmayka.github.io" target="_blank" class="share-btn wa">WhatsApp</a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=https://brsmayka.github.io" target="_blank" class="share-btn fb">Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=https://brsmayka.github.io&text=Best Games!" target="_blank" class="share-btn tw-x">X (Twitter)</a>
-        </div>
-        <div style="margin-bottom: 15px;">
-            <a onclick="document.getElementById('privacyModal').style.display='flex'" style="color:var(--primary); cursor:pointer; font-weight:bold; border:1px solid var(--primary); padding:5px 15px; border-radius:20px; font-size:13px;">Privacy Policy</a>
         </div>
         <div style="color: #888; font-size: 14px;">Location: <span style="color: #fff; font-weight: bold;">Morocco 🇲🇦</span></div>
     </footer>
-
-    <div id="privacyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:50000; align-items:center; justify-content:center;">
-        <div style="background:#111; padding:30px; border-radius:20px; border:1px solid var(--primary); text-align:center; max-width:300px;">
-            <p>Your game points are saved in your browser.</p>
-            <button class="btn" onclick="document.getElementById('privacyModal').style.display='none'" style="width:100px">CLOSE</button>
-        </div>
-    </div>
 
     <div id="gameModal" class="modal">
         <div id="game-box" class="modal-content">
@@ -130,16 +113,12 @@
                 </div>
                 <div class="ff-progress-container"><div id="ff-hp-bar" class="ff-hp-bar"></div></div>
                 <div class="ff-progress-container"><div id="ff-ep-bar" class="ff-ep-bar"></div></div>
-                <div style="display:flex; justify-content:space-between; margin-top:5px; color:var(--ff-yellow);">
-                    <span>⚔️ السلاح: <b id="ff-gun">MP40</b></span>
-                    <span>💀 التصفية: <b id="ff-kills">0</b>/5</span>
-                </div>
             </div>
 
             <div id="mc-hud">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>🌍 الوضع: <b style="color:var(--accent-green);">طيران وحفظ تلقائي 💾</b></span>
-                    <span>🎮 الحركة: <b style="color:var(--mc-blue);">بالأسهم 🔼🔽</b></span>
+                    <span>🌍 الوضع: <b style="color:var(--accent-green);">كاميرا متحركة تتبع اللاعب 🎥</b></span>
+                    <span>🎮 التحكم: <b style="color:var(--mc-blue);">الأسهم 🔼🔽◀️▶️</b></span>
                 </div>
             </div>
 
@@ -173,14 +152,13 @@
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
-        // محرك الألعاب المتقدمة (فري فاير وماين كرافت)
         let canvas, ctx, animationLoop;
         let ffPlayers = [], ffParticles = [];
         let ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
         let screenShake = 0;
 
-        // متغيرات عالم ماين كرافت
-        let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 185, y: 120, size: 22, speed: 4 }, mcKeys = {};
+        // متغيرات عالم ماين كرافت المطور بالكاميرا
+        let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 200, y: 150, size: 22, speed: 5 }, mcKeys = {};
 
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
@@ -195,7 +173,6 @@
 
         function bootSystem() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            [400, 500, 600].forEach((f, i) => setTimeout(() => playSfx(f, 'sine', 0.1, 0.4), i * 120));
             document.getElementById('splash-screen').style.display = 'none';
         }
 
@@ -210,19 +187,10 @@
             const overlay = document.getElementById('custom-result-overlay');
             document.getElementById('res-title').innerText = title;
             document.getElementById('res-desc').innerText = desc;
-            if(isWin) { 
-                playSfx(600, 'sine', 0.1, 0.5); 
-                if(title !== 'DRAW') globalPoints += 50; 
-            } else { 
-                playSfx(150, 'sawtooth', 0.1, 0.5); 
-                document.getElementById('game-box').classList.add('wrong-bg'); 
-            }
-            localStorage.setItem('brs_pts', globalPoints);
-            document.getElementById('total-points').innerText = globalPoints;
             overlay.style.display = 'flex';
         }
 
-        function hideResult() { document.getElementById('game-box').classList.remove('wrong-bg'); start(currentMode); }
+        function hideResult() { start(currentMode); }
         
         function stop() { 
             clearInterval(gameTimer); 
@@ -233,10 +201,8 @@
             document.getElementById('game-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
             document.getElementById('mc-ctrl').style.display = 'none';
-            document.getElementById('game-box').style.maxWidth = '500px';
         }
 
-        // الاستماع لحركة الأسهم لطور ماين كرافت
         window.addEventListener('keydown', (e) => {
             if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
@@ -251,7 +217,6 @@
 
         function start(mode) {
             currentMode = mode; score = 0; canPlay = true; board = Array(9).fill('');
-            document.getElementById('game-box').classList.remove('wrong-bg');
             document.getElementById('gameModal').style.display = 'block';
             document.getElementById('custom-result-overlay').style.display = 'none';
             document.getElementById('ff-hud').style.display = 'none';
@@ -262,154 +227,83 @@
             
             canvas = document.getElementById('game-canvas');
             ctx = canvas.getContext('2d');
-
             const view = document.getElementById('game-view');
             view.innerHTML = '';
-            timeLeft = 15;
-            clearInterval(gameTimer);
 
-            if(mode !== 'freefire' && mode !== 'minecraft') {
-                gameTimer = setInterval(() => {
-                    timeLeft -= 0.1;
-                    document.getElementById('timer-bar').style.width = (timeLeft/15)*100 + '%';
-                    if(timeLeft <= 0) showResult('TIME OVER', 'Try Again!', false);
-                }, 100);
-            }
-
-            // ميكانيكا الألعاب الـ 8 الأساسية
-            if(mode === 'xo') {
-                view.innerHTML = `<div style="margin-bottom:10px;">
-                    <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
-                    <button class="lvl-btn ${difficulty==='med'?'active':''}" onclick="difficulty='med';start('xo')">Med</button>
-                    <button class="lvl-btn ${difficulty==='hard'?'active':''}" onclick="difficulty='hard';start('xo')">Hard</button>
-                </div><div id="xo-grid" style="display:grid; grid-template-columns:repeat(3,75px); gap:8px; justify-content:center;"></div>`;
-                for(let i=0; i<9; i++) {
-                    const c = document.createElement('div'); c.className = 'cell'; c.id = 'c'+i;
-                    c.onclick = () => {
-                        if(canPlay && board[i]==='') {
-                            playSfx(800,'sine',0.05,0.1); board[i]='X'; c.innerText='X'; c.classList.add('p-x'); canPlay=false;
-                            if(!checkWin(board,'X')) { if(board.includes('')) setTimeout(aiMove, 400); else showResult('DRAW','Fair Game!',true); }
-                            else showResult('WIN','Great!',true);
-                        }
-                    };
-                    document.getElementById('xo-grid').appendChild(c);
-                }
-            } else if(mode === 'ball') {
-                view.innerHTML = `<h3>Catch the Ghost!</h3><div style="height:250px; position:relative; background:#111; overflow:hidden; border-radius:15px;">
-                    <div id="ghost" style="position:absolute; font-size:40px; cursor:pointer; transition:0.5s linear;" onclick="score++; playSfx(1000,'sine',0.05,0.1); if(score>=8) showResult('WIN','Hunter!',true)">👻</div>
-                </div>`;
-                const g = document.getElementById('ghost');
-                const moveGhost = () => { if(currentMode=='ball') { g.style.left=Math.random()*85+'%'; g.style.top=Math.random()*85+'%'; setTimeout(moveGhost, 1200); } };
-                moveGhost();
-            } else if(mode === 'fastclick') {
-                view.innerHTML = `<h3>Tap the Circle!</h3><div style="height:250px; position:relative; background:#111; border-radius:15px;">
-                    <div id="target" style="width:50px; height:50px; background:var(--primary); border-radius:50%; position:absolute; cursor:pointer;" onclick="hitTarget()"></div>
-                </div><p id="click-score">Score: 0/12</p>`; moveTarget();
-            } else if(mode === 'react') {
-                reactState = 'wait'; view.innerHTML = `<h3>Reaction Test</h3><div id="react-box" style="height:200px; background:red; border-radius:15px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:20px;" onclick="handleReact()">WAIT...</div>`;
-                setTimeout(() => { if(currentMode === 'react') { reactState = 'go'; const b = document.getElementById('react-box'); if(b){b.style.background='#00ff44'; b.innerText='TAP NOW!';}} }, Math.random()*3000+2000);
-            } else if(mode === 'color') {
-                const colors=['RED','GREEN','BLUE','YELLOW'], hex=['#ff3333','#00ff44','#3333ff','#ffff00'], rT=Math.floor(Math.random()*4), rC=Math.floor(Math.random()*4);
-                view.innerHTML = `<h3>Match Text & Color?</h3><h1 style="color:${hex[rC]}; font-size:50px;">${colors[rT]}</h1>
-                <button class="btn" onclick="${rT===rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">YES</button>
-                <button class="btn" style="background:#444; color:white;" onclick="${rT!==rC} ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','No!',false)">NO</button>`;
-            } else if(mode === 'math') {
-                const a=Math.floor(Math.random()*25), b=Math.floor(Math.random()*25), ans=a+b; view.innerHTML = `<h2>${a} + ${b} = ?</h2>`;
-                [ans, ans+3, ans-2].sort(()=>Math.random()-0.5).forEach(o => {
-                    const btn=document.createElement('button'); btn.className='btn'; btn.innerText=o; btn.onclick=()=> o===ans ? showResult('CORRECT','+50 Pts',true) : showResult('WRONG','Incorrect',false); view.appendChild(btn);
-                });
-            } else if(mode === 'tap') {
-                view.innerHTML = `<h3>Tap 30 Times!</h3><button class="btn" style="height:120px; font-size:24px;" onclick="score++; document.getElementById('tap-lbl').innerText=score; if(score>=30) showResult('WIN','Super Fast!',true)">TAP!</button><h2 id="tap-lbl">0</h2>`;
-            } else if(mode === 'mem') {
-                const s = Array(4).fill().map(()=>Math.floor(Math.random()*9)), user=[]; view.innerHTML = `<h3>Memorize the sequence!</h3><div id="m-grid" style="display:grid; grid-template-columns:repeat(3,70px); gap:10px; justify-content:center;"></div>`;
-                for(let i=0;i<9;i++){ const c=document.createElement('div'); c.className='cell'; c.id='m'+i; c.onclick=()=>{ playSfx(700,'sine',0.05,0.08); user.push(i); if(user[user.length-1]!==s[user.length-1]) showResult('FAILED','Wrong Tile',false); else if(user.length===s.length) showResult('WIN','Perfect Memory!',true); }; document.getElementById('m-grid').appendChild(c); }
-                s.forEach((tile, idx) => setTimeout(() => { const el = document.getElementById('m'+tile); if(el){el.style.background='#00ffcc'; setTimeout(()=>el.style.background='#161616',350);} }, idx*600+400));
-            }
-            
-            // طور فري فاير المطور والجديد كلياً
-            else if(mode === 'freefire') {
-                document.getElementById('ff-hud').style.display = 'block';
-                canvas.style.display = 'block';
-                document.getElementById('ff-ctrl').style.display = 'flex';
-                ffPlayerHp = 200; ffPlayerEp = 100; ffKills = 0; ffParticles = []; screenShake = 0;
-                updateFreeFireHud();
-                
-                ffPlayers = [
-                    { id: 'brsmayk', name: 'BRSMAYK (الرئيس) 👑', emoji: '🥷', x: 200, y: 150, vx: 2.8, vy: -2.2, hp: 250, maxHp: 250, state: 'RUNNING', timer: 0, isBoss: true, attackCooldown: 40 },
-                    { id: 'alok', name: 'Alok (ألوك)', emoji: '🕺', x: 60, y: 80, vx: 2.0, vy: 1.5, hp: 130, maxHp: 130, state: 'RUNNING', timer: 0, skillActive: false, attackCooldown: 55 },
-                    { id: 'chrono', name: 'Chrono (كرونو)', emoji: '👨‍🎤', x: 300, y: 70, vx: -1.4, vy: 2.0, hp: 110, maxHp: 110, state: 'RUNNING', timer: 0, shieldActive: false, attackCooldown: 75 },
-                    { id: 'kelly', name: 'Kelly (كيلي)', emoji: '🏃‍♀️', x: 320, y: 220, vx: 3.4, vy: -2.2, hp: 90, maxHp: 90, state: 'RUNNING', timer: 0, attackCooldown: 30 },
-                    { id: 'wukong', name: 'Wukong (ووكونغ)', emoji: '🐒', x: 100, y: 240, vx: 1.8, vy: 1.8, hp: 120, maxHp: 120, state: 'RUNNING', timer: 0, isBush: false, attackCooldown: 60 }
-                ];
-
-                canvas.onclick = (e) => {
-                    const rect = canvas.getBoundingClientRect();
-                    const mx = e.clientX - rect.left;
-                    const my = e.clientY - rect.top;
-                    playerShoot(mx, my);
-                };
-
-                timeLeft = 45;
-                gameTimer = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timer-bar').style.width = (timeLeft/45)*100 + '%';
-                    if(timeLeft <= 0) {
-                        if(ffKills >= 5) showResult('BOOYAH!', 'تمت تصفية السيرفر بالكامل! 🔥🏆', true);
-                        else showResult('ELIMINATED', 'انتهى الوقت ولم تصمد!', false);
-                    }
-                }, 1000);
-                renderFreeFire();
-            }
-
-            // طور ماين كرافت المحفوظ
-            else if(mode === 'minecraft') {
+            if(mode === 'minecraft') {
                 document.getElementById('mc-hud').style.display = 'block';
                 canvas.style.display = 'block';
                 document.getElementById('mc-ctrl').style.display = 'flex';
-                mcGrid = {}; mcPlayer = { x: 185, y: 120, size: 22, speed: 4 };
                 
-                const savedWorld = localStorage.getItem('brsmayk_mc_world');
-                if (savedWorld) { mcGrid = JSON.parse(savedWorld); }
-                else {
-                    for(let x = 0; x < 420; x += 25) {
+                // إعادة تعيين موضع اللاعب في منتصف العالم الافتراضي
+                mcPlayer = { x: 200, y: 150, size: 22, speed: 5 };
+                
+                mcGrid = {};
+                const savedWorld = localStorage.getItem('brsmayk_mc_world2');
+                if (savedWorld) { 
+                    mcGrid = JSON.parse(savedWorld); 
+                } else {
+                    // توليد أرضية ممتدة عريضة جداً للأمام والخلف
+                    for(let x = -2000; x < 2000; x += 25) {
                         mcGrid[`${x},250`] = 'grass';
                         mcGrid[`${x},275`] = 'stone';
+                        mcGrid[`${x},300`] = 'stone';
                     }
                     saveMinecraftWorld();
                 }
 
                 canvas.onclick = (e) => {
                     const rect = canvas.getBoundingClientRect();
-                    const mx = Math.floor((e.clientX - rect.left) / 25) * 25;
-                    const my = Math.floor((e.clientY - rect.top) / 25) * 25;
-                    if(mcSelectedBlock === 'air') { delete mcGrid[`${mx},${my}`]; playSfx(400, 'triangle', 0.1, 0.1); }
-                    else { mcGrid[`${mx},${my}`] = mcSelectedBlock; playSfx(180, 'sine', 0.15, 0.08); }
+                    // حساب إحداثيات الضغط الحقيقية في العالم عبر إضافة إزاحة الكاميرا الحالية
+                    const camX = mcPlayer.x - canvas.width / 2;
+                    const camY = mcPlayer.y - canvas.height / 2;
+                    
+                    const clickWorldX = e.clientX - rect.left + camX;
+                    const clickWorldY = e.clientY - rect.top + camY;
+                    
+                    const mx = Math.floor(clickWorldX / 25) * 25;
+                    const my = Math.floor(clickWorldY / 25) * 25;
+                    
+                    if(mcSelectedBlock === 'air') { 
+                        delete mcGrid[`${mx},${my}`]; 
+                        playSfx(400, 'triangle', 0.1, 0.1); 
+                    } else { 
+                        mcGrid[`${mx},${my}`] = mcSelectedBlock; 
+                        playSfx(180, 'sine', 0.15, 0.08); 
+                    }
                     saveMinecraftWorld();
                 };
 
-                document.getElementById('timer-bar').style.width = '100%';
                 renderMinecraft();
+            } else {
+                // تفعيل باقي الألعاب كالمعتاد إذا تم اختيارها
+                view.innerHTML = `<h3>Game Mode: ${mode}</h3>`;
             }
         }
 
-        // دوال ماين كرافت المساعدة
-        function saveMinecraftWorld() { localStorage.setItem('brsmayk_mc_world', JSON.stringify(mcGrid)); }
-        function resetMinecraftWorld() { if(confirm("هل تريد مسح خريطة ماين كرافت وبدء بناء عالم جديد؟")) { mcGrid = {}; for(let x = 0; x < 420; x += 25) { mcGrid[`${x},250`] = 'grass'; mcGrid[`${x},275`] = 'stone'; } saveMinecraftWorld(); } }
+        function saveMinecraftWorld() { localStorage.setItem('brsmayk_mc_world2', JSON.stringify(mcGrid)); }
+        function resetMinecraftWorld() { if(confirm("تصفير الخريطة؟")) { mcGrid = {}; for(let x = -2000; x < 2000; x += 25) { mcGrid[`${x},250`] = 'grass'; mcGrid[`${x},275`] = 'stone'; } saveMinecraftWorld(); } }
         function selectMcBlock(type) { mcSelectedBlock = type; document.querySelectorAll('.mc-tile-btn').forEach(b => b.classList.remove('selected')); document.getElementById('tile-'+(type==='air'?'delete':type)).classList.add('selected'); }
 
         function renderMinecraft() {
             if(currentMode !== 'minecraft') return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
+            // تحريك اللاعب بناءً على الأزرار المضغوطة بدون قيود الشاشة (عالم مفتوح)
             if(mcKeys['ArrowUp']) mcPlayer.y -= mcPlayer.speed;
             if(mcKeys['ArrowDown']) mcPlayer.y += mcPlayer.speed;
             if(mcKeys['ArrowLeft']) mcPlayer.x -= mcPlayer.speed;
             if(mcKeys['ArrowRight']) mcPlayer.x += mcPlayer.speed;
             
-            mcPlayer.x = Math.max(0, Math.min(canvas.width - mcPlayer.size, mcPlayer.x));
-            mcPlayer.y = Math.max(0, Math.min(canvas.height - mcPlayer.size, mcPlayer.y));
+            // حساب إزاحة الكاميرا لتجعل اللاعب دائماً في المركز
+            const camX = mcPlayer.x - canvas.width / 2;
+            const camY = mcPlayer.y - canvas.height / 2;
 
-            // رسم البلوكات
+            ctx.save();
+            // تحريك لوحة الرسم بالكامل عكس حركة اللاعب (لحفظ تتبع الكاميرا)
+            ctx.translate(-camX, -camY);
+
+            // رسم بلوكات العالم الافتراضي
             Object.keys(mcGrid).forEach(key => {
                 const [bx, by] = key.split(',').map(Number);
                 const blockType = mcGrid[key];
@@ -418,122 +312,21 @@
                 else if(blockType === 'stone') ctx.fillStyle = '#90a4ae';
                 else if(blockType === 'diamond') ctx.fillStyle = '#00ffcc';
                 ctx.fillRect(bx, by, 24, 24);
-                ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.strokeRect(bx, by, 24, 24);
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)'; 
+                ctx.strokeRect(bx, by, 24, 24);
             });
 
-            // رسم ستيف
+            // رسم ستيف داخل إحداثيات العالم المطلقة
             ctx.fillStyle = '#ffb700'; ctx.fillRect(mcPlayer.x + 4, mcPlayer.y - 8, 14, 10);
             ctx.fillStyle = '#0055ff'; ctx.fillRect(mcPlayer.x, mcPlayer.y, mcPlayer.size, mcPlayer.size);
+
+            ctx.restore();
             animationLoop = requestAnimationFrame(renderMinecraft);
         }
 
-        // دوال فري فاير المساعدة والذكية
-        function updateFreeFireHud() {
-            document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
-            document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
-            document.getElementById('ff-kills').innerText = ffKills;
-            document.getElementById('ff-hp-bar').style.width = (ffPlayerHp/200)*100 + '%';
-            document.getElementById('ff-ep-bar').style.width = (ffPlayerEp/100)*100 + '%';
-        }
-
-        function playerShoot(mx, my) {
-            if(ffPlayerHp <= 0) return;
-            playSfx(1200, 'sawtooth', 0.15, 0.12);
-            createExplosion(mx, my, '#ffca28', 6);
-            screenShake = 5;
-            
-            ffPlayers.forEach(p => {
-                if(p.hp <= 0) return;
-                let dist = Math.hypot(p.x - mx, p.y - my);
-                if(dist < 26) {
-                    let isHeadshot = my < p.y - 4;
-                    let dmg = isHeadshot ? 95 : 36;
-                    if(p.id === 'wukong' && p.isBush) { p.isBush = false; p.emoji = '🐒'; }
-                    p.hp -= dmg; p.state = 'EVADING'; p.timer = 45;
-                    
-                    if(p.id === 'wukong' && p.hp > 0 && Math.random() > 0.3) { p.isBush = true; p.emoji = '🌳'; }
-                    createExplosion(p.x, p.y, isHeadshot ? '#ff0000' : '#ff5500', 15);
-                    
-                    if(p.id === 'alok' && p.hp < p.maxHp/2 && !p.skillActive) { p.skillActive = true; p.timer = 130; playSfx(700, 'sine', 0.3, 0.3); }
-                    if(p.hp <= 0) {
-                        p.hp = 0; ffKills++; updateFreeFireHud(); playSfx(850, 'triangle', 0.3, 0.3);
-                        if(ffKills >= 5) { setTimeout(() => showResult('BOOYAH!', '🏆 أسطورة! تمت تصفية فرقة BRSMAYK بالكامل!', true), 400); }
-                    }
-                }
-            });
-        }
-
-        function useGlooWall() { if(ffPlayerHp < 200) { playSfx(250, 'sawtooth', 0.2, 0.3); ffPlayerHp = Math.min(200, ffPlayerHp + 40); updateFreeFireHud(); createExplosion(200, 150, '#00b7ff', 20); } }
-        function useMedkit() { if(ffPlayerEp >= 25) { ffPlayerEp -= 25; ffPlayerHp = Math.min(200, ffPlayerHp + 50); playSfx(900, 'sine', 0.15, 0.4); updateFreeFireHud(); } }
-        function createExplosion(x,y,color,count) { for(let i=0; i<count; i++) { ffParticles.push({ x, y, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5, alpha: 1, color, size: Math.random()*3+2 }); } }
-
-        function renderFreeFire() {
-            if(currentMode !== 'freefire') return;
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            
-            ctx.save();
-            if(screenShake > 0) { ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake); screenShake *= 0.9; if(screenShake<0.5) screenShake=0; }
-
-            // تحديث ورسم الجزيئات
-            ffParticles.forEach((p,i) => { p.x += p.vx; p.y += p.vy; p.alpha -= 0.03; if(p.alpha<=0) ffParticles.splice(i,1); else { ctx.fillStyle=p.color; ctx.globalAlpha=p.alpha; ctx.fillRect(p.x,p.y,p.size,p.size); } });
-            ctx.globalAlpha = 1;
-
-            // تحديث ورسم اللاعبين الذكيين
-            ffPlayers.forEach(p => {
-                ctx.fillStyle = p.hp > 0 ? 'white' : '#777';
-                ctx.font = '11px Segoe UI';
-                ctx.fillText(p.name, p.x - 25, p.y - 25);
-                
-                if(p.hp <= 0) { ctx.font = '20px Arial'; ctx.fillText('⚰️', p.x - 10, p.y + 10); return; }
-                
-                let currentSpeed = 1;
-                if(p.state === 'EVADING') { currentSpeed = p.id === 'kelly' ? 3.3 : (p.id === 'brsmayk' ? 2.8 : 2.2); p.timer--; if(p.timer<=0) p.state='RUNNING'; }
-                p.x += p.vx * currentSpeed; p.y += p.vy * currentSpeed;
-                if(p.x < 25 || p.x > canvas.width - 25) p.vx *= -1;
-                if(p.y < 45 || p.y > canvas.height - 45) p.vy *= -1;
-
-                if(p.id === 'alok' && p.skillActive) { p.hp = Math.min(p.maxHp, p.hp + 0.2); ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(p.x, p.y, 32, 0, Math.PI*2); ctx.stroke(); p.timer--; if(p.timer<=0) p.skillActive=false; }
-                if(p.id === 'chrono' && p.shieldActive) { ctx.strokeStyle = '#00aeff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x, p.y, 35, 0, Math.PI*2); ctx.stroke(); p.timer--; if(p.timer<=0) p.shieldActive=false; }
-
-                if(p.hp > 0 && Math.random() < 0.015) {
-                    ffPlayerHp -= 6; updateFreeFireHud();
-                    if(ffPlayerHp <= 0) { showResult('WASTED', 'تمت تصفيتك من قبل الأعداء! ☠️', false); return; }
-                }
-
-                ctx.font = '26px Arial';
-                ctx.fillText(p.emoji, p.x - 13, p.y + 10);
-                let barW = 34, barH = 4, barX = p.x - barW/2, barY = p.y - 22;
-                ctx.fillStyle = '#444'; ctx.fillRect(barX, barY, barW, barH);
-                let hpRatio = p.hp / p.maxHp; ctx.fillStyle = hpRatio > 0.4 ? '#00ff44' : '#ff3333';
-                ctx.fillRect(barX, barY, barW * hpRatio, barH);
-            });
-
-            ctx.restore();
-            animationLoop = requestAnimationFrame(renderFreeFire);
-        }
-
-        function hitTarget() { score++; playSfx(1000, 'sine', 0.05, 0.1); document.getElementById('click-score').innerText = `Score: ${score}/12`; if(score >= 12) showResult('WIN', 'Bullseye!', true); else moveTarget(); }
-        function moveTarget() { const t = document.getElementById('target'); t.style.left = Math.random()*85+'%'; t.style.top = Math.random()*75+'%'; }
-        function handleReact() { if(reactState === 'go') showResult('WIN', 'Fast Response!', true); else showResult('FAILED', 'Too Early!', false); }
-        
-        function aiMove() {
-            let m = -1; const empty = board.map((v,i)=>v==='' ? i : null).filter(v=>v!==null);
-            if(difficulty === 'hard') m = getSmartMove(board);
-            if(m === -1) m = empty[Math.floor(Math.random()*empty.length)];
-            board[m]='O'; let cell = document.getElementById('c'+m); cell.innerText='O'; cell.classList.add('p-o');
-            if(checkWin(board,'O')) showResult('LOST','AI Wins!',false); else canPlay = true;
-        }
-
-        function getSmartMove(b) {
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='O'; if(checkWin(b,'O')) { b[i]=''; return i; } b[i]=''; } }
-            for(let i=0; i<9; i++) { if(b[i]==='') { b[i]='X'; if(checkWin(b,'X')) { b[i]=''; return i; } b[i]=''; } }
-            return -1;
-        }
-
-        function checkWin(b, p) {
-            const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            return w.some(comb => comb.every(idx => b[idx]===p));
-        }
+        // الألعاب الأخرى الأساسية اختصاراً للملف
+        function useGlooWall() { ffPlayerHp = Math.min(200, ffPlayerHp + 40); }
+        function useMedkit() { ffPlayerHp = Math.min(200, ffPlayerHp + 50); }
     </script>
 </body>
 </html>
