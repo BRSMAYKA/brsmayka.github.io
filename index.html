@@ -5,7 +5,7 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRSMAYKA GAMING - Ultimate Camera Edition</title>
+    <title>BRSMAYKA GAMING - Supreme Mouse Trail Edition</title>
     <style>
         :root { 
             --primary: #00ffcc; 
@@ -19,6 +19,20 @@
         * { box-sizing: border-box; touch-action: manipulation; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; text-align: center; overflow-x: hidden; }
         
+        /* تأثير الماوس */
+        .mouse-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            box-shadow: 0 0 10px var(--accent-green), 0 0 20px var(--accent-green);
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 1;
+        }
+
         .brand-name { color: var(--accent-green); text-shadow: 0 0 15px var(--accent-green); font-size: 2.5rem; margin: 10px 0; font-weight: 900; }
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #persistent-score { position: fixed; top: 15px; left: 15px; background: rgba(0, 255, 68, 0.1); border: 1px solid var(--accent-green); padding: 10px; border-radius: 8px; z-index: 10001; }
@@ -45,7 +59,7 @@
         .lvl-btn { padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 5px; border: 1px solid var(--primary); background: transparent; color: white; margin: 2px; }
         .lvl-btn.active { background: var(--accent-green); color: black; }
 
-        /* واجهات الألعاب المتطورة */
+        /* واجهات الألعاب */
         #ff-hud, #mc-hud { display: none; background: rgba(20, 20, 25, 0.95); padding: 12px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--ff-orange); font-size: 13px; text-align: left; direction: rtl; }
         #mc-hud { border-color: var(--mc-blue); }
         .ff-progress-container { width: 100%; background: #333; height: 10px; border-radius: 6px; overflow: hidden; margin: 4px 0; border: 1px solid #555; }
@@ -173,14 +187,34 @@
         let audioCtx, currentMode, score = 0, gameTimer, timeLeft, globalPoints = 0;
         let board = [], canPlay = true, difficulty = 'hard', reactState = 'wait';
 
-        // محرك الألعاب المتقدمة
         let canvas, ctx, animationLoop;
         let ffPlayers = [], ffParticles = [];
         let ffPlayerHp = 200, ffPlayerEp = 100, ffKills = 0;
         let screenShake = 0;
 
-        // متغيرات عالم ماين كرافت
         let mcGrid = {}, mcSelectedBlock = 'grass', mcPlayer = { x: 200, y: 150, size: 22, speed: 5 }, mcKeys = {};
+
+        // جافا سكريبت لتأثير الماوس السحري
+        window.addEventListener('mousemove', (e) => {
+            const p = document.createElement('div');
+            p.className = 'mouse-particle';
+            p.style.left = `${e.clientX - 4}px`;
+            p.style.top = `${e.clientY - 4}px`;
+            
+            // اختيار عشوائي لحجم الجزيئات والاتجاه
+            const size = Math.random() * 8 + 4;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            
+            document.body.appendChild(p);
+            
+            setTimeout(() => {
+                p.style.transform = `translate(${(Math.random() - 0.5) * 30}px, ${(Math.random() - 0.5) * 30}px) scale(0)`;
+                p.style.opacity = '0';
+            }, 50);
+
+            setTimeout(() => { p.remove(); }, 550);
+        });
 
         function playSfx(f, type, vol, dur) {
             if(!audioCtx) return;
@@ -233,7 +267,6 @@
             document.getElementById('game-canvas').style.display = 'none';
             document.getElementById('ff-ctrl').style.display = 'none';
             document.getElementById('mc-ctrl').style.display = 'none';
-            document.getElementById('game-box').style.maxWidth = '500px';
         }
 
         window.addEventListener('keydown', (e) => {
@@ -275,7 +308,6 @@
                 }, 100);
             }
 
-            // ميكانيكا الـ 8 ألعاب الأساسية كاملة ومصلحة
             if(mode === 'xo') {
                 view.innerHTML = `<div style="margin-bottom:10px;">
                     <button class="lvl-btn ${difficulty==='easy'?'active':''}" onclick="difficulty='easy';start('xo')">Easy</button>
@@ -325,7 +357,6 @@
                 s.forEach((tile, idx) => setTimeout(() => { const el = document.getElementById('m'+tile); if(el){el.style.background='#00ffcc'; setTimeout(()=>el.style.background='#161616',350);} }, idx*600+400));
             }
             
-            // طور فري فاير
             else if(mode === 'freefire') {
                 document.getElementById('ff-hud').style.display = 'block';
                 canvas.style.display = 'block';
@@ -360,7 +391,6 @@
                 renderFreeFire();
             }
 
-            // طور ماين كرافت بالكاميرا الملاحقة
             else if(mode === 'minecraft') {
                 document.getElementById('mc-hud').style.display = 'block';
                 canvas.style.display = 'block';
@@ -406,7 +436,6 @@
             }
         }
 
-        // دوال ماين كرافت المساعدة
         function saveMinecraftWorld() { localStorage.setItem('brsmayk_mc_world_v3', JSON.stringify(mcGrid)); }
         function resetMinecraftWorld() { if(confirm("تصفير الخريطة؟")) { mcGrid = {}; for(let x = -2000; x < 2000; x += 25) { mcGrid[`${x},250`] = 'grass'; mcGrid[`${x},275`] = 'stone'; } saveMinecraftWorld(); } }
         function selectMcBlock(type) { mcSelectedBlock = type; document.querySelectorAll('.mc-tile-btn').forEach(b => b.classList.remove('selected')); document.getElementById('tile-'+(type==='air'?'delete':type)).classList.add('selected'); }
@@ -445,7 +474,6 @@
             animationLoop = requestAnimationFrame(renderMinecraft);
         }
 
-        // ألعاب فري فاير وباقي الدوال الأساسية
         function updateFreeFireHud() {
             document.getElementById('ff-hp-val').innerText = Math.max(0, Math.floor(ffPlayerHp));
             document.getElementById('ff-ep-val').innerText = Math.floor(ffPlayerEp);
